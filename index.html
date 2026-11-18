@@ -221,6 +221,36 @@ nav span{font-size:19px}
  <button data-tab="health" onclick="show('health')"><span>♡</span>Здоровье</button>
  <button data-tab="tasks" onclick="show('tasks')"><span>✓</span>Задачи</button>
  <button data-tab="money" onclick="show('money')"><span>₽</span>Финансы</button>
+
+<section id="habits" class="hidden">
+ <h2>Мои привычки 🌱</h2>
+ <div class="card">
+  <b>Новая привычка</b>
+  <form onsubmit="addHabit(event)">
+   <label>Название привычки</label>
+   <input id="habitName" required placeholder="Например, зарядка">
+   <button class="primary" type="submit">Добавить привычку</button>
+  </form>
+ </div>
+ <div class="card">
+  <div class="row"><b>Мой прогресс сегодня</b><span id="habitProgress">0/0</span></div>
+  <div class="progress"><div id="habitBar" style="width:0%"></div></div>
+  <div id="habitList"></div>
+ </div>
+</section>
+
+<section id="calendar" class="hidden">
+ <h2>Мой календарь 📅</h2>
+ <div class="card">
+  <label>Выбери дату</label>
+  <input type="date" id="eventDate">
+  <label>План или событие</label>
+  <input id="eventName" placeholder="Например, тренировка">
+  <button class="primary" onclick="addEvent()">Добавить в календарь</button>
+ </div>
+ <h2>Мои планы</h2>
+ <div class="card" id="eventList"></div>
+</section>
  <button data-tab="notes" onclick="show('notes')"><span>✿</span>Записи</button>
  <button data-tab="settings" onclick="show('settings')"><span>⚙</span>Ещё</button>
 </nav>
@@ -230,7 +260,7 @@ const today=new Date().toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',
 document.getElementById('today').textContent=today.charAt(0).toUpperCase()+today.slice(1);
 
 const key='healthDiaryData';
-let db={water:[],health:[],tasks:[],money:[],notes:[],goal:2100,moods:{}};
+let db={water:[],health:[],tasks:[],money:[],notes:[],habits:[],events:[],goal:2100,moods:{}};
 try{db={...db,...JSON.parse(localStorage.getItem(key)||'{}')}}catch(e){}
 
 function save(){localStorage.setItem(key,JSON.stringify(db));render()}
@@ -276,6 +306,41 @@ function del(arr,i){
  if(confirm('Удалить эту запись?')){arr.splice(i,1);save()}
 }
 
+
+function addHabit(e){
+ e.preventDefault();
+ db.habits.push({name:habitName.value,completed:[]});
+ e.target.reset();
+ save();
+}
+
+function toggleHabit(i){
+ const today=dateKey();
+ const dates=db.habits[i].completed;
+ const index=dates.indexOf(today);
+ if(index>=0) dates.splice(index,1);
+ else dates.push(today);
+ save();
+}
+
+function addEvent(){
+ const date=document.getElementById('eventDate').value;
+ const name=document.getElementById('eventName').value.trim();
+ if(!date || !name){
+  alert('Укажи дату и название события');
+  return;
+ }
+ db.events.push({date,name});
+ document.getElementById('eventName').value='';
+ save();
+}
+
+function deleteEvent(i){
+ if(confirm('Удалить событие?')){
+  db.events.splice(i,1);
+  save();
+ }
+}
 function render(){
  const water=db.water.filter(x=>x.date===dateKey()).reduce((s,x)=>s+x.amount,0);
  document.getElementById('waterTotal').textContent=water+' мл';
@@ -320,6 +385,29 @@ function render(){
 function saveGoal(){
  let n=Number(waterGoal.value);
  if(n>0){db.goal=n;save();alert('Цель сохранена!')}
+
+ document.getElementById('habitList').innerHTML=db.habits.map((h,i)=>{
+  const done=h.completed.includes(dateKey());
+  return `<div class="item row">
+   <label>
+    <input style="width:auto" type="checkbox" ${done?'checked':''} onchange="toggleHabit(${i})">
+    <span class="${done?'done':''}">${esc(h.name)}</span>
+   </label>
+   <span class="small">${h.completed.length} дн.</span>
+  </div>`;
+ }).join('')||'<span class="small">Добавь свою первую привычку 🌱</span>';
+
+ const completed=db.habits.filter(h=>h.completed.includes(dateKey())).length;
+ document.getElementById('habitProgress').textContent=completed+'/'+db.habits.length;
+ document.getElementById('habitBar').style.width=(db.habits.length?completed/db.habits.length*100:0)+'%';
+
+ document.getElementById('eventList').innerHTML=db.events
+  .map((ev,i)=>({ev,i}))
+  .sort((a,b)=>a.ev.date.localeCompare(b.ev.date))
+  .map(({ev,i})=>`<div class="item row">
+   <div><b>${esc(ev.name)}</b><div class="small">${ev.date}</div></div>
+   <button class="delete" onclick="deleteEvent(${i})">×</button>
+  </div>`).join('')||'<span class="small">Планов пока нет 📅</span>';
 }
 function backup(){
  let blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});
