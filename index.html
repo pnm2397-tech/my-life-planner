@@ -1,275 +1,545 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#f4f0e8">
-<title>Health Diary</title>
+<meta name="theme-color" content="#f5f6f1">
+<title>Health Diary 🌿</title>
 <style>
-:root{--bg:#f4f0e8;--card:#fbf8f2;--accent:#b5a58f;--dark:#5c5145;--soft:#e9e1d5;--text:#403a33;--muted:#8d8377;--line:#eee7dc;--danger:#a17c70}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:100px}
-header{padding:25px 20px 19px;background:var(--soft);border-radius:0 0 25px 25px}
-h1{font-size:27px;margin:0;color:var(--dark)}
-h2{font-size:19px;margin:20px 0 12px;color:var(--dark)}
-h3{font-size:16px;color:var(--dark);margin:8px 0}
-.sub,.small{color:var(--muted);font-size:13px}
-main{padding:16px;max-width:700px;margin:auto}
-.card{background:var(--card);border-radius:17px;padding:16px;margin-bottom:12px;box-shadow:0 3px 14px #5c514508}
-.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.big{font-size:25px;font-weight:700;color:var(--dark);margin:7px 0}
-button{border:0;border-radius:11px;background:var(--soft);color:var(--dark);padding:11px 13px;font-size:14px;font-weight:600;cursor:pointer}
-button.primary{background:var(--dark);color:white}
-button.delete{background:#f1e8e1;color:var(--danger);padding:7px 10px}
-button.active{background:var(--dark);color:white}
-button.full{width:100%;margin-top:7px}
-input,select,textarea{width:100%;border:1px solid var(--line);background:#fffdf9;border-radius:10px;padding:11px;font-size:16px;color:var(--text);margin:5px 0 11px}
-input[type=checkbox]{width:19px;height:19px;margin:0;accent-color:var(--dark)}
-input[type=file]{font-size:13px}
-textarea{min-height:75px}
-label{font-size:13px;color:var(--muted)}
-.hidden{display:none!important}
-.item{padding:11px 0;border-bottom:1px solid var(--line)}
+body{margin:0;padding:20px 16px 100px;font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif;background:#f5f6f1;color:#303b33}
+header{margin-bottom:24px}
+h1{font-size:25px;margin:0 0 5px}
+h2{font-size:19px;margin:0 0 14px}
+h3{font-size:16px;margin:0 0 12px}
+.subtitle,.muted,.small{color:#829087}
+.subtitle{font-size:13px}
+.small{font-size:12px}
+.card{background:white;border-radius:18px;padding:17px;margin-bottom:14px;box-shadow:0 3px 12px #00000008}
+.page{display:none}
+.page.active{display:block}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:#edf3ed;padding:15px;border-radius:15px}
+.stat strong{display:block;font-size:22px;margin-bottom:5px}
+.stat span{font-size:13px;color:#829087}
+button{border:0;border-radius:12px;padding:12px;background:#6d9278;color:white;font-size:14px;font-weight:600;margin:3px 2px}
+button.secondary{background:#e9f0e9;color:#496b55}
+button.danger{background:#f8e9e6;color:#9a5147}
+input,textarea,select{width:100%;padding:12px;margin:6px 0 10px;border:1px solid #e2e8e0;border-radius:10px;background:white;font-size:15px;color:#303b33}
+textarea{min-height:100px}
+label{display:block;font-size:12px;color:#829087;margin-top:7px}
+.nav{position:fixed;bottom:0;left:0;right:0;background:#ffffffed;backdrop-filter:blur(12px);display:flex;justify-content:space-around;padding:9px 2px calc(18px + env(safe-area-inset-bottom));border-top:1px solid #e8ece6;z-index:10}
+.nav button{background:transparent;color:#87948a;padding:5px 2px;font-size:11px;font-weight:400;flex:1;margin:0}
+.nav button.active{color:#52765c;font-weight:bold}
+.nav span{display:block;font-size:21px;margin-bottom:4px}
+.row{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.row>*{flex:1}
+.item{padding:11px 0;border-bottom:1px solid #edf0eb;display:flex;justify-content:space-between;gap:8px;align-items:center}
 .item:last-child{border:0}
-.done{text-decoration:line-through;color:var(--muted)}
-.progress{height:8px;background:var(--soft);border-radius:9px;overflow:hidden;margin:9px 0}
-.progress div{height:100%;background:var(--accent);border-radius:9px}
-.hero{background:var(--soft);border-radius:18px;padding:19px;margin-bottom:12px}
-.hero-title{font-size:22px;font-weight:700;color:var(--dark)}
-.hero-text{font-size:13px;color:var(--muted);margin-top:6px}
-nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);display:flex;overflow-x:auto;padding:7px 4px calc(7px + env(safe-area-inset-bottom));box-shadow:0 -3px 15px #5c51440d;z-index:5;scrollbar-width:none}
-nav::-webkit-scrollbar{display:none}
-nav button{background:transparent;padding:6px 5px;font-size:10px;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--muted);flex:1 0 65px;min-width:65px;white-space:nowrap}
-nav button.active{background:var(--soft);color:var(--dark)}
-nav span{font-size:19px}
-.mood-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
-.mood-grid button{padding:9px 2px;font-size:21px}
-.mood-grid button small{display:block;font-size:9px;font-weight:400}
-.quadrant{border:1px solid var(--line);border-radius:13px;padding:12px;margin-bottom:10px}
-.q1{background:#f5eee7}.q2{background:#f2eee5}.q3{background:#f7f3ed}.q4{background:#f5f1ee}
-.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
-.week-cell{padding:7px 1px;border-radius:9px;background:#f5f1eb;font-size:11px}
-.week-cell button{padding:5px 2px;background:transparent;font-size:20px}
-.week-cell.today{outline:1px solid var(--accent)}
-.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
-.cal-day{min-height:54px;background:#f5f1eb;border-radius:9px;padding:5px 1px;font-size:12px;cursor:pointer}
-.cal-day.selected{background:var(--soft);outline:1px solid var(--accent)}
-.cal-day .dot{font-size:10px;color:var(--accent)}
-.cal-head{font-size:11px;color:var(--muted);padding:5px}
-.badge{font-size:11px;background:var(--soft);padding:4px 7px;border-radius:8px;color:var(--dark)}
-.chart{display:flex;align-items:flex-end;justify-content:space-between;gap:6px;height:120px;padding-top:10px}
-.chart-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;min-width:0}
-.chart-bar-wrap{height:80px;width:100%;display:flex;align-items:flex-end;justify-content:center}
-.chart-bar{width:65%;min-height:3px;background:var(--accent);border-radius:5px 5px 2px 2px}
-.chart-label,.chart-value{font-size:9px;color:var(--muted);margin-top:5px}
-.muted-box{padding:12px;background:#f5f1eb;border-radius:12px}
-.file-card{font-size:13px;padding:8px;background:#f5f1eb;border-radius:9px;margin:5px 0}
+.item small{display:block;color:#829087;margin-top:4px}
+.item button{padding:8px 10px}
+.progress{height:8px;background:#edf0eb;border-radius:20px;overflow:hidden;margin:12px 0}
+.progress div{height:100%;background:#6d9278;width:0}
+.macro{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.macro div{background:#f1f4ef;border-radius:12px;padding:11px;text-align:center}
+.macro b{display:block;font-size:17px}
+.macro small{color:#829087}
+.quick{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.quick button{text-align:left;background:#f0f4ef;color:#405247;padding:15px}
+.quick small{display:block;color:#829087;font-weight:400;margin-top:5px}
+@media(min-width:600px){body{max-width:760px;margin:auto}.nav{max-width:760px;margin:auto}}
 </style>
 </head>
 <body>
+
 <header>
- <div class="row"><div><h1>Health Diary</h1><div class="sub" id="todayText"></div></div><div style="font-size:30px">☁️</div></div>
+  <h1>Health Diary 🌿</h1>
+  <div class="subtitle">Твой дневник заботы о себе</div>
 </header>
-<main>
 
-<section id="home">
- <div class="hero"><div class="hero-title" id="greeting">Доброе утро!</div><div class="hero-text">Не обязательно успеть всё. Достаточно сделать важное для себя.</div></div>
- <div class="grid">
-  <div class="card"><div class="small">Вода сегодня</div><div class="big" id="homeWater">0 мл</div><div class="progress"><div id="homeWaterBar"></div></div><button class="full" onclick="addWater()">+ Стакан воды</button></div>
-  <div class="card"><div class="small">Задачи сегодня</div><div class="big" id="homeTaskCount">0/0</div><div class="progress"><div id="homeTaskBar"></div></div><button class="full" onclick="show('day')">Мой день</button></div>
- </div>
- <h2>Мой настрой</h2>
- <div class="card"><div class="small">Как ты себя чувствуешь сейчас?</div><div class="mood-grid" id="moodButtons"></div><div id="moodToday" class="small" style="margin-top:10px"></div></div>
- <h2>Главный фокус</h2><div class="card" id="homeFocus">Добавь задачу в разделе «Мой день»</div>
- <h2>Привычки сегодня</h2><div class="card"><div id="homeHabits"></div><div class="progress"><div id="homeHabitBar"></div></div><button class="full" onclick="show('habits')">Все привычки</button></div>
- <h2>Быстрый доступ</h2>
- <div class="grid"><button onclick="show('health')">♡ Здоровье</button><button onclick="show('day')">✓ Мой день</button><button onclick="show('calendar')">▦ Календарь</button><button onclick="show('space')">✎ Моё пространство</button></div>
+<!-- ГЛАВНАЯ -->
+<section id="home" class="page active">
+  <h2>Сегодня</h2>
+  <p class="small" id="todayDate"></p>
+
+  <div class="stats">
+    <div class="stat"><strong id="homeWater">0 мл</strong><span>💧 Вода</span></div>
+    <div class="stat"><strong id="homeCalories">0 ккал</strong><span>🍽️ Питание</span></div>
+    <div class="stat"><strong id="homeTasks">0/0</strong><span>☑ Задачи</span></div>
+    <div class="stat"><strong id="homeMood">—</strong><span>♡ Настроение</span></div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <h2>Вода 💧</h2>
+    <p>Цель: <span id="waterGoalText">2100</span> мл</p>
+    <div class="progress"><div id="waterProgress"></div></div>
+    <div class="row">
+      <button class="secondary" onclick="addWater(150)">+150 мл</button>
+      <button class="secondary" onclick="addWater(250)">+250 мл</button>
+      <button class="secondary" onclick="addWater(500)">+500 мл</button>
+    </div>
+    <label>Своя порция, мл</label>
+    <div class="row">
+      <input id="customWater" type="number" placeholder="Например, 300">
+      <button onclick="addCustomWater()">Добавить</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Быстрый переход</h2>
+    <div class="quick">
+      <button onclick="showPage('day')">☑ Мой день<small>Задачи и настроение</small></button>
+      <button onclick="showPage('health')">♡ Здоровье<small>Питание и КБЖУ</small></button>
+      <button onclick="showPage('calendar')">▦ Календарь<small>Планы и события</small></button>
+      <button onclick="showPage('more')">☰ Ещё<small>Привычки и заметки</small></button>
+    </div>
+  </div>
 </section>
 
-<section id="day" class="hidden">
- <h2>Мой день</h2>
- <div class="card"><div class="row"><button onclick="shiftDay(-1)">← Вчера</button><b id="dayTitle"></b><button onclick="shiftDay(1)">Завтра →</button></div><label>Выбрать дату</label><input type="date" id="dayPicker" onchange="selectDay(this.value)"></div>
- <div class="card">
-  <b>Новая задача</b>
-  <form onsubmit="addTask(event)">
-   <label>Что нужно сделать?</label><input id="taskName" required placeholder="Название задачи">
-   <label>Дата</label><input id="taskDate" type="date" required>
-   <label>Приоритет</label><select id="taskQuadrant"><option value="q1">Срочно и важно</option><option value="q2">Важно, не срочно</option><option value="q3">Срочно, не важно</option><option value="q4">Не срочно и не важно</option></select>
-   <button class="primary" type="submit">Добавить задачу</button>
-  </form>
- </div>
- <div id="dayTasks"></div>
+<!-- МОЙ ДЕНЬ -->
+<section id="day" class="page">
+  <h2>Мой день</h2>
+  <p class="small" id="dayDate"></p>
+
+  <div class="card">
+    <h3>Задачи на сегодня</h3>
+    <input id="taskInput" placeholder="Что нужно сделать?">
+    <div class="row">
+      <input id="taskTime" type="time">
+      <button onclick="addTask()">Добавить</button>
+    </div>
+    <div id="taskList"></div>
+  </div>
+
+  <div class="card">
+    <h3>Настроение</h3>
+    <div class="row">
+      <button class="secondary" onclick="setMood('😊')">😊</button>
+      <button class="secondary" onclick="setMood('🙂')">🙂</button>
+      <button class="secondary" onclick="setMood('😐')">😐</button>
+      <button class="secondary" onclick="setMood('😔')">😔</button>
+      <button class="secondary" onclick="setMood('😣')">😣</button>
+    </div>
+    <p class="small" id="moodText">Выбери настроение</p>
+  </div>
+
+  <div class="card">
+    <h3>Заметка дня</h3>
+    <textarea id="dayNote" placeholder="Что важно запомнить сегодня?"></textarea>
+    <button onclick="saveDayNote()">Сохранить</button>
+  </div>
 </section>
 
-<section id="health" class="hidden">
- <h2>Здоровье</h2>
- <div class="card"><div class="small">Вода сегодня</div><div class="big" id="healthWater">0 мл</div><button onclick="addWater()">+ 250 мл</button> <button onclick="customWater()">Другое количество</button></div>
- <div class="card"><h3>Показатели здоровья</h3>
-  <form onsubmit="addHealth(event)">
-   <label>Показатель</label><select id="healthType"><option>Вес</option><option>Сон</option><option>Шаги</option><option>Калории</option><option>Самочувствие</option><option>Лекарства</option><option>Другое</option></select>
-   <label>Значение</label><input id="healthValue" required placeholder="Например, 70 кг">
-   <label>Комментарий</label><input id="healthComment" placeholder="Необязательно">
-   <button class="primary">Сохранить показатель</button>
-  </form>
- </div>
- <div class="card"><h3>Витамины и добавки</h3>
-  <form onsubmit="addSupplement(event)">
-   <label>Название</label><input id="suppName" required placeholder="Например, витамин D">
-   <label>Дозировка</label><input id="suppDose" placeholder="Например, 2000 МЕ">
-   <label>Время приёма</label><input id="suppTime" type="time">
-   <button class="primary">Добавить</button>
-  </form><div id="supplementList"></div>
- </div>
- <div class="card"><h3>Замеры тела</h3>
-  <label>Дата замеров</label><input type="date" id="measureDate">
-  <div class="grid" id="measureInputs"></div>
-  <button class="primary full" onclick="saveMeasurements()">Сохранить замеры</button>
-  <div id="measureList"></div>
- </div>
- <div class="card"><h3>Анализы</h3>
-  <form onsubmit="addLab(event)">
-   <label>Название показателя</label><input id="labName" required placeholder="Например, ферритин">
-   <div class="grid"><div><label>Результат</label><input id="labValue" required placeholder="20"></div><div><label>Единицы</label><input id="labUnit" placeholder="нг/мл"></div></div>
-   <div class="grid"><div><label>Нижняя граница нормы</label><input id="labMin" type="number" step="any"></div><div><label>Верхняя граница нормы</label><input id="labMax" type="number" step="any"></div></div>
-   <label>Дата анализа</label><input id="labDate" type="date" required>
-   <label>Комментарий лаборатории</label><input id="labComment" placeholder="Необязательно">
-   <label>Прикрепить фото или PDF</label><input id="labFiles" type="file" accept="image/*,.pdf" multiple>
-   <button class="primary">Сохранить анализ</button>
-  </form><div id="labList"></div>
- </div>
- <div class="card"><h3>История показателей</h3><div id="healthList"></div></div>
+<!-- ЗДОРОВЬЕ И ПИТАНИЕ -->
+<section id="health" class="page">
+  <h2>Здоровье и питание</h2>
+
+  <div class="card">
+    <h3>Итоги питания за сегодня</h3>
+    <strong style="font-size:25px" id="totalKcal">0</strong> ккал
+    <div class="progress"><div id="calorieProgress"></div></div>
+    <div class="macro">
+      <div><b id="totalP">0 г</b><small>Белки</small></div>
+      <div><b id="totalF">0 г</b><small>Жиры</small></div>
+      <div><b id="totalC">0 г</b><small>Углеводы</small></div>
+    </div>
+    <p class="small" id="goalSummary"></p>
+  </div>
+
+  <div class="card">
+    <h3>Добавить продукт</h3>
+    <label>Название продукта или блюда</label>
+    <input id="foodName" placeholder="Например, творог">
+    <label>Приём пищи</label>
+    <select id="foodMeal">
+      <option>Завтрак</option>
+      <option>Обед</option>
+      <option>Ужин</option>
+      <option>Перекус</option>
+    </select>
+    <label>Вес порции, граммы</label>
+    <input id="foodGrams" type="number" placeholder="100">
+    <label>Калории на 100 г</label>
+    <input id="foodKcal" type="number" placeholder="120">
+    <div class="row">
+      <div><label>Белки на 100 г</label><input id="foodP" type="number" step="0.1" placeholder="15"></div>
+      <div><label>Жиры на 100 г</label><input id="foodF" type="number" step="0.1" placeholder="5"></div>
+    </div>
+    <label>Углеводы на 100 г</label>
+    <input id="foodC" type="number" step="0.1" placeholder="3">
+    <button onclick="addFood()">Добавить в дневник</button>
+  </div>
+
+  <div class="card">
+    <h3>Дневник питания</h3>
+    <div id="foodList"></div>
+  </div>
+
+  <div class="card">
+    <h3>Мои цели КБЖУ</h3>
+    <label>Калории, ккал</label><input id="goalKcal" type="number">
+    <label>Белки, г</label><input id="goalP" type="number">
+    <label>Жиры, г</label><input id="goalF" type="number">
+    <label>Углеводы, г</label><input id="goalC" type="number">
+    <button onclick="saveGoals()">Сохранить цели</button>
+  </div>
+
+  <div class="card">
+    <h3>Вода за сегодня</h3>
+    <strong id="healthWater">0 мл</strong>
+  </div>
 </section>
 
-<section id="habits" class="hidden">
- <h2>Мои привычки</h2>
- <div class="card"><form onsubmit="addHabit(event)"><label>Новая привычка</label><input id="habitName" required placeholder="Например, зарядка"><button class="primary">Добавить привычку</button></form></div>
- <div class="card"><div class="row"><button onclick="shiftWeek(-1)">← Неделя</button><b id="weekTitle"></b><button onclick="shiftWeek(1)">Неделя →</button></div><div id="habitTable"></div></div>
+<!-- КАЛЕНДАРЬ -->
+<section id="calendar" class="page">
+  <h2>Календарь</h2>
+  <div class="card">
+    <label>Выбери дату</label>
+    <input id="calendarDate" type="date" onchange="renderCalendar()">
+    <div id="calendarItems"></div>
+  </div>
+
+  <div class="card">
+    <h3>Добавить событие</h3>
+    <input id="eventName" placeholder="Название события">
+    <label>Дата</label><input id="eventDate" type="date">
+    <label>Время</label><input id="eventTime" type="time">
+    <button onclick="addEvent()">Добавить событие</button>
+    <div id="eventList"></div>
+  </div>
 </section>
 
-<section id="calendar" class="hidden">
- <h2>Календарь</h2>
- <div class="card"><div class="row"><button onclick="shiftMonth(-1)">←</button><b id="monthTitle"></b><button onclick="shiftMonth(1)">→</button></div><div class="calendar-grid" id="calendarGrid"></div></div>
- <div class="card"><h3 id="selectedDateTitle">Выбранный день</h3><div id="calendarDayItems"></div></div>
- <div class="card"><h3>Добавить событие</h3><form onsubmit="addEvent(event)"><label>Дата</label><input type="date" id="eventDate" required><label>Название</label><input id="eventName" required placeholder="Например, тренировка"><button class="primary">Сохранить событие</button></form></div>
+<!-- ЕЩЁ -->
+<section id="more" class="page">
+  <h2>Ещё</h2>
+
+  <div class="card">
+    <h3>Привычки</h3>
+    <input id="habitInput" placeholder="Например, прогулка">
+    <button onclick="addHabit()">Добавить привычку</button>
+    <div id="habitList"></div>
+  </div>
+
+  <div class="card">
+    <h3>Пространство и заметки</h3>
+    <textarea id="notes" placeholder="Идеи, мысли, списки и планы"></textarea>
+    <button onclick="saveNotes()">Сохранить</button>
+  </div>
+
+  <div class="card">
+    <h3>Статистика</h3>
+    <div class="stats">
+      <div class="stat"><strong id="statFoods">0</strong><span>Записей питания</span></div>
+      <div class="stat"><strong id="statTasks">0</strong><span>Задач</span></div>
+      <div class="stat"><strong id="statHabits">0</strong><span>Привычек</span></div>
+      <div class="stat"><strong id="statEvents">0</strong><span>Событий</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Настройки</h3>
+    <label>Цель воды, мл</label>
+    <input id="waterGoalInput" type="number">
+    <button onclick="saveWaterGoal()">Сохранить цель воды</button>
+  </div>
+
+  <div class="card">
+    <h3>Резервная копия</h3>
+    <p class="small">Сохрани копию данных, чтобы иметь возможность восстановить записи.</p>
+    <button onclick="exportData()">Скачать резервную копию</button>
+    <button class="secondary" onclick="document.getElementById('importFile').click()">Восстановить копию</button>
+    <input id="importFile" type="file" accept="application/json" hidden onchange="importData(event)">
+    <p class="small" id="backupStatus"></p>
+  </div>
 </section>
 
-<section id="space" class="hidden">
- <h2>Моё пространство</h2>
- <div class="card"><form onsubmit="addNote(event)"><label>Раздел</label><select id="noteType"><option>Заметка</option><option>Книга</option><option>Фильм или сериал</option><option>Покупки</option><option>Желание</option><option>Идея</option><option>План</option></select><label>Название</label><input id="noteTitle" required><label>Описание</label><textarea id="noteText"></textarea><button class="primary">Сохранить</button></form></div>
- <div class="card" id="noteList"></div>
-</section>
-
-<section id="stats" class="hidden">
- <h2>Моя статистика</h2>
- <div class="card"><b>Вода за 7 дней</b><div class="big" id="weekWater">0 мл</div><div class="chart" id="waterChart"></div></div>
- <div class="card"><b>Выполнение задач</b><div class="big" id="taskStats">0%</div><div class="progress"><div id="taskStatsBar"></div></div></div>
- <div class="card"><b>Привычки за неделю</b><div class="big" id="habitStats">0%</div><div class="progress"><div id="habitStatsBar"></div></div></div>
- <div class="card"><b>Динамика веса</b><div id="weightStats" class="small"></div></div>
- <div class="card"><b>Настроение за неделю</b><div id="moodStats"></div></div>
-</section>
-
-<section id="settings" class="hidden">
- <h2>Ещё</h2>
- <div class="card"><b>Цель по воде</b><input id="waterGoal" type="number" min="100"><button onclick="saveGoal()">Сохранить</button></div>
- <div class="card"><b>Резервная копия</b><p class="small">Включает записи и прикреплённые файлы.</p><button class="primary full" onclick="backup()">Скачать копию</button><label>Восстановить копию</label><input type="file" accept=".json" onchange="restore(event)"></div>
- <div class="card"><b>О приложении</b><p class="small">Health Diary хранит данные в браузере на этом устройстве. Регулярно сохраняй резервные копии и не очищай данные Safari.</p></div>
-</section>
-</main>
-
-<nav>
- <button class="active" data-tab="home" onclick="show('home')"><span>⌂</span>Главная</button>
- <button data-tab="day" onclick="show('day')"><span>✓</span>Мой день</button>
- <button data-tab="health" onclick="show('health')"><span>♡</span>Здоровье</button>
- <button data-tab="habits" onclick="show('habits')"><span>○</span>Привычки</button>
- <button data-tab="calendar" onclick="show('calendar')"><span>▦</span>Календарь</button>
- <button data-tab="space" onclick="show('space')"><span>✎</span>Пространство</button>
- <button data-tab="stats" onclick="show('stats')"><span>▥</span>Статистика</button>
- <button data-tab="settings" onclick="show('settings')"><span>⚙</span>Ещё</button>
+<nav class="nav">
+  <button class="active" data-page="home" onclick="showPage('home')"><span>⌂</span>Главная</button>
+  <button data-page="day" onclick="showPage('day')"><span>☑</span>Мой день</button>
+  <button data-page="health" onclick="showPage('health')"><span>♡</span>Здоровье</button>
+  <button data-page="calendar" onclick="showPage('calendar')"><span>▦</span>Календарь</button>
+  <button data-page="more" onclick="showPage('more')"><span>☰</span>Ещё</button>
 </nav>
 
 <script>
-const key='healthDiaryData';
-const defaults={water:[],health:[],tasks:[],money:[],notes:[],habits:[],events:[],goal:2100,moods:{}};
-let db={...defaults};
-try{db={...defaults,...JSON.parse(localStorage.getItem(key)||'{}')}}catch(e){console.error(e)}
-['water','health','tasks','notes','habits','events','money'].forEach(k=>{if(!Array.isArray(db[k]))db[k]=[]});
-if(!db.moods||typeof db.moods!=='object')db.moods={};
-if(!Array.isArray(db.moodEntries))db.moodEntries=[];
-if(!Array.isArray(db.supplements))db.supplements=[];
-if(!Array.isArray(db.measurements))db.measurements=[];
-if(!Array.isArray(db.labs))db.labs=[];
-db.tasks.forEach(t=>{if(!t.date)t.date=dateKey();if(!t.quadrant)t.quadrant='q2'});
+const KEY = "healthDiaryData";
+const today = () => {
+  const d = new Date();
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+};
 
-function dateKey(d=new Date()){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
-function parseDate(s){return new Date(s+'T12:00:00')}
-function shiftDate(s,n){let d=parseDate(s);d.setDate(d.getDate()+n);return dateKey(d)}
-function fmt(s){return parseDate(s).toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'})}
-function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function save(){localStorage.setItem(key,JSON.stringify(db));render()}
-function show(id){document.querySelectorAll('main section').forEach(s=>s.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));render()}
-let selectedDay=dateKey(),calendarMonth=new Date(),weekOffset=0;
-function sumWater(day){return db.water.filter(x=>x.date===day).reduce((s,x)=>s+Number(x.amount||0),0)}
-function addWater(){db.water.push({date:dateKey(),amount:250});save()}
-function customWater(){let n=Number(prompt('Сколько миллилитров?'));if(n>0){db.water.push({date:dateKey(),amount:n});save()}}
-function addHealth(e){e.preventDefault();db.health.unshift({type:healthType.value,value:healthValue.value,comment:healthComment.value,date:dateKey()});e.target.reset();save()}
-function addTask(e){e.preventDefault();db.tasks.unshift({name:taskName.value.trim(),done:false,date:taskDate.value,quadrant:taskQuadrant.value});e.target.reset();taskDate.value=selectedDay;save()}
-function toggleTask(i){db.tasks[i].done=!db.tasks[i].done;save()}
-function deleteTask(i){if(confirm('Удалить задачу?')){db.tasks.splice(i,1);save()}}
-function editTask(i){let t=db.tasks[i],name=prompt('Изменить название задачи',t.name);if(name===null)return;if(!name.trim())return;let date=prompt('Дата задачи ГГГГ-ММ-ДД',t.date);if(date&&!/^\d{4}-\d{2}-\d{2}$/.test(date)){alert('Проверь формат даты');return}let q=prompt('Квадрант: q1, q2, q3 или q4',t.quadrant);if(q&&!['q1','q2','q3','q4'].includes(q)){alert('Укажи q1, q2, q3 или q4');return}t.name=name.trim();if(date)t.date=date;if(q)t.quadrant=q;save()}
-function shiftDay(n){selectedDay=shiftDate(selectedDay,n);render()}
-function selectDay(v){if(v){selectedDay=v;render()}}
-function addHabit(e){e.preventDefault();db.habits.push({name:habitName.value.trim(),completed:[]});e.target.reset();save()}
-function toggleHabit(i,day){let a=db.habits[i].completed;if(!Array.isArray(a))a=[];let p=a.indexOf(day);if(p>=0)a.splice(p,1);else a.push(day);db.habits[i].completed=a;save()}
-function deleteHabit(i){if(confirm('Удалить привычку и её историю отметок?')){db.habits.splice(i,1);save()}}
-function shiftWeek(n){weekOffset+=n;render()}
-function addEvent(e){e.preventDefault();db.events.push({date:eventDate.value,name:eventName.value.trim()});e.target.reset();save()}
-function deleteEvent(i){if(confirm('Удалить событие?')){db.events.splice(i,1);save()}}
-function editEvent(i){let n=prompt('Название события',db.events[i].name);if(n===null)return;let d=prompt('Дата ГГГГ-ММ-ДД',db.events[i].date);if(d&&!/^\d{4}-\d{2}-\d{2}$/.test(d)){alert('Неверная дата');return}db.events[i].name=n.trim();if(d)db.events[i].date=d;save()}
-function addNote(e){e.preventDefault();db.notes.unshift({type:noteType.value,title:noteTitle.value.trim(),text:noteText.value,date:dateKey()});e.target.reset();save()}
-function deleteNote(i){if(confirm('Удалить запись?')){db.notes.splice(i,1);save()}}
-function saveGoal(){let n=Number(waterGoal.value);if(n>0){db.goal=n;save();alert('Цель сохранена')}}
-const moods=['😊 Отлично','🙂 Хорошо','😐 Нормально','😔 Устала','🥺 Тяжело'];
-function addMood(m){db.moodEntries.push({date:dateKey(),time:new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}),mood:m});save()}
-function dayMoods(day){let a=db.moodEntries.filter(x=>x.date===day);if(!a.length&&db.moods[day])return [{date:day,time:'',mood:db.moods[day]}];return a}
-function moodSummary(day){let a=dayMoods(day);if(!a.length)return 'Нет отметок';let counts={};a.forEach(x=>counts[x.mood]=(counts[x.mood]||0)+1);let max=Math.max(...Object.values(counts));let top=Object.keys(counts).filter(k=>counts[k]===max);return top.length>1?'Смешанное настроение':top[0]}
-function addSupplement(e){e.preventDefault();db.supplements.push({name:suppName.value.trim(),dose:suppDose.value.trim(),time:suppTime.value,history:[]});e.target.reset();save()}
-function toggleSupplement(i){let s=db.supplements[i];let d=dateKey();if(!Array.isArray(s.history))s.history=[];let p=s.history.indexOf(d);if(p>=0)s.history.splice(p,1);else s.history.push(d);save()}
-function deleteSupplement(i){if(confirm('Удалить витамин или добавку?')){db.supplements.splice(i,1);save()}}
-const measureNames=['Грудь','Талия','Живот','Бёдра','Бедро','Рука','Икра'];
-function saveMeasurements(){let values={};measureNames.forEach((n,i)=>{let v=document.getElementById('measure'+i).value;if(v)values[n]=v});if(!Object.keys(values).length){alert('Введи хотя бы один замер');return}db.measurements.unshift({date:measureDate.value||dateKey(),values});save()}
-function deleteMeasurement(i){if(confirm('Удалить замеры?')){db.measurements.splice(i,1);save()}}
-function addLab(e){e.preventDefault();let files=[...labFiles.files];let record={id:'lab_'+Date.now()+'_'+Math.random().toString(36).slice(2),name:labName.value.trim(),value:labValue.value,unit:labUnit.value,min:labMin.value,max:labMax.value,date:labDate.value,comment:labComment.value,files:[]};db.labs.unshift(record);e.target.reset();save();if(files.length)saveLabFiles(record.id,files)}
-function deleteLab(i){if(confirm('Удалить результат анализа и прикреплённые файлы?')){let id=db.labs[i].id;db.labs.splice(i,1);deleteLabFiles(id).then(save);save()}}
-function addSupplementHistory(i){toggleSupplement(i)}
-let idb;
-function openFilesDB(){return new Promise((resolve,reject)=>{let req=indexedDB.open('HealthDiaryFiles',1);req.onupgradeneeded=()=>{let d=req.result;if(!d.objectStoreNames.contains('files'))d.createObjectStore('files',{keyPath:'id'})};req.onsuccess=()=>{idb=req.result;resolve(idb)};req.onerror=()=>reject(req.error)})}
-async function saveLabFiles(labId,files){try{let d=await openFilesDB();for(let f of files){let id=labId+'_'+Date.now()+'_'+Math.random().toString(36).slice(2);await new Promise((res,rej)=>{let tx=d.transaction('files','readwrite');tx.objectStore('files').put({id,labId,name:f.name,type:f.type,blob:f});tx.oncomplete=res;tx.onerror=()=>rej(tx.error)});let lab=db.labs.find(x=>x.id===labId);if(lab)lab.files.push(id)}save()}catch(e){alert('Не удалось сохранить файл. Проверь доступное место на устройстве.');console.error(e)}}
-async function getLabFiles(labId){let d=await openFilesDB();return new Promise((res,rej)=>{let tx=d.transaction('files','readonly'),r=tx.objectStore('files').getAll();r.onsuccess=()=>res(r.result.filter(x=>x.labId===labId));r.onerror=()=>rej(r.error)})}
-async function deleteLabFiles(labId){try{let files=await getLabFiles(labId),d=await openFilesDB();for(let f of files)await new Promise(res=>{let tx=d.transaction('files','readwrite');tx.objectStore('files').delete(f.id);tx.oncomplete=res})}catch(e){}}
-async function openLabFile(id){let d=await openFilesDB();let f=await new Promise((res,rej)=>{let r=d.transaction('files','readonly').objectStore('files').get(id);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});if(!f){alert('Файл не найден на этом устройстве');return}let url=URL.createObjectURL(f.blob);let a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener';a.click();setTimeout(()=>URL.revokeObjectURL(url),60000)}
-function shiftMonth(n){calendarMonth.setMonth(calendarMonth.getMonth()+n);renderCalendar()}
-function renderCalendar(){let y=calendarMonth.getFullYear(),m=calendarMonth.getMonth();monthTitle.textContent=calendarMonth.toLocaleDateString('ru-RU',{month:'long',year:'numeric'});let first=new Date(y,m,1),offset=(first.getDay()+6)%7,days=new Date(y,m+1,0).getDate();let html=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'].map(x=>`<div class="cal-head">${x}</div>`).join('');for(let i=0;i<offset;i++)html+='<div></div>';for(let n=1;n<=days;n++){let d=dateKey(new Date(y,m,n)),has=db.events.some(x=>x.date===d)||db.tasks.some(x=>x.date===d);html+=`<div class="cal-day ${selectedDay===d?'selected':''}" onclick="selectCalendarDay('${d}')">${n}${has?'<div class="dot">●</div>':'<div class="dot">&nbsp;</div>'}</div>`}calendarGrid.innerHTML=html}
-function selectCalendarDay(d){selectedDay=d;renderCalendar();renderCalendarItems()}
-function renderCalendarItems(){selectedDateTitle.textContent=fmt(selectedDay);let tasks=db.tasks.map((x,i)=>({...x,index:i})).filter(x=>x.date===selectedDay);let events=db.events.map((x,i)=>({...x,index:i})).filter(x=>x.date===selectedDay);let html=tasks.map(t=>`<div class="item"><div class="row"><span>${t.done?'✓':'○'} ${esc(t.name)}</span><span class="badge">Задача</span></div><div class="small">${esc(t.quadrant)}</div><button onclick="editTask(${t.index})">Изменить</button></div>`).join('');html+=events.map(x=>`<div class="item"><div class="row"><b>${esc(x.name)}</b><span class="badge">Событие</span></div><button onclick="editEvent(${x.index})">Изменить</button> <button class="delete" onclick="deleteEvent(${x.index})">Удалить</button></div>`).join('');calendarDayItems.innerHTML=html||'<div class="small">На этот день пока ничего не запланировано</div>';eventDate.value=selectedDay}
-function renderDay(){dayPicker.value=selectedDay;taskDate.value=selectedDay;dayTitle.textContent=parseDate(selectedDay).toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'});let labels={q1:'1. Срочно и важно',q2:'2. Важно, не срочно',q3:'3. Срочно, не важно',q4:'4. Не срочно и не важно'};let html='';for(let q of ['q1','q2','q3','q4']){let arr=db.tasks.map((t,i)=>({...t,index:i})).filter(t=>t.date===selectedDay&&(t.quadrant||'q2')===q);html+=`<div class="quadrant ${q}"><b>${labels[q]}</b>${arr.length?arr.map(t=>`<div class="item"><div class="row"><label><input type="checkbox" ${t.done?'checked':''} onchange="toggleTask(${t.index})"> <span class="${t.done?'done':''}">${esc(t.name)}</span></label><button class="delete" onclick="deleteTask(${t.index})">×</button></div><div style="margin-top:7px"><button onclick="editTask(${t.index})">Изменить / перенести</button></div></div>`).join(''):'<div class="small" style="margin-top:8px">Задач нет</div>'}</div>`}dayTasks.innerHTML=html}
-function renderHabits(){let start=shiftDate(dateKey(),-((new Date().getDay()+6)%7)+weekOffset*7);let days=Array.from({length:7},(_,i)=>shiftDate(start,i));let end=days[6];weekTitle.textContent=fmt(days[0])+' — '+fmt(end);habitTable.innerHTML=db.habits.map((h,i)=>`<div class="item"><div class="row"><b>${esc(h.name)}</b><button class="delete" onclick="deleteHabit(${i})">Удалить</button></div><div class="week-grid">${days.map((d,j)=>`<div class="week-cell ${d===dateKey()?'today':''}"><div>${['Пн','Вт','Ср','Чт','Пт','Сб','Вс'][j]}</div><div>${parseDate(d).getDate()}</div><button onclick="toggleHabit(${i},'${d}')">${(h.completed||[]).includes(d)?'●':'○'}</button></div>`).join('')}</div></div>`).join('')||'<div class="small">Добавь первую привычку</div>'}
-function render(){let today=dateKey(),hour=new Date().getHours();greeting.textContent=hour<12?'Доброе утро!':hour<18?'Добрый день!':'Добрый вечер!';todayText.textContent=fmt(today);let water=sumWater(today),goal=Number(db.goal)||2100;homeWater.textContent=water+' мл';homeWaterBar.style.width=Math.min(100,water/goal*100)+'%';healthWater.textContent=water+' мл';waterGoal.value=goal;let tasks=db.tasks.filter(x=>x.date===today),done=tasks.filter(x=>x.done).length;homeTaskCount.textContent=done+'/'+tasks.length;homeTaskBar.style.width=(tasks.length?done/tasks.length*100:0)+'%';let focus=tasks.find(x=>!x.done);homeFocus.textContent=focus?focus.name:(tasks.length?'Все задачи выполнены ☁️':'Добавь задачу в «Мой день»');moodButtons.innerHTML=moods.map(m=>`<button onclick="addMood('${m}')">${m.split(' ')[0]}<small>${m.split(' ').slice(1).join(' ')}</small></button>`).join('');moodToday.textContent='Сегодня: '+dayMoods(today).map(x=>x.time+' '+x.mood).join(' · ')+' | Итог: '+moodSummary(today);
-homeHabits.innerHTML=db.habits.map((h,i)=>`<div class="item row"><label><input type="checkbox" ${(h.completed||[]).includes(today)?'checked':''} onchange="toggleHabit(${i},'${today}')"> ${esc(h.name)}</label></div>`).join('')||'<span class="small">Пока нет привычек</span>';let hc=db.habits.filter(h=>(h.completed||[]).includes(today)).length;homeHabitBar.style.width=(db.habits.length?hc/db.habits.length*100:0)+'%';
-healthList.innerHTML=db.health.map((x,i)=>`<div class="item row"><div><b>${esc(x.type)}: ${esc(x.value)}</b><div class="small">${esc(x.date)} ${esc(x.comment||'')}</div></div><button class="delete" onclick="delHealth(${i})">×</button></div>`).join('')||'<span class="small">Записей пока нет</span>';
-supplementList.innerHTML=db.supplements.map((s,i)=>`<div class="item"><div class="row"><b>${esc(s.name)}</b><button class="delete" onclick="deleteSupplement(${i})">×</button></div><div class="small">${esc(s.dose)} ${s.time?'· '+esc(s.time):''}</div><label><input type="checkbox" ${(s.history||[]).includes(today)?'checked':''} onchange="toggleSupplement(${i})"> Принято сегодня</label><div class="small">Приёмов отмечено: ${(s.history||[]).length}</div></div>`).join('')||'<span class="small">Добавок пока нет</span>';
-measureInputs.innerHTML=measureNames.map((n,i)=>`<div><label>${n}, см</label><input id="measure${i}" type="number" step="0.1" placeholder="—"></div>`).join('');if(!measureDate.value)measureDate.value=today;
-measureList.innerHTML=db.measurements.slice(0,10).map((x,i)=>`<div class="item"><div class="row"><b>${esc(x.date)}</b><button class="delete" onclick="deleteMeasurement(${i})">×</button></div>${Object.entries(x.values).map(([k,v])=>`<span class="badge">${esc(k)}: ${esc(v)} см</span>`).join(' ')}</div>`).join('')||'<span class="small">Замеров пока нет</span>';
-labList.innerHTML=db.labs.map((x,i)=>`<div class="item"><div class="row"><b>${esc(x.name)}: ${esc(x.value)} ${esc(x.unit)}</b><button class="delete" onclick="deleteLab(${i})">×</button></div><div class="small">${esc(x.date)} · Норма: ${esc(x.min||'—')}–${esc(x.max||'—')} ${esc(x.unit)}</div><div class="small">${esc(x.comment||'')}</div><div id="files_${esc(x.id)}" class="small">Загрузка списка файлов…</div></div>`).join('')||'<span class="small">Анализов пока нет</span>';
-db.labs.forEach(async x=>{let el=document.getElementById('files_'+x.id);if(!el)return;try{let fs=await getLabFiles(x.id);el.innerHTML=fs.map(f=>`<div class="file-card"><a href="#" onclick="openLabFile('${f.id}');return false">${esc(f.name)}</a></div>`).join('')||'Файлы не прикреплены'}catch(e){el.textContent='Файлы недоступны'}});
-renderDay();renderHabits();renderCalendar();renderCalendarItems();renderNotes();renderStats()}
-function delHealth(i){if(confirm('Удалить запись?')){db.health.splice(i,1);save()}}
-function renderNotes(){noteList.innerHTML=db.notes.map((x,i)=>`<div class="item"><div class="row"><b>${esc(x.title)}</b><button class="delete" onclick="deleteNote(${i})">×</button></div><div class="small">${esc(x.type)} · ${esc(x.date)}</div><p>${esc(x.text||'')}</p></div>`).join('')||'<span class="small">Записей пока нет</span>'}
-function renderStats(){let days=Array.from({length:7},(_,i)=>shiftDate(today,-6+i));let today=dateKey();let total=days.reduce((s,d)=>s+sumWater(d),0);weekWater.textContent=total+' мл';let max=Math.max(2100,...days.map(sumWater));waterChart.innerHTML=days.map(d=>`<div class="chart-col"><div class="chart-value">${sumWater(d)||''}</div><div class="chart-bar-wrap"><div class="chart-bar" style="height:${Math.max(3,sumWater(d)/max*100)}%"></div></div><div class="chart-label">${parseDate(d).toLocaleDateString('ru-RU',{weekday:'short'})}</div></div>`).join('');let ts=db.tasks.filter(x=>days.includes(x.date)),td=ts.filter(x=>x.done).length,tp=ts.length?Math.round(td/ts.length*100):0;taskStats.textContent=tp+'%';taskStatsBar.style.width=tp+'%';let possible=db.habits.length*7,checks=db.habits.reduce((s,h)=>s+(h.completed||[]).filter(d=>days.includes(d)).length,0),hp=possible?Math.round(checks/possible*100):0;habitStats.textContent=hp+'%';habitStatsBar.style.width=hp+'%';let weights=db.health.filter(x=>x.type==='Вес');weightStats.innerHTML=weights.slice(0,8).map(x=>`${esc(x.date)} — ${esc(x.value)}`).join('<br>')||'Пока нет записей о весе';moodStats.innerHTML=days.map(d=>`<div class="item row"><span>${fmt(d)}</span><span>${esc(moodSummary(d))}</span></div>`).join('')}
-async function backup(){try{let files=[];let d=await openFilesDB();let all=await new Promise((res,rej)=>{let r=d.transaction('files','readonly').objectStore('files').getAll();r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});for(let f of all){let data=await new Promise((res,rej)=>{let r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(f.blob)});files.push({id:f.id,labId:f.labId,name:f.name,type:f.type,data})}let payload={version:2,db,files};let blob=new Blob([JSON.stringify(payload)],{type:'application/json'});let url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='health-diary-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),2000)}catch(e){alert('Не удалось создать копию файлов. Попробуй ещё раз.');console.error(e)}}
-async function restore(e){let f=e.target.files[0];if(!f)return;try{let data=JSON.parse(await f.text());if(!confirm('Восстановить данные из этой копии? Текущие записи будут заменены.'))return;let restored=data.db||data;db={...defaults,...restored};['water','health','tasks','notes','habits','events','money','moodEntries','supplements','measurements','labs'].forEach(k=>{if(!Array.isArray(db[k]))db[k]=[]});if(!db.moods)db.moods={};if(data.files){let d=await openFilesDB();for(let f of data.files){let blob=await (await fetch(f.data)).blob();await new Promise((res,rej)=>{let tx=d.transaction('files','readwrite');tx.objectStore('files').put({id:f.id,labId:f.labId,name:f.name,type:f.type,blob});tx.oncomplete=res;tx.onerror=()=>rej(tx.error)})}}save();alert('Данные восстановлены')}catch(err){alert('Не удалось прочитать резервную копию');console.error(err)}finally{e.target.value=''}}
-document.getElementById('todayText').textContent=fmt(dateKey());
-render();
+function freshData(){
+  return {
+    water:{}, waterGoal:2100,
+    goals:{kcal:1450,p:100,f:50,c:150},
+    foods:[],tasks:[],events:[],habits:[],
+    moods:{},dayNotes:{},notes:""
+  };
+}
+
+function loadData(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(KEY));
+    return {...freshData(),...(saved||{})};
+  }catch(e){return freshData();}
+}
+
+let data=loadData();
+
+function save(){
+  localStorage.setItem(KEY,JSON.stringify(data));
+  renderAll();
+}
+
+function showPage(id){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  document.querySelectorAll(".nav button").forEach(b=>{
+    b.classList.toggle("active",b.dataset.page===id);
+  });
+  if(id==="calendar")renderCalendar();
+  window.scrollTo(0,0);
+}
+
+function addWater(n){
+  data.water[today()]=(data.water[today()]||0)+n;
+  save();
+}
+
+function addCustomWater(){
+  const n=Number(document.getElementById("customWater").value);
+  if(n>0){addWater(n);document.getElementById("customWater").value="";}
+}
+
+function addTask(){
+  const input=document.getElementById("taskInput");
+  const text=input.value.trim();
+  if(!text)return;
+  data.tasks.push({
+    id:Date.now(),text,date:today(),
+    time:document.getElementById("taskTime").value,
+    done:false
+  });
+  input.value="";
+  save();
+}
+
+function toggleTask(id){
+  const t=data.tasks.find(x=>x.id===id);
+  if(t)t.done=!t.done;
+  save();
+}
+
+function setMood(m){
+  data.moods[today()]=m;
+  save();
+}
+
+function saveDayNote(){
+  data.dayNotes[today()]=document.getElementById("dayNote").value;
+  save();
+  alert("Заметка сохранена");
+}
+
+function addFood(){
+  const name=document.getElementById("foodName").value.trim();
+  const grams=Number(document.getElementById("foodGrams").value);
+  if(!name||grams<=0){
+    alert("Укажи название продукта и вес порции");
+    return;
+  }
+  const factor=grams/100;
+  data.foods.push({
+    id:Date.now(),date:today(),name,grams,
+    meal:document.getElementById("foodMeal").value,
+    kcal:Number(document.getElementById("foodKcal").value||0)*factor,
+    p:Number(document.getElementById("foodP").value||0)*factor,
+    f:Number(document.getElementById("foodF").value||0)*factor,
+    c:Number(document.getElementById("foodC").value||0)*factor
+  });
+  ["foodName","foodGrams","foodKcal","foodP","foodF","foodC"].forEach(id=>{
+    document.getElementById(id).value="";
+  });
+  save();
+}
+
+function deleteFood(id){
+  data.foods=data.foods.filter(f=>f.id!==id);
+  save();
+}
+
+function saveGoals(){
+  data.goals={
+    kcal:Number(goalKcal.value)||1450,
+    p:Number(goalP.value)||100,
+    f:Number(goalF.value)||50,
+    c:Number(goalC.value)||150
+  };
+  save();
+  alert("Цели сохранены");
+}
+
+function addEvent(){
+  const name=eventName.value.trim();
+  if(!name)return;
+  data.events.push({
+    id:Date.now(),name,
+    date:eventDate.value||today(),
+    time:eventTime.value
+  });
+  eventName.value="";
+  save();
+}
+
+function addHabit(){
+  const name=habitInput.value.trim();
+  if(!name)return;
+  data.habits.push({id:Date.now(),name,days:{}});
+  habitInput.value="";
+  save();
+}
+
+function toggleHabit(id){
+  const h=data.habits.find(x=>x.id===id);
+  if(h)h.days[today()]=!h.days[today()];
+  save();
+}
+
+function deleteItem(type,id){
+  data[type]=data[type].filter(x=>x.id!==id);
+  save();
+}
+
+function saveNotes(){
+  data.notes=notes.value;
+  save();
+  alert("Заметки сохранены");
+}
+
+function saveWaterGoal(){
+  data.waterGoal=Number(waterGoalInput.value)||2100;
+  save();
+  alert("Цель воды сохранена");
+}
+
+function exportData(){
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download="health-diary-backup-"+today()+".json";
+  a.click();
+  URL.revokeObjectURL(url);
+  backupStatus.textContent="Резервная копия подготовлена.";
+}
+
+function importData(event){
+  const file=event.target.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const imported=JSON.parse(reader.result);
+      if(!imported||typeof imported!=="object")throw new Error();
+      data={...freshData(),...imported};
+      save();
+      backupStatus.textContent="Данные восстановлены.";
+    }catch(e){
+      alert("Не удалось прочитать резервную копию.");
+    }
+  };
+  reader.readAsText(file);
+}
+
+function esc(value){
+  return String(value).replace(/[&<>"']/g,c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  })[c]);
+}
+
+function renderCalendar(){
+  const date=calendarDate.value||today();
+  calendarDate.value=date;
+  const tasks=data.tasks.filter(x=>x.date===date);
+  const events=data.events.filter(x=>x.date===date);
+  const all=[
+    ...tasks.map(x=>({name:x.text,time:x.time,type:"Задача",done:x.done})),
+    ...events.map(x=>({name:x.name,time:x.time,type:"Событие"}))
+  ].sort((a,b)=>(a.time||"").localeCompare(b.time||""));
+  calendarItems.innerHTML=all.length?all.map(x=>
+    `<div class="item"><div>${esc(x.name)}<small>${x.type} · ${x.time||"Без времени"}${x.done?" · Выполнено":""}</small></div></div>`
+  ).join(""):"<p class='small'>На эту дату записей нет.</p>";
+  eventList.innerHTML=data.events.map(x=>
+    `<div class="item"><div>${esc(x.name)}<small>${x.date} ${x.time||""}</small></div><button class="danger" onclick="deleteItem('events',${x.id})">Удалить</button></div>`
+  ).join("")||"<p class='small'>Событий пока нет.</p>";
+}
+
+function renderAll(){
+  const date=today();
+  const water=data.water[date]||0;
+  const foods=data.foods.filter(x=>x.date===date);
+  const tasks=data.tasks.filter(x=>x.date===date);
+  const done=tasks.filter(x=>x.done).length;
+  const totals=foods.reduce((a,x)=>({
+    kcal:a.kcal+x.kcal,p:a.p+x.p,f:a.f+x.f,c:a.c+x.c
+  }),{kcal:0,p:0,f:0,c:0});
+
+  todayDate.textContent=new Date().toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+  dayDate.textContent=todayDate.textContent;
+
+  homeWater.textContent=water+" мл";
+  homeCalories.textContent=Math.round(totals.kcal)+" ккал";
+  homeTasks.textContent=done+"/"+tasks.length;
+  homeMood.textContent=data.moods[date]||"—";
+
+  waterGoalText.textContent=data.waterGoal;
+  waterProgress.style.width=Math.min(100,water/data.waterGoal*100)+"%";
+  healthWater.textContent=water+" мл";
+
+  totalKcal.textContent=Math.round(totals.kcal);
+  totalP.textContent=totals.p.toFixed(1)+" г";
+  totalF.textContent=totals.f.toFixed(1)+" г";
+  totalC.textContent=totals.c.toFixed(1)+" г";
+  calorieProgress.style.width=Math.min(100,totals.kcal/data.goals.kcal*100)+"%";
+  goalSummary.textContent=`Цели: ${data.goals.kcal} ккал · Б ${data.goals.p} г · Ж ${data.goals.f} г · У ${data.goals.c} г`;
+
+  goalKcal.value=data.goals.kcal;
+  goalP.value=data.goals.p;
+  goalF.value=data.goals.f;
+  goalC.value=data.goals.c;
+  waterGoalInput.value=data.waterGoal;
+
+  taskList.innerHTML=tasks.map(t=>
+    `<div class="item"><div>${esc(t.text)}<small>${t.time||"Без времени"}</small></div><div><button class="secondary" onclick="toggleTask(${t.id})">${t.done?"↩":"✓"}</button><button class="danger" onclick="deleteItem('tasks',${t.id})">×</button></div></div>`
+  ).join("")||"<p class='small'>Задач пока нет.</p>";
+
+  moodText.textContent=data.moods[date]||"Выбери настроение на сегодня";
+  dayNote.value=data.dayNotes[date]||"";
+
+  foodList.innerHTML=foods.map(f=>
+    `<div class="item"><div><b>${esc(f.name)}</b><small>${f.meal} · ${f.grams} г · ${Math.round(f.kcal)} ккал</small><small>Б ${f.p.toFixed(1)} · Ж ${f.f.toFixed(1)} · У ${f.c.toFixed(1)} г</small></div><button class="danger" onclick="deleteFood(${f.id})">×</button></div>`
+  ).join("")||"<p class='small'>Пока нет записей питания.</p>";
+
+  habitList.innerHTML=data.habits.map(h=>
+    `<div class="item"><div>${esc(h.name)}<small>${h.days[date]?"Сегодня выполнено":"Отметь выполнение"}</small></div><div><button class="secondary" onclick="toggleHabit(${h.id})">${h.days[date]?"✓":"○"}</button><button class="danger" onclick="deleteItem('habits',${h.id})">×</button></div></div>`
+  ).join("")||"<p class='small'>Добавь первую привычку.</p>";
+
+  notes.value=data.notes||"";
+  statFoods.textContent=data.foods.length;
+  statTasks.textContent=data.tasks.length;
+  statHabits.textContent=data.habits.length;
+  statEvents.textContent=data.events.length;
+
+  if(calendarDate.value)renderCalendar();
+}
+
+document.addEventListener("DOMContentLoaded",()=>{
+  calendarDate.value=today();
+  eventDate.value=today();
+  renderAll();
+});
+renderAll();
 </script>
 </body>
 </html>
