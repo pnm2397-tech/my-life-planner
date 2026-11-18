@@ -4,19 +4,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#eee8fa">
+<meta name="theme-color" content="#f4f0e8">
 <title>Health Diary</title>
 
 <style>
 :root {
- --bg:#f8f6fb;
- --card:#fff;
- --purple:#9b83c7;
- --dark:#594879;
- --soft:#eee8f8;
- --text:#393343;
- --muted:#92899c;
- --pink:#f6e8f0;
+ --bg:#f4f0e8;
+ --card:#fbf8f2;
+ --accent:#b5a58f;
+ --dark:#5c5145;
+ --soft:#e9e1d5;
+ --text:#403a33;
+ --muted:#8d8377;
+ --line:#eee7dc;
+ --danger:#a17c70;
 }
 *{box-sizing:border-box}
 body{
@@ -24,23 +25,23 @@ body{
  background:var(--bg);
  color:var(--text);
  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
- padding-bottom:90px
+ padding-bottom:100px
 }
 header{
  padding:27px 20px 20px;
- background:linear-gradient(135deg,#eee8fa,#f8eaf1);
- border-radius:0 0 28px 28px
+ background:#e9e1d5;
+ border-radius:0 0 26px 26px
 }
 h1{font-size:27px;margin:0;color:var(--dark)}
 .sub{color:var(--muted);font-size:13px;margin-top:6px}
 main{padding:18px;max-width:650px;margin:auto}
-h2{font-size:19px;margin:22px 0 12px}
+h2{font-size:19px;margin:22px 0 12px;color:var(--dark)}
 .card{
  background:var(--card);
- border-radius:20px;
+ border-radius:18px;
  padding:17px;
  margin-bottom:13px;
- box-shadow:0 4px 18px #51416b0b
+ box-shadow:0 3px 14px #5c514508
 }
 .row{display:flex;justify-content:space-between;align-items:center;gap:12px}
 .small{font-size:13px;color:var(--muted)}
@@ -48,7 +49,7 @@ h2{font-size:19px;margin:22px 0 12px}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 button{
  border:0;
- border-radius:14px;
+ border-radius:12px;
  background:var(--soft);
  color:var(--dark);
  padding:12px 15px;
@@ -56,12 +57,12 @@ button{
  font-weight:600;
  cursor:pointer
 }
-button.primary{background:var(--purple);color:white}
+button.primary{background:var(--dark);color:#fff}
 input,select,textarea{
  width:100%;
- border:1px solid #e9e2f0;
- background:#fcfbfd;
- border-radius:12px;
+ border:1px solid var(--line);
+ background:#fffdf9;
+ border-radius:11px;
  padding:12px;
  font-size:16px;
  color:var(--text);
@@ -69,44 +70,101 @@ input,select,textarea{
 }
 textarea{min-height:75px}
 label{font-size:13px;color:var(--muted)}
-.item{padding:12px 0;border-bottom:1px solid #f0edf3}
+.item{padding:12px 0;border-bottom:1px solid var(--line)}
 .item:last-child{border:0}
 .done{text-decoration:line-through;color:var(--muted)}
 .progress{
  height:9px;
- background:#eeeaf3;
+ background:var(--soft);
  border-radius:9px;
  overflow:hidden;
  margin:10px 0
 }
-.progress div{height:100%;background:var(--purple);border-radius:9px}
+.progress div{height:100%;background:var(--accent);border-radius:9px}
 .hidden{display:none}
-.delete{background:#f8edf1;color:#a46c82;padding:7px 10px}
+.delete{background:#f1e8e1;color:var(--danger);padding:7px 10px}
 nav{
  position:fixed;
  bottom:0;
  left:0;
  right:0;
- background:#fff;
+ background:#fbf8f2;
  display:flex;
- justify-content:space-around;
- padding:9px 2px calc(9px + env(safe-area-inset-bottom));
- box-shadow:0 -4px 18px #51416b10;
- z-index:5
+ justify-content:flex-start;
+ overflow-x:auto;
+ padding:8px 5px calc(8px + env(safe-area-inset-bottom));
+ box-shadow:0 -3px 15px #5c51440d;
+ z-index:5;
+ scrollbar-width:none
 }
+nav::-webkit-scrollbar{display:none}
 nav button{
  background:transparent;
- padding:7px 4px;
- font-size:11px;
+ padding:7px 5px;
+ font-size:10px;
  display:flex;
  flex-direction:column;
  align-items:center;
  gap:4px;
  color:var(--muted);
- flex:1
+ flex:1 0 62px;
+ min-width:62px;
+ white-space:nowrap
 }
 nav button.active{color:var(--dark);background:var(--soft)}
 nav span{font-size:19px}
+.quick button{min-height:48px}
+.stat-number{font-size:22px;font-weight:700;color:var(--dark)}
+.chart{
+ display:flex;
+ align-items:flex-end;
+ justify-content:space-between;
+ gap:7px;
+ height:125px;
+ padding-top:12px
+}
+.chart-column{
+ flex:1;
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ justify-content:flex-end;
+ height:100%;
+ min-width:0
+}
+.chart-bar-wrap{
+ height:85px;
+ width:100%;
+ display:flex;
+ align-items:flex-end;
+ justify-content:center
+}
+.chart-bar{
+ width:65%;
+ min-height:3px;
+ background:var(--accent);
+ border-radius:6px 6px 2px 2px
+}
+.chart-label{
+ font-size:10px;
+ color:var(--muted);
+ margin-top:7px
+}
+.chart-value{
+ font-size:10px;
+ color:var(--muted);
+ margin-bottom:4px;
+ white-space:nowrap
+}
+.stat-row{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ gap:10px;
+ padding:9px 0;
+ border-bottom:1px solid var(--line)
+}
+.stat-row:last-child{border:0}
 </style>
 </head>
 
@@ -115,10 +173,10 @@ nav span{font-size:19px}
 <header>
  <div class="row">
   <div>
-   <h1>Health Diary ♡</h1>
+   <h1>Health Diary</h1>
    <div class="sub" id="today"></div>
   </div>
-  <div style="font-size:35px">☁️</div>
+  <div style="font-size:32px">☁️</div>
  </div>
 </header>
 
@@ -126,7 +184,7 @@ nav span{font-size:19px}
 
 <!-- ГЛАВНАЯ -->
 <section id="home">
- <h2>Мой день ✨</h2>
+ <h2>Мой день</h2>
 
  <div class="grid">
   <div class="card">
@@ -144,7 +202,7 @@ nav span{font-size:19px}
  </div>
 
  <div class="card">
-  <div class="row"><b>Мой настрой</b><span>🌷</span></div>
+  <div class="row"><b>Мой настрой</b><span>☕</span></div>
   <select id="mood" onchange="saveMood()">
    <option value="">Как ты себя чувствуешь?</option>
    <option>😊 Отлично</option>
@@ -156,11 +214,11 @@ nav span{font-size:19px}
  </div>
 
  <h2>Быстрый доступ</h2>
- <div class="grid">
-  <button onclick="show('health')">💧 Здоровье</button>
-  <button onclick="show('tasks')">☑️ Задачи</button>
-  <button onclick="show('money')">💰 Финансы</button>
-  <button onclick="show('notes')">📚 Мои записи</button>
+ <div class="grid quick">
+  <button onclick="show('health')">♡ Здоровье</button>
+  <button onclick="show('tasks')">✓ Задачи</button>
+  <button onclick="show('habits')">Привычки</button>
+  <button onclick="show('notes')">Мои записи</button>
  </div>
 
  <h2>Сегодняшние задачи</h2>
@@ -169,7 +227,7 @@ nav span{font-size:19px}
 
 <!-- ЗДОРОВЬЕ -->
 <section id="health" class="hidden">
- <h2>Здоровье 🌿</h2>
+ <h2>Здоровье</h2>
 
  <div class="card">
   <div class="small">Вода за сегодня</div>
@@ -208,7 +266,7 @@ nav span{font-size:19px}
 
 <!-- ЗАДАЧИ -->
 <section id="tasks" class="hidden">
- <h2>Мои задачи ☑️</h2>
+ <h2>Мои задачи</h2>
 
  <div class="card">
   <form onsubmit="addTask(event)">
@@ -221,52 +279,9 @@ nav span{font-size:19px}
  <div class="card" id="taskList"></div>
 </section>
 
-<!-- ФИНАНСЫ -->
-<section id="money" class="hidden">
- <h2>Мои финансы 💰</h2>
-
- <div class="grid">
-  <div class="card">
-   <div class="small">Доходы</div>
-   <div class="big" id="income">0 ₽</div>
-  </div>
-  <div class="card">
-   <div class="small">Расходы</div>
-   <div class="big" id="expenses">0 ₽</div>
-  </div>
- </div>
-
- <div class="card">
-  <div class="small">Остаток</div>
-  <div class="big" id="balance">0 ₽</div>
- </div>
-
- <div class="card">
-  <b>Новая операция</b>
-  <form onsubmit="addMoney(event)">
-   <label>Тип операции</label>
-   <select id="moneyType">
-    <option value="expense">Расход</option>
-    <option value="income">Доход</option>
-   </select>
-
-   <label>Сумма, ₽</label>
-   <input id="moneyAmount" type="number" min="1" required placeholder="0">
-
-   <label>Категория</label>
-   <input id="moneyCategory" required placeholder="Продукты, транспорт...">
-
-   <button class="primary" type="submit">Сохранить</button>
-  </form>
- </div>
-
- <h2>История операций</h2>
- <div class="card" id="moneyList"></div>
-</section>
-
 <!-- ПРИВЫЧКИ -->
 <section id="habits" class="hidden">
- <h2>Мои привычки 🌱</h2>
+ <h2>Мои привычки</h2>
 
  <div class="card">
   <b>Новая привычка</b>
@@ -291,7 +306,7 @@ nav span{font-size:19px}
 
 <!-- КАЛЕНДАРЬ -->
 <section id="calendar" class="hidden">
- <h2>Мой календарь 📅</h2>
+ <h2>Мой календарь</h2>
 
  <div class="card">
   <label>Выбери дату</label>
@@ -309,7 +324,7 @@ nav span{font-size:19px}
 
 <!-- ЗАПИСИ -->
 <section id="notes" class="hidden">
- <h2>Моё пространство 📚</h2>
+ <h2>Моё пространство</h2>
 
  <div class="card">
   <b>Новая запись</b>
@@ -339,9 +354,44 @@ nav span{font-size:19px}
  <div class="card" id="noteList"></div>
 </section>
 
+<!-- СТАТИСТИКА -->
+<section id="stats" class="hidden">
+ <h2>Моя статистика</h2>
+ <p class="small">Твои результаты за последние 7 дней</p>
+
+ <div class="card">
+  <div class="small">Всего выпито воды</div>
+  <div class="big" id="weekWater">0 мл</div>
+  <div class="small">За последние 7 дней</div>
+  <div class="chart" id="waterChart"></div>
+ </div>
+
+ <div class="card">
+  <b>Вес</b>
+  <div class="big" id="latestWeight">Пока нет записей</div>
+  <div class="small" id="weightDate"></div>
+  <div class="chart" id="weightChart"></div>
+ </div>
+
+ <div class="card">
+  <b>Задачи</b>
+  <div class="big" id="weekTasks">0/0</div>
+  <div class="small">Выполнено за последние 7 дней</div>
+  <div class="progress"><div id="taskWeekBar" style="width:0%"></div></div>
+  <div class="small" id="taskWeekPercent">0% выполнения</div>
+ </div>
+
+ <div class="card">
+  <b>Привычки</b>
+  <div class="big" id="weekHabits">0%</div>
+  <div class="small" id="weekHabitsDetail">Отметки за последние 7 дней</div>
+  <div class="progress"><div id="habitWeekBar" style="width:0%"></div></div>
+ </div>
+</section>
+
 <!-- НАСТРОЙКИ -->
 <section id="settings" class="hidden">
- <h2>Настройки ⚙️</h2>
+ <h2>Настройки</h2>
 
  <div class="card">
   <b>Цель по воде</b>
@@ -362,7 +412,7 @@ nav span{font-size:19px}
  <div class="card">
   <b>О приложении</b>
   <p class="small">
-   Health Diary — твоё уютное пространство для заботы о себе
+   Health Diary — твоё пространство для заботы о себе
    и организации жизни. Данные хранятся в браузере на этом устройстве.
   </p>
  </div>
@@ -381,17 +431,17 @@ nav span{font-size:19px}
  <button data-tab="tasks" onclick="show('tasks')">
   <span>✓</span>Задачи
  </button>
- <button data-tab="money" onclick="show('money')">
-  <span>₽</span>Финансы
- </button>
  <button data-tab="habits" onclick="show('habits')">
-  <span>🌱</span>Привычки
+  <span>○</span>Привычки
  </button>
  <button data-tab="calendar" onclick="show('calendar')">
-  <span>📅</span>Календарь
+  <span>▦</span>Календарь
  </button>
  <button data-tab="notes" onclick="show('notes')">
-  <span>✿</span>Записи
+  <span>✎</span>Записи
+ </button>
+ <button data-tab="stats" onclick="show('stats')">
+  <span>▥</span>Статистика
  </button>
  <button data-tab="settings" onclick="show('settings')">
   <span>⚙</span>Ещё
@@ -399,14 +449,14 @@ nav span{font-size:19px}
 </nav>
 
 <script>
-const today = new Date().toLocaleDateString('ru-RU',{
+const todayText = new Date().toLocaleDateString('ru-RU',{
  weekday:'long',
  day:'numeric',
  month:'long'
 });
 
 document.getElementById('today').textContent =
- today.charAt(0).toUpperCase() + today.slice(1);
+ todayText.charAt(0).toUpperCase() + todayText.slice(1);
 
 const key = 'healthDiaryData';
 
@@ -426,15 +476,41 @@ try {
  const stored = JSON.parse(localStorage.getItem(key) || '{}');
  db = {...db,...stored};
 
+ if(!Array.isArray(db.water)) db.water = [];
+ if(!Array.isArray(db.health)) db.health = [];
+ if(!Array.isArray(db.tasks)) db.tasks = [];
+ if(!Array.isArray(db.notes)) db.notes = [];
  if(!Array.isArray(db.habits)) db.habits = [];
  if(!Array.isArray(db.events)) db.events = [];
+ if(!Array.isArray(db.money)) db.money = [];
  if(!db.moods) db.moods = {};
 } catch(e) {
  console.error('Ошибка чтения данных',e);
 }
 
-function dateKey(){
- return new Date().toLocaleDateString('sv-SE');
+function dateKey(date=new Date()){
+ const y = date.getFullYear();
+ const m = String(date.getMonth()+1).padStart(2,'0');
+ const d = String(date.getDate()).padStart(2,'0');
+ return `${y}-${m}-${d}`;
+}
+
+function last7Days(){
+ const result = [];
+ for(let i=6;i>=0;i--){
+  const d = new Date();
+  d.setHours(12,0,0,0);
+  d.setDate(d.getDate()-i);
+  result.push(dateKey(d));
+ }
+ return result;
+}
+
+function shortDate(date){
+ return new Date(date+'T12:00:00').toLocaleDateString('ru-RU',{
+  day:'numeric',
+  month:'short'
+ });
 }
 
 function save(){
@@ -511,20 +587,6 @@ function addTask(e){
 
 function toggleTask(i){
  db.tasks[i].done = !db.tasks[i].done;
- save();
-}
-
-function addMoney(e){
- e.preventDefault();
-
- db.money.unshift({
-  type:document.getElementById('moneyType').value,
-  amount:Number(document.getElementById('moneyAmount').value),
-  category:document.getElementById('moneyCategory').value.trim(),
-  date:dateKey()
- });
-
- e.target.reset();
  save();
 }
 
@@ -609,6 +671,117 @@ function deleteEvent(i){
  }
 }
 
+/* СТАТИСТИКА */
+
+function renderStats(){
+ const days = last7Days();
+
+ const waterByDay = days.map(day=>
+  db.water
+   .filter(x=>x.date===day)
+   .reduce((sum,x)=>sum+Number(x.amount||0),0)
+ );
+
+ const totalWater = waterByDay.reduce((a,b)=>a+b,0);
+
+ document.getElementById('weekWater').textContent =
+  totalWater.toLocaleString('ru-RU')+' мл';
+
+ const maxWater = Math.max(2100,...waterByDay);
+
+ document.getElementById('waterChart').innerHTML =
+  waterByDay.map((value,i)=>`
+   <div class="chart-column">
+    <div class="chart-value">${value ? value : ''}</div>
+    <div class="chart-bar-wrap">
+     <div class="chart-bar" style="height:${Math.max(3,value/maxWater*100)}%"></div>
+    </div>
+    <div class="chart-label">${shortDate(days[i])}</div>
+   </div>
+  `).join('');
+
+ /* ВЕС */
+
+ const weights = db.health
+  .filter(x=>x.type==='Вес' && days.includes(x.date))
+  .map(x=>({
+   date:x.date,
+   value:parseFloat(String(x.value).replace(',','.').replace(/[^\d.]/g,''))
+  }))
+  .filter(x=>Number.isFinite(x.value) && x.value>0)
+  .sort((a,b)=>a.date.localeCompare(b.date));
+
+ const latest = weights.length ? weights[weights.length-1] : null;
+
+ document.getElementById('latestWeight').textContent =
+  latest ? latest.value+' кг' : 'Пока нет записей';
+
+ document.getElementById('weightDate').textContent =
+  latest ? 'Последняя запись: '+shortDate(latest.date) : 'Добавь вес в разделе «Здоровье»';
+
+ if(weights.length){
+  const minWeight = Math.min(...weights.map(x=>x.value));
+  const maxWeight = Math.max(...weights.map(x=>x.value));
+  const range = maxWeight-minWeight || 1;
+
+  document.getElementById('weightChart').innerHTML =
+   weights.map(x=>`
+    <div class="chart-column">
+     <div class="chart-value">${x.value}</div>
+     <div class="chart-bar-wrap">
+      <div class="chart-bar" style="height:${35+(x.value-minWeight)/range*65}%"></div>
+     </div>
+     <div class="chart-label">${shortDate(x.date)}</div>
+    </div>
+   `).join('');
+ } else {
+  document.getElementById('weightChart').innerHTML =
+   '<div class="small">За последние 7 дней записей о весе нет</div>';
+ }
+
+ /* ЗАДАЧИ */
+
+ const weekTasks = db.tasks.filter(x=>days.includes(x.date));
+ const doneTasks = weekTasks.filter(x=>x.done).length;
+ const taskPercent = weekTasks.length
+  ? Math.round(doneTasks/weekTasks.length*100)
+  : 0;
+
+ document.getElementById('weekTasks').textContent =
+  doneTasks+'/'+weekTasks.length;
+
+ document.getElementById('taskWeekBar').style.width =
+  taskPercent+'%';
+
+ document.getElementById('taskWeekPercent').textContent =
+  taskPercent+'% выполнения';
+
+ /* ПРИВЫЧКИ */
+
+ let habitChecks = 0;
+
+ db.habits.forEach(h=>{
+  if(!Array.isArray(h.completed)) h.completed=[];
+  habitChecks += h.completed.filter(day=>days.includes(day)).length;
+ });
+
+ const possibleChecks = db.habits.length*7;
+ const habitPercent = possibleChecks
+  ? Math.round(habitChecks/possibleChecks*100)
+  : 0;
+
+ document.getElementById('weekHabits').textContent =
+  habitPercent+'%';
+
+ document.getElementById('weekHabitsDetail').textContent =
+  db.habits.length
+   ? habitChecks+' отметок из '+possibleChecks+' возможных'
+   : 'Добавь привычки, чтобы отслеживать прогресс';
+
+ document.getElementById('habitWeekBar').style.width =
+  habitPercent+'%';
+}
+
 /* ОТРИСОВКА ДАННЫХ */
 
 function render(){
@@ -619,7 +792,7 @@ function render(){
 
  const water = db.water
   .filter(x=>x.date===today)
-  .reduce((s,x)=>s+Number(x.amount),0);
+  .reduce((s,x)=>s+Number(x.amount||0),0);
 
  document.getElementById('waterTotal').textContent = water+' мл';
  document.getElementById('healthWater').textContent = water+' мл';
@@ -630,7 +803,6 @@ function render(){
  /* ЗАДАЧИ */
 
  const todayTasks = db.tasks.filter(x=>x.date===today);
-
  const completedTasks = todayTasks.filter(x=>x.done).length;
 
  document.getElementById('taskTotal').textContent =
@@ -648,7 +820,7 @@ function render(){
        ${t.done?'✓':'○'} ${esc(t.name)}
       </div>`
      ).join('')
-   : '<span class="small">Пока задач нет. Можно выдохнуть ☁️</span>';
+   : '<span class="small">Пока задач нет. Можно выдохнуть</span>';
 
  document.getElementById('taskList').innerHTML =
   todayTasks.length
@@ -669,7 +841,7 @@ function render(){
        </div>
       `;
      }).join('')
-   : '<span class="small">Добавь первую задачу выше 🌷</span>';
+   : '<span class="small">Добавь первую задачу выше</span>';
 
  /* ЗДОРОВЬЕ */
 
@@ -683,36 +855,6 @@ function render(){
     <button class="delete" onclick="del(db.health,${i})">×</button>
    </div>
   `).join('') || '<span class="small">Записей пока нет</span>';
-
- /* ФИНАНСЫ */
-
- const inc = db.money
-  .filter(x=>x.type==='income')
-  .reduce((s,x)=>s+Number(x.amount),0);
-
- const out = db.money
-  .filter(x=>x.type==='expense')
-  .reduce((s,x)=>s+Number(x.amount),0);
-
- document.getElementById('income').textContent =
-  inc.toLocaleString('ru-RU')+' ₽';
-
- document.getElementById('expenses').textContent =
-  out.toLocaleString('ru-RU')+' ₽';
-
- document.getElementById('balance').textContent =
-  (inc-out).toLocaleString('ru-RU')+' ₽';
-
- document.getElementById('moneyList').innerHTML =
-  db.money.map((x,i)=>`
-   <div class="item row">
-    <div>
-     <b>${x.type==='income'?'+':'−'}${Number(x.amount).toLocaleString('ru-RU')} ₽ · ${esc(x.category)}</b>
-     <div class="small">${esc(x.date)}</div>
-    </div>
-    <button class="delete" onclick="del(db.money,${i})">×</button>
-   </div>
-  `).join('') || '<span class="small">Операций пока нет</span>';
 
  /* ЗАПИСИ */
 
@@ -749,7 +891,7 @@ function render(){
      <span class="small">${h.completed.length} дн.</span>
     </div>
    `;
-  }).join('') || '<span class="small">Добавь свою первую привычку 🌱</span>';
+  }).join('') || '<span class="small">Добавь свою первую привычку</span>';
 
  const completedHabits = db.habits.filter(h=>
   Array.isArray(h.completed) && h.completed.includes(today)
@@ -775,7 +917,11 @@ function render(){
      </div>
      <button class="delete" onclick="deleteEvent(${i})">×</button>
     </div>
-   `).join('') || '<span class="small">Планов пока нет 📅</span>';
+   `).join('') || '<span class="small">Планов пока нет</span>';
+
+ /* СТАТИСТИКА */
+
+ renderStats();
 }
 
 /* ЦЕЛЬ ПО ВОДЕ */
@@ -805,7 +951,7 @@ function backup(){
  a.download = 'health-diary-backup.json';
  a.click();
 
- URL.revokeObjectURL(url);
+ setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
 
 /* ВОССТАНОВЛЕНИЕ ДАННЫХ */
@@ -821,19 +967,28 @@ function restore(e){
    const d = JSON.parse(r.result);
 
    if(!confirm('Заменить текущие данные данными из копии?')){
+    e.target.value='';
     return;
    }
 
    db = {...db,...d};
 
-   if(!Array.isArray(db.habits)) db.habits = [];
-   if(!Array.isArray(db.events)) db.events = [];
+   if(!Array.isArray(db.water)) db.water=[];
+   if(!Array.isArray(db.health)) db.health=[];
+   if(!Array.isArray(db.tasks)) db.tasks=[];
+   if(!Array.isArray(db.notes)) db.notes=[];
+   if(!Array.isArray(db.habits)) db.habits=[];
+   if(!Array.isArray(db.events)) db.events=[];
+   if(!Array.isArray(db.money)) db.money=[];
+   if(!db.moods) db.moods={};
 
    save();
    alert('Данные восстановлены!');
   }catch(err){
    alert('Не удалось прочитать файл');
   }
+
+  e.target.value='';
  };
 
  r.readAsText(f);
