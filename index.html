@@ -311,8 +311,18 @@ function del(arr,i){
 
 function addHabit(e){
  e.preventDefault();
- db.habits.push({name:habitName.value,completed:[]});
- e.target.reset();
+
+ const input = document.getElementById('habitName');
+ const name = input.value.trim();
+
+ if(!name) return;
+
+ db.habits.push({
+  name: name,
+  completed: []
+ });
+
+ input.value = '';
  save();
 }
 
