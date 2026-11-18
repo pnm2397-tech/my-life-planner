@@ -6,790 +6,270 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#f4f0e8">
 <title>Health Diary</title>
-
 <style>
-:root{
- --bg:#f4f0e8;
- --card:#fbf8f2;
- --accent:#b5a58f;
- --dark:#5c5145;
- --soft:#e9e1d5;
- --text:#403a33;
- --muted:#8d8377;
- --line:#eee7dc;
- --danger:#a17c70;
-}
+:root{--bg:#f4f0e8;--card:#fbf8f2;--accent:#b5a58f;--dark:#5c5145;--soft:#e9e1d5;--text:#403a33;--muted:#8d8377;--line:#eee7dc;--danger:#a17c70}
 *{box-sizing:border-box}
-body{
- margin:0;background:var(--bg);color:var(--text);
- font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
- padding-bottom:100px
-}
-header{
- padding:27px 20px 20px;background:#e9e1d5;
- border-radius:0 0 26px 26px
-}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:100px}
+header{padding:25px 20px 19px;background:var(--soft);border-radius:0 0 25px 25px}
 h1{font-size:27px;margin:0;color:var(--dark)}
-.sub{color:var(--muted);font-size:13px;margin-top:6px}
-main{padding:18px;max-width:650px;margin:auto}
-h2{font-size:19px;margin:22px 0 12px;color:var(--dark)}
-.card{
- background:var(--card);border-radius:18px;padding:17px;
- margin-bottom:13px;box-shadow:0 3px 14px #5c514508
-}
-.row{display:flex;justify-content:space-between;align-items:center;gap:12px}
-.small{font-size:13px;color:var(--muted)}
-.big{font-size:25px;font-weight:700;color:var(--dark)}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-button{
- border:0;border-radius:12px;background:var(--soft);
- color:var(--dark);padding:12px 15px;font-size:14px;
- font-weight:600;cursor:pointer
-}
+h2{font-size:19px;margin:20px 0 12px;color:var(--dark)}
+h3{font-size:16px;color:var(--dark);margin:8px 0}
+.sub,.small{color:var(--muted);font-size:13px}
+main{padding:16px;max-width:700px;margin:auto}
+.card{background:var(--card);border-radius:17px;padding:16px;margin-bottom:12px;box-shadow:0 3px 14px #5c514508}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.big{font-size:25px;font-weight:700;color:var(--dark);margin:7px 0}
+button{border:0;border-radius:11px;background:var(--soft);color:var(--dark);padding:11px 13px;font-size:14px;font-weight:600;cursor:pointer}
 button.primary{background:var(--dark);color:white}
-input,select,textarea{
- width:100%;border:1px solid var(--line);background:#fffdf9;
- border-radius:11px;padding:12px;font-size:16px;color:var(--text);
- margin:6px 0 12px
-}
+button.delete{background:#f1e8e1;color:var(--danger);padding:7px 10px}
+button.active{background:var(--dark);color:white}
+button.full{width:100%;margin-top:7px}
+input,select,textarea{width:100%;border:1px solid var(--line);background:#fffdf9;border-radius:10px;padding:11px;font-size:16px;color:var(--text);margin:5px 0 11px}
+input[type=checkbox]{width:19px;height:19px;margin:0;accent-color:var(--dark)}
+input[type=file]{font-size:13px}
 textarea{min-height:75px}
 label{font-size:13px;color:var(--muted)}
-.item{padding:12px 0;border-bottom:1px solid var(--line)}
+.hidden{display:none!important}
+.item{padding:11px 0;border-bottom:1px solid var(--line)}
 .item:last-child{border:0}
 .done{text-decoration:line-through;color:var(--muted)}
-.progress{
- height:9px;background:var(--soft);border-radius:9px;
- overflow:hidden;margin:10px 0
-}
+.progress{height:8px;background:var(--soft);border-radius:9px;overflow:hidden;margin:9px 0}
 .progress div{height:100%;background:var(--accent);border-radius:9px}
-.hidden{display:none}
-.delete{background:#f1e8e1;color:var(--danger);padding:7px 10px}
-nav{
- position:fixed;bottom:0;left:0;right:0;background:#fbf8f2;
- display:flex;justify-content:flex-start;overflow-x:auto;
- padding:8px 5px calc(8px + env(safe-area-inset-bottom));
- box-shadow:0 -3px 15px #5c51440d;z-index:5;scrollbar-width:none
-}
-nav::-webkit-scrollbar{display:none}
-nav button{
- background:transparent;padding:7px 5px;font-size:10px;
- display:flex;flex-direction:column;align-items:center;gap:4px;
- color:var(--muted);flex:1 0 62px;min-width:62px;white-space:nowrap
-}
-nav button.active{color:var(--dark);background:var(--soft)}
-nav span{font-size:19px}
-.quick button{min-height:48px}
-.hero{
- background:#e9e1d5;border-radius:20px;padding:20px;
- margin-bottom:13px
-}
+.hero{background:var(--soft);border-radius:18px;padding:19px;margin-bottom:12px}
 .hero-title{font-size:22px;font-weight:700;color:var(--dark)}
 .hero-text{font-size:13px;color:var(--muted);margin-top:6px}
-.home-card-title{font-size:14px;color:var(--muted)}
-.home-number{font-size:27px;font-weight:700;color:var(--dark);margin-top:7px}
-.home-action{width:100%;margin-top:8px}
-.focus-card{border:1px solid #e5dacb}
-.focus-label{font-size:12px;color:var(--muted);margin-bottom:8px}
-.focus-name{font-size:17px;font-weight:600;color:var(--dark)}
-.habit-home-item{display:flex;align-items:center;gap:9px;padding:8px 0}
-.habit-home-item input{width:19px;height:19px;margin:0;accent-color:var(--dark)}
-.habit-home-item label{font-size:14px;color:var(--text)}
-.chart{
- display:flex;align-items:flex-end;justify-content:space-between;
- gap:7px;height:125px;padding-top:12px
-}
-.chart-column{
- flex:1;display:flex;flex-direction:column;align-items:center;
- justify-content:flex-end;height:100%;min-width:0
-}
-.chart-bar-wrap{
- height:85px;width:100%;display:flex;align-items:flex-end;
- justify-content:center
-}
-.chart-bar{
- width:65%;min-height:3px;background:var(--accent);
- border-radius:6px 6px 2px 2px
-}
-.chart-label{font-size:10px;color:var(--muted);margin-top:7px}
-.chart-value{font-size:10px;color:var(--muted);margin-bottom:4px;white-space:nowrap}
+nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);display:flex;overflow-x:auto;padding:7px 4px calc(7px + env(safe-area-inset-bottom));box-shadow:0 -3px 15px #5c51440d;z-index:5;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav button{background:transparent;padding:6px 5px;font-size:10px;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--muted);flex:1 0 65px;min-width:65px;white-space:nowrap}
+nav button.active{background:var(--soft);color:var(--dark)}
+nav span{font-size:19px}
+.mood-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
+.mood-grid button{padding:9px 2px;font-size:21px}
+.mood-grid button small{display:block;font-size:9px;font-weight:400}
+.quadrant{border:1px solid var(--line);border-radius:13px;padding:12px;margin-bottom:10px}
+.q1{background:#f5eee7}.q2{background:#f2eee5}.q3{background:#f7f3ed}.q4{background:#f5f1ee}
+.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.week-cell{padding:7px 1px;border-radius:9px;background:#f5f1eb;font-size:11px}
+.week-cell button{padding:5px 2px;background:transparent;font-size:20px}
+.week-cell.today{outline:1px solid var(--accent)}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.cal-day{min-height:54px;background:#f5f1eb;border-radius:9px;padding:5px 1px;font-size:12px;cursor:pointer}
+.cal-day.selected{background:var(--soft);outline:1px solid var(--accent)}
+.cal-day .dot{font-size:10px;color:var(--accent)}
+.cal-head{font-size:11px;color:var(--muted);padding:5px}
+.badge{font-size:11px;background:var(--soft);padding:4px 7px;border-radius:8px;color:var(--dark)}
+.chart{display:flex;align-items:flex-end;justify-content:space-between;gap:6px;height:120px;padding-top:10px}
+.chart-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;min-width:0}
+.chart-bar-wrap{height:80px;width:100%;display:flex;align-items:flex-end;justify-content:center}
+.chart-bar{width:65%;min-height:3px;background:var(--accent);border-radius:5px 5px 2px 2px}
+.chart-label,.chart-value{font-size:9px;color:var(--muted);margin-top:5px}
+.muted-box{padding:12px;background:#f5f1eb;border-radius:12px}
+.file-card{font-size:13px;padding:8px;background:#f5f1eb;border-radius:9px;margin:5px 0}
 </style>
 </head>
-
 <body>
 <header>
- <div class="row">
-  <div>
-   <h1>Health Diary</h1>
-   <div class="sub" id="today"></div>
-  </div>
-  <div style="font-size:32px">☁️</div>
- </div>
+ <div class="row"><div><h1>Health Diary</h1><div class="sub" id="todayText"></div></div><div style="font-size:30px">☁️</div></div>
 </header>
-
 <main>
 
-<!-- ГЛАВНАЯ -->
 <section id="home">
- <div class="hero">
-  <div class="hero-title" id="greetingTitle">Доброе утро!</div>
-  <div class="hero-text" id="greetingText">Пусть сегодня будет хороший день.</div>
- </div>
-
- <h2>Мой день</h2>
-
+ <div class="hero"><div class="hero-title" id="greeting">Доброе утро!</div><div class="hero-text">Не обязательно успеть всё. Достаточно сделать важное для себя.</div></div>
  <div class="grid">
-  <div class="card">
-   <div class="home-card-title">Вода</div>
-   <div class="home-number" id="waterTotal">0 мл</div>
-   <div class="small" id="waterPercent">0% от цели</div>
-   <div class="progress"><div id="waterBar" style="width:0%"></div></div>
-   <button class="home-action" onclick="addWater()">+ Стакан воды</button>
-  </div>
-
-  <div class="card">
-   <div class="home-card-title">Задачи</div>
-   <div class="home-number" id="taskTotal">0/0</div>
-   <div class="small" id="taskRemaining">Пока нет задач</div>
-   <div class="progress"><div id="taskBar" style="width:0%"></div></div>
-   <button class="home-action" onclick="show('tasks')">Мои задачи</button>
-  </div>
+  <div class="card"><div class="small">Вода сегодня</div><div class="big" id="homeWater">0 мл</div><div class="progress"><div id="homeWaterBar"></div></div><button class="full" onclick="addWater()">+ Стакан воды</button></div>
+  <div class="card"><div class="small">Задачи сегодня</div><div class="big" id="homeTaskCount">0/0</div><div class="progress"><div id="homeTaskBar"></div></div><button class="full" onclick="show('day')">Мой день</button></div>
  </div>
-
- <div class="card">
-  <div class="row">
-   <b>Мой настрой</b><span>☕</span>
-  </div>
-  <select id="mood" onchange="saveMood()">
-   <option value="">Как ты себя чувствуешь?</option>
-   <option>😊 Отлично</option>
-   <option>🙂 Хорошо</option>
-   <option>😐 Нормально</option>
-   <option>😔 Устала</option>
-   <option>🥺 Тяжёлый день</option>
-  </select>
- </div>
-
- <h2>Главный фокус дня</h2>
- <div class="card focus-card" id="focusCard">
-  <div class="focus-label">Одна важная задача</div>
-  <div class="focus-name" id="focusTask">Выбери задачу на сегодня</div>
-  <button class="home-action" onclick="show('tasks')">Перейти к задачам</button>
- </div>
-
- <h2>Мои привычки</h2>
- <div class="card">
-  <div class="row">
-   <b>Прогресс сегодня</b>
-   <span class="small" id="homeHabitProgress">0/0</span>
-  </div>
-  <div class="progress"><div id="homeHabitBar" style="width:0%"></div></div>
-  <div id="homeHabitList"></div>
-  <button class="home-action" onclick="show('habits')">Все привычки</button>
- </div>
-
+ <h2>Мой настрой</h2>
+ <div class="card"><div class="small">Как ты себя чувствуешь сейчас?</div><div class="mood-grid" id="moodButtons"></div><div id="moodToday" class="small" style="margin-top:10px"></div></div>
+ <h2>Главный фокус</h2><div class="card" id="homeFocus">Добавь задачу в разделе «Мой день»</div>
+ <h2>Привычки сегодня</h2><div class="card"><div id="homeHabits"></div><div class="progress"><div id="homeHabitBar"></div></div><button class="full" onclick="show('habits')">Все привычки</button></div>
  <h2>Быстрый доступ</h2>
- <div class="grid quick">
-  <button onclick="show('health')">♡ Здоровье</button>
-  <button onclick="show('tasks')">✓ Задачи</button>
-  <button onclick="show('habits')">Привычки</button>
-  <button onclick="show('notes')">Мои записи</button>
- </div>
-
- <h2>Сегодняшние задачи</h2>
- <div class="card" id="homeTasks"></div>
+ <div class="grid"><button onclick="show('health')">♡ Здоровье</button><button onclick="show('day')">✓ Мой день</button><button onclick="show('calendar')">▦ Календарь</button><button onclick="show('space')">✎ Моё пространство</button></div>
 </section>
 
-<!-- ЗДОРОВЬЕ -->
-<section id="health" class="hidden">
- <h2>Здоровье</h2>
+<section id="day" class="hidden">
+ <h2>Мой день</h2>
+ <div class="card"><div class="row"><button onclick="shiftDay(-1)">← Вчера</button><b id="dayTitle"></b><button onclick="shiftDay(1)">Завтра →</button></div><label>Выбрать дату</label><input type="date" id="dayPicker" onchange="selectDay(this.value)"></div>
  <div class="card">
-  <div class="small">Вода за сегодня</div>
-  <div class="big" id="healthWater">0 мл</div>
-  <button onclick="addWater()">+ 250 мл</button>
-  <button onclick="addCustomWater()">Другое количество</button>
- </div>
- <div class="card">
-  <b>Добавить показатель</b>
-  <form onsubmit="addHealth(event)">
-   <label>Что записываем?</label>
-   <select id="healthType">
-    <option>Вес</option><option>Сон</option><option>Шаги</option>
-    <option>Калории</option><option>Самочувствие</option>
-    <option>Лекарства</option><option>Другое</option>
-   </select>
-   <label>Значение</label>
-   <input id="healthValue" required placeholder="Например, 70 кг или 8 часов">
-   <label>Комментарий</label>
-   <input id="healthComment" placeholder="Необязательно">
-   <button class="primary" type="submit">Сохранить</button>
-  </form>
- </div>
- <h2>История</h2>
- <div class="card" id="healthList"></div>
-</section>
-
-<!-- ЗАДАЧИ -->
-<section id="tasks" class="hidden">
- <h2>Мои задачи</h2>
- <div class="card">
+  <b>Новая задача</b>
   <form onsubmit="addTask(event)">
-   <label>Новая задача</label>
-   <input id="taskName" required placeholder="Что нужно сделать?">
+   <label>Что нужно сделать?</label><input id="taskName" required placeholder="Название задачи">
+   <label>Дата</label><input id="taskDate" type="date" required>
+   <label>Приоритет</label><select id="taskQuadrant"><option value="q1">Срочно и важно</option><option value="q2">Важно, не срочно</option><option value="q3">Срочно, не важно</option><option value="q4">Не срочно и не важно</option></select>
    <button class="primary" type="submit">Добавить задачу</button>
   </form>
  </div>
- <div class="card" id="taskList"></div>
+ <div id="dayTasks"></div>
 </section>
 
-<!-- ПРИВЫЧКИ -->
+<section id="health" class="hidden">
+ <h2>Здоровье</h2>
+ <div class="card"><div class="small">Вода сегодня</div><div class="big" id="healthWater">0 мл</div><button onclick="addWater()">+ 250 мл</button> <button onclick="customWater()">Другое количество</button></div>
+ <div class="card"><h3>Показатели здоровья</h3>
+  <form onsubmit="addHealth(event)">
+   <label>Показатель</label><select id="healthType"><option>Вес</option><option>Сон</option><option>Шаги</option><option>Калории</option><option>Самочувствие</option><option>Лекарства</option><option>Другое</option></select>
+   <label>Значение</label><input id="healthValue" required placeholder="Например, 70 кг">
+   <label>Комментарий</label><input id="healthComment" placeholder="Необязательно">
+   <button class="primary">Сохранить показатель</button>
+  </form>
+ </div>
+ <div class="card"><h3>Витамины и добавки</h3>
+  <form onsubmit="addSupplement(event)">
+   <label>Название</label><input id="suppName" required placeholder="Например, витамин D">
+   <label>Дозировка</label><input id="suppDose" placeholder="Например, 2000 МЕ">
+   <label>Время приёма</label><input id="suppTime" type="time">
+   <button class="primary">Добавить</button>
+  </form><div id="supplementList"></div>
+ </div>
+ <div class="card"><h3>Замеры тела</h3>
+  <label>Дата замеров</label><input type="date" id="measureDate">
+  <div class="grid" id="measureInputs"></div>
+  <button class="primary full" onclick="saveMeasurements()">Сохранить замеры</button>
+  <div id="measureList"></div>
+ </div>
+ <div class="card"><h3>Анализы</h3>
+  <form onsubmit="addLab(event)">
+   <label>Название показателя</label><input id="labName" required placeholder="Например, ферритин">
+   <div class="grid"><div><label>Результат</label><input id="labValue" required placeholder="20"></div><div><label>Единицы</label><input id="labUnit" placeholder="нг/мл"></div></div>
+   <div class="grid"><div><label>Нижняя граница нормы</label><input id="labMin" type="number" step="any"></div><div><label>Верхняя граница нормы</label><input id="labMax" type="number" step="any"></div></div>
+   <label>Дата анализа</label><input id="labDate" type="date" required>
+   <label>Комментарий лаборатории</label><input id="labComment" placeholder="Необязательно">
+   <label>Прикрепить фото или PDF</label><input id="labFiles" type="file" accept="image/*,.pdf" multiple>
+   <button class="primary">Сохранить анализ</button>
+  </form><div id="labList"></div>
+ </div>
+ <div class="card"><h3>История показателей</h3><div id="healthList"></div></div>
+</section>
+
 <section id="habits" class="hidden">
  <h2>Мои привычки</h2>
- <div class="card">
-  <b>Новая привычка</b>
-  <form onsubmit="addHabit(event)">
-   <label>Название привычки</label>
-   <input id="habitName" required placeholder="Например, зарядка">
-   <button class="primary" type="submit">Добавить привычку</button>
-  </form>
- </div>
- <div class="card">
-  <div class="row"><b>Мой прогресс сегодня</b><span id="habitProgress">0/0</span></div>
-  <div class="progress"><div id="habitBar" style="width:0%"></div></div>
-  <div id="habitList"></div>
- </div>
+ <div class="card"><form onsubmit="addHabit(event)"><label>Новая привычка</label><input id="habitName" required placeholder="Например, зарядка"><button class="primary">Добавить привычку</button></form></div>
+ <div class="card"><div class="row"><button onclick="shiftWeek(-1)">← Неделя</button><b id="weekTitle"></b><button onclick="shiftWeek(1)">Неделя →</button></div><div id="habitTable"></div></div>
 </section>
 
-<!-- КАЛЕНДАРЬ -->
 <section id="calendar" class="hidden">
- <h2>Мой календарь</h2>
- <div class="card">
-  <label>Выбери дату</label>
-  <input type="date" id="eventDate">
-  <label>План или событие</label>
-  <input id="eventName" placeholder="Например, тренировка">
-  <button class="primary" onclick="addEvent()">Добавить в календарь</button>
- </div>
- <h2>Мои планы</h2>
- <div class="card" id="eventList"></div>
+ <h2>Календарь</h2>
+ <div class="card"><div class="row"><button onclick="shiftMonth(-1)">←</button><b id="monthTitle"></b><button onclick="shiftMonth(1)">→</button></div><div class="calendar-grid" id="calendarGrid"></div></div>
+ <div class="card"><h3 id="selectedDateTitle">Выбранный день</h3><div id="calendarDayItems"></div></div>
+ <div class="card"><h3>Добавить событие</h3><form onsubmit="addEvent(event)"><label>Дата</label><input type="date" id="eventDate" required><label>Название</label><input id="eventName" required placeholder="Например, тренировка"><button class="primary">Сохранить событие</button></form></div>
 </section>
 
-<!-- ЗАПИСИ -->
-<section id="notes" class="hidden">
+<section id="space" class="hidden">
  <h2>Моё пространство</h2>
- <div class="card">
-  <b>Новая запись</b>
-  <form onsubmit="addNote(event)">
-   <label>Раздел</label>
-   <select id="noteType">
-    <option>Заметка</option><option>Книга</option>
-    <option>Фильм или сериал</option><option>Покупки</option>
-    <option>Желание</option><option>Идея</option><option>План</option>
-   </select>
-   <label>Название</label>
-   <input id="noteTitle" required placeholder="Название">
-   <label>Описание</label>
-   <textarea id="noteText" placeholder="Добавь подробности..."></textarea>
-   <button class="primary" type="submit">Сохранить</button>
-  </form>
- </div>
- <h2>Мои записи</h2>
+ <div class="card"><form onsubmit="addNote(event)"><label>Раздел</label><select id="noteType"><option>Заметка</option><option>Книга</option><option>Фильм или сериал</option><option>Покупки</option><option>Желание</option><option>Идея</option><option>План</option></select><label>Название</label><input id="noteTitle" required><label>Описание</label><textarea id="noteText"></textarea><button class="primary">Сохранить</button></form></div>
  <div class="card" id="noteList"></div>
 </section>
 
-<!-- СТАТИСТИКА -->
 <section id="stats" class="hidden">
  <h2>Моя статистика</h2>
- <p class="small">Твои результаты за последние 7 дней</p>
- <div class="card">
-  <div class="small">Всего выпито воды</div>
-  <div class="big" id="weekWater">0 мл</div>
-  <div class="small">За последние 7 дней</div>
-  <div class="chart" id="waterChart"></div>
- </div>
- <div class="card">
-  <b>Вес</b>
-  <div class="big" id="latestWeight">Пока нет записей</div>
-  <div class="small" id="weightDate"></div>
-  <div class="chart" id="weightChart"></div>
- </div>
- <div class="card">
-  <b>Задачи</b>
-  <div class="big" id="weekTasks">0/0</div>
-  <div class="small">Выполнено за последние 7 дней</div>
-  <div class="progress"><div id="taskWeekBar" style="width:0%"></div></div>
-  <div class="small" id="taskWeekPercent">0% выполнения</div>
- </div>
- <div class="card">
-  <b>Привычки</b>
-  <div class="big" id="weekHabits">0%</div>
-  <div class="small" id="weekHabitsDetail">Отметки за последние 7 дней</div>
-  <div class="progress"><div id="habitWeekBar" style="width:0%"></div></div>
- </div>
+ <div class="card"><b>Вода за 7 дней</b><div class="big" id="weekWater">0 мл</div><div class="chart" id="waterChart"></div></div>
+ <div class="card"><b>Выполнение задач</b><div class="big" id="taskStats">0%</div><div class="progress"><div id="taskStatsBar"></div></div></div>
+ <div class="card"><b>Привычки за неделю</b><div class="big" id="habitStats">0%</div><div class="progress"><div id="habitStatsBar"></div></div></div>
+ <div class="card"><b>Динамика веса</b><div id="weightStats" class="small"></div></div>
+ <div class="card"><b>Настроение за неделю</b><div id="moodStats"></div></div>
 </section>
 
-<!-- НАСТРОЙКИ -->
 <section id="settings" class="hidden">
- <h2>Настройки</h2>
- <div class="card">
-  <b>Цель по воде</b>
-  <input id="waterGoal" type="number" min="100" value="2100">
-  <button onclick="saveGoal()">Сохранить цель</button>
- </div>
- <div class="card">
-  <b>Резервная копия</b>
-  <p class="small">Сохрани свои записи в файл, чтобы не потерять их.</p>
-  <button class="primary" onclick="backup()">Скачать резервную копию</button>
-  <p></p>
-  <label>Восстановить данные из копии</label>
-  <input type="file" id="restoreFile" accept=".json" onchange="restore(event)">
- </div>
- <div class="card">
-  <b>О приложении</b>
-  <p class="small">Health Diary — твоё пространство для заботы о себе и организации жизни. Данные хранятся в браузере на этом устройстве.</p>
- </div>
+ <h2>Ещё</h2>
+ <div class="card"><b>Цель по воде</b><input id="waterGoal" type="number" min="100"><button onclick="saveGoal()">Сохранить</button></div>
+ <div class="card"><b>Резервная копия</b><p class="small">Включает записи и прикреплённые файлы.</p><button class="primary full" onclick="backup()">Скачать копию</button><label>Восстановить копию</label><input type="file" accept=".json" onchange="restore(event)"></div>
+ <div class="card"><b>О приложении</b><p class="small">Health Diary хранит данные в браузере на этом устройстве. Регулярно сохраняй резервные копии и не очищай данные Safari.</p></div>
 </section>
-
 </main>
 
 <nav>
  <button class="active" data-tab="home" onclick="show('home')"><span>⌂</span>Главная</button>
+ <button data-tab="day" onclick="show('day')"><span>✓</span>Мой день</button>
  <button data-tab="health" onclick="show('health')"><span>♡</span>Здоровье</button>
- <button data-tab="tasks" onclick="show('tasks')"><span>✓</span>Задачи</button>
  <button data-tab="habits" onclick="show('habits')"><span>○</span>Привычки</button>
  <button data-tab="calendar" onclick="show('calendar')"><span>▦</span>Календарь</button>
- <button data-tab="notes" onclick="show('notes')"><span>✎</span>Записи</button>
+ <button data-tab="space" onclick="show('space')"><span>✎</span>Пространство</button>
  <button data-tab="stats" onclick="show('stats')"><span>▥</span>Статистика</button>
  <button data-tab="settings" onclick="show('settings')"><span>⚙</span>Ещё</button>
 </nav>
 
 <script>
-const todayText=new Date().toLocaleDateString('ru-RU',{
- weekday:'long',day:'numeric',month:'long'
-});
-document.getElementById('today').textContent=
- todayText.charAt(0).toUpperCase()+todayText.slice(1);
-
 const key='healthDiaryData';
+const defaults={water:[],health:[],tasks:[],money:[],notes:[],habits:[],events:[],goal:2100,moods:{}};
+let db={...defaults};
+try{db={...defaults,...JSON.parse(localStorage.getItem(key)||'{}')}}catch(e){console.error(e)}
+['water','health','tasks','notes','habits','events','money'].forEach(k=>{if(!Array.isArray(db[k]))db[k]=[]});
+if(!db.moods||typeof db.moods!=='object')db.moods={};
+if(!Array.isArray(db.moodEntries))db.moodEntries=[];
+if(!Array.isArray(db.supplements))db.supplements=[];
+if(!Array.isArray(db.measurements))db.measurements=[];
+if(!Array.isArray(db.labs))db.labs=[];
+db.tasks.forEach(t=>{if(!t.date)t.date=dateKey();if(!t.quadrant)t.quadrant='q2'});
 
-let db={
- water:[],health:[],tasks:[],money:[],notes:[],
- habits:[],events:[],goal:2100,moods:{}
-};
-
-try{
- const stored=JSON.parse(localStorage.getItem(key)||'{}');
- db={...db,...stored};
- if(!Array.isArray(db.water))db.water=[];
- if(!Array.isArray(db.health))db.health=[];
- if(!Array.isArray(db.tasks))db.tasks=[];
- if(!Array.isArray(db.notes))db.notes=[];
- if(!Array.isArray(db.habits))db.habits=[];
- if(!Array.isArray(db.events))db.events=[];
- if(!Array.isArray(db.money))db.money=[];
- if(!db.moods)db.moods={};
-}catch(e){console.error('Ошибка чтения данных',e)}
-
-function dateKey(date=new Date()){
- const y=date.getFullYear();
- const m=String(date.getMonth()+1).padStart(2,'0');
- const d=String(date.getDate()).padStart(2,'0');
- return `${y}-${m}-${d}`;
-}
-
-function last7Days(){
- const result=[];
- for(let i=6;i>=0;i--){
-  const d=new Date();
-  d.setHours(12,0,0,0);
-  d.setDate(d.getDate()-i);
-  result.push(dateKey(d));
- }
- return result;
-}
-
-function shortDate(date){
- return new Date(date+'T12:00:00').toLocaleDateString('ru-RU',{
-  day:'numeric',month:'short'
- });
-}
-
-function save(){
- localStorage.setItem(key,JSON.stringify(db));
- render();
-}
-
-function show(id){
- document.querySelectorAll('main section').forEach(s=>s.classList.add('hidden'));
- const target=document.getElementById(id);
- if(target)target.classList.remove('hidden');
- document.querySelectorAll('nav button').forEach(b=>{
-  b.classList.toggle('active',b.dataset.tab===id);
- });
- render();
-}
-
-function addWater(){
- db.water.push({date:dateKey(),amount:250});
- save();
-}
-
-function addCustomWater(){
- const n=Number(prompt('Сколько миллилитров?'));
- if(n>0){db.water.push({date:dateKey(),amount:n});save()}
-}
-
-function saveMood(){
- db.moods[dateKey()]=document.getElementById('mood').value;
- save();
-}
-
-function addHealth(e){
- e.preventDefault();
- db.health.unshift({
-  type:document.getElementById('healthType').value,
-  value:document.getElementById('healthValue').value,
-  comment:document.getElementById('healthComment').value,
-  date:dateKey()
- });
- e.target.reset();
- save();
-}
-
-function addTask(e){
- e.preventDefault();
- db.tasks.unshift({
-  name:document.getElementById('taskName').value.trim(),
-  done:false,date:dateKey()
- });
- e.target.reset();
- save();
-}
-
-function toggleTask(i){
- db.tasks[i].done=!db.tasks[i].done;
- save();
-}
-
-function addNote(e){
- e.preventDefault();
- db.notes.unshift({
-  type:document.getElementById('noteType').value,
-  title:document.getElementById('noteTitle').value.trim(),
-  text:document.getElementById('noteText').value,
-  date:dateKey()
- });
- e.target.reset();
- save();
-}
-
-function del(arr,i){
- if(confirm('Удалить эту запись?')){arr.splice(i,1);save()}
-}
-
-function addHabit(e){
- e.preventDefault();
- const input=document.getElementById('habitName');
- const name=input.value.trim();
- if(!name)return;
- db.habits.push({name:name,completed:[]});
- input.value='';
- save();
-}
-
-function toggleHabit(i){
- if(!Array.isArray(db.habits[i].completed))db.habits[i].completed=[];
- const dates=db.habits[i].completed;
- const today=dateKey();
- const index=dates.indexOf(today);
- if(index>=0)dates.splice(index,1);
- else dates.push(today);
- save();
-}
-
-function addEvent(){
- const date=document.getElementById('eventDate').value;
- const name=document.getElementById('eventName').value.trim();
- if(!date||!name){alert('Укажи дату и название события');return}
- db.events.push({date,name});
- document.getElementById('eventName').value='';
- save();
-}
-
-function deleteEvent(i){
- if(confirm('Удалить событие?')){db.events.splice(i,1);save()}
-}
-
-/* ПРИВЕТСТВИЕ И ГЛАВНАЯ */
-
-function renderHome(today){
- const hour=new Date().getHours();
- let greeting='Добрый вечер!';
- if(hour<12)greeting='Доброе утро!';
- else if(hour<18)greeting='Добрый день!';
-
- document.getElementById('greetingTitle').textContent=greeting;
- document.getElementById('greetingText').textContent=
-  'Не обязательно успеть всё. Достаточно сделать важное для себя.';
-
- const water=db.water.filter(x=>x.date===today)
-  .reduce((s,x)=>s+Number(x.amount||0),0);
- const goal=Number(db.goal)||2100;
- const waterPct=Math.min(100,Math.round(water/goal*100));
-
- document.getElementById('waterTotal').textContent=water+' мл';
- document.getElementById('waterPercent').textContent=waterPct+'% от цели '+goal+' мл';
- document.getElementById('waterBar').style.width=waterPct+'%';
-
- const tasks=db.tasks.filter(x=>x.date===today);
- const completed=tasks.filter(x=>x.done).length;
- const remaining=tasks.length-completed;
- const taskPct=tasks.length?Math.round(completed/tasks.length*100):0;
-
- document.getElementById('taskTotal').textContent=completed+'/'+tasks.length;
- document.getElementById('taskRemaining').textContent=
-  tasks.length?(remaining?'Осталось: '+remaining:'Все задачи выполнены!'):'Пока нет задач';
- document.getElementById('taskBar').style.width=taskPct+'%';
-
- const focus=tasks.find(x=>!x.done);
- document.getElementById('focusTask').textContent=
-  focus?focus.name:(tasks.length?'Все задачи на сегодня выполнены':'Добавь важную задачу на сегодня');
-
- document.getElementById('mood').value=db.moods[today]||'';
-
- document.getElementById('homeTasks').innerHTML=tasks.length
-  ?tasks.map(t=>{
-    const i=db.tasks.indexOf(t);
-    return `<div class="item row">
-     <label>
-      <input style="width:auto;margin:0 8px 0 0" type="checkbox"
-       ${t.done?'checked':''} onchange="toggleTask(${i})">
-      <span class="${t.done?'done':''}">${esc(t.name)}</span>
-     </label>
-    </div>`;
-   }).join('')
-  :'<span class="small">Пока задач нет. Можно выдохнуть ☁️</span>';
-
- const completedHabits=db.habits.filter(h=>
-  Array.isArray(h.completed)&&h.completed.includes(today)
- ).length;
- const habitPct=db.habits.length?
-  Math.round(completedHabits/db.habits.length*100):0;
-
- document.getElementById('homeHabitProgress').textContent=
-  completedHabits+'/'+db.habits.length;
- document.getElementById('homeHabitBar').style.width=habitPct+'%';
-
- document.getElementById('homeHabitList').innerHTML=db.habits.length
-  ?db.habits.map((h,i)=>{
-    if(!Array.isArray(h.completed))h.completed=[];
-    const done=h.completed.includes(today);
-    return `<div class="habit-home-item">
-     <input type="checkbox" ${done?'checked':''} onchange="toggleHabit(${i})">
-     <label class="${done?'done':''}">${esc(h.name)}</label>
-    </div>`;
-   }).join('')
-  :'<span class="small">Добавь привычки, и они появятся здесь</span>';
-}
-
-/* СТАТИСТИКА */
-
-function renderStats(){
- const days=last7Days();
- const waterByDay=days.map(day=>db.water
-  .filter(x=>x.date===day)
-  .reduce((sum,x)=>sum+Number(x.amount||0),0));
- const totalWater=waterByDay.reduce((a,b)=>a+b,0);
-
- document.getElementById('weekWater').textContent=
-  totalWater.toLocaleString('ru-RU')+' мл';
-
- const maxWater=Math.max(2100,...waterByDay);
- document.getElementById('waterChart').innerHTML=waterByDay.map((value,i)=>`
-  <div class="chart-column">
-   <div class="chart-value">${value||''}</div>
-   <div class="chart-bar-wrap">
-    <div class="chart-bar" style="height:${Math.max(3,value/maxWater*100)}%"></div>
-   </div>
-   <div class="chart-label">${shortDate(days[i])}</div>
-  </div>`).join('');
-
- const weights=db.health.filter(x=>x.type==='Вес'&&days.includes(x.date))
-  .map(x=>({
-   date:x.date,
-   value:parseFloat(String(x.value).replace(',','.').replace(/[^\d.]/g,''))
-  }))
-  .filter(x=>Number.isFinite(x.value)&&x.value>0)
-  .sort((a,b)=>a.date.localeCompare(b.date));
-
- const latest=weights.length?weights[weights.length-1]:null;
- document.getElementById('latestWeight').textContent=
-  latest?latest.value+' кг':'Пока нет записей';
- document.getElementById('weightDate').textContent=
-  latest?'Последняя запись: '+shortDate(latest.date):
-  'Добавь вес в разделе «Здоровье»';
-
- if(weights.length){
-  const min=Math.min(...weights.map(x=>x.value));
-  const max=Math.max(...weights.map(x=>x.value));
-  const range=max-min||1;
-  document.getElementById('weightChart').innerHTML=weights.map(x=>`
-   <div class="chart-column">
-    <div class="chart-value">${x.value}</div>
-    <div class="chart-bar-wrap">
-     <div class="chart-bar" style="height:${35+(x.value-min)/range*65}%"></div>
-    </div>
-    <div class="chart-label">${shortDate(x.date)}</div>
-   </div>`).join('');
- }else{
-  document.getElementById('weightChart').innerHTML=
-   '<div class="small">За последние 7 дней записей о весе нет</div>';
- }
-
- const weekTasks=db.tasks.filter(x=>days.includes(x.date));
- const doneTasks=weekTasks.filter(x=>x.done).length;
- const taskPercent=weekTasks.length?
-  Math.round(doneTasks/weekTasks.length*100):0;
-
- document.getElementById('weekTasks').textContent=doneTasks+'/'+weekTasks.length;
- document.getElementById('taskWeekBar').style.width=taskPercent+'%';
- document.getElementById('taskWeekPercent').textContent=taskPercent+'% выполнения';
-
- let habitChecks=0;
- db.habits.forEach(h=>{
-  if(!Array.isArray(h.completed))h.completed=[];
-  habitChecks+=h.completed.filter(day=>days.includes(day)).length;
- });
- const possible=db.habits.length*7;
- const habitPercent=possible?Math.round(habitChecks/possible*100):0;
-
- document.getElementById('weekHabits').textContent=habitPercent+'%';
- document.getElementById('weekHabitsDetail').textContent=db.habits.length?
-  habitChecks+' отметок из '+possible+' возможных':
-  'Добавь привычки, чтобы отслеживать прогресс';
- document.getElementById('habitWeekBar').style.width=habitPercent+'%';
-}
-
-/* ОТРИСОВКА */
-
-function render(){
- const today=dateKey();
- renderHome(today);
-
- const water=db.water.filter(x=>x.date===today)
-  .reduce((s,x)=>s+Number(x.amount||0),0);
- document.getElementById('healthWater').textContent=water+' мл';
- document.getElementById('waterGoal').value=db.goal;
-
- document.getElementById('healthList').innerHTML=db.health.map((x,i)=>`
-  <div class="item row">
-   <div><b>${esc(x.type)}: ${esc(x.value)}</b>
-    <div class="small">${esc(x.date)} · ${esc(x.comment||'')}</div>
-   </div>
-   <button class="delete" onclick="del(db.health,${i})">×</button>
-  </div>`).join('')||'<span class="small">Записей пока нет</span>';
-
- const todayTasks=db.tasks.filter(x=>x.date===today);
- document.getElementById('taskList').innerHTML=todayTasks.length?
-  todayTasks.map(t=>{
-   const i=db.tasks.indexOf(t);
-   return `<div class="item row">
-    <label>
-     <input style="width:auto;margin-right:8px" type="checkbox"
-      ${t.done?'checked':''} onchange="toggleTask(${i})">
-     <span class="${t.done?'done':''}">${esc(t.name)}</span>
-    </label>
-    <button class="delete" onclick="del(db.tasks,${i})">×</button>
-   </div>`;
-  }).join(''):'<span class="small">Добавь первую задачу выше</span>';
-
- document.getElementById('noteList').innerHTML=db.notes.map((x,i)=>`
-  <div class="item">
-   <div class="row"><b>${esc(x.title)}</b>
-    <button class="delete" onclick="del(db.notes,${i})">×</button>
-   </div>
-   <div class="small">${esc(x.type)} · ${esc(x.date)}</div>
-   <p>${esc(x.text||'')}</p>
-  </div>`).join('')||'<span class="small">Записей пока нет</span>';
-
- document.getElementById('habitList').innerHTML=db.habits.map((h,i)=>{
-  if(!Array.isArray(h.completed))h.completed=[];
-  const done=h.completed.includes(today);
-  return `<div class="item row">
-   <label>
-    <input style="width:auto" type="checkbox" ${done?'checked':''}
-     onchange="toggleHabit(${i})">
-    <span class="${done?'done':''}">${esc(h.name)}</span>
-   </label>
-   <span class="small">${h.completed.length} дн.</span>
-  </div>`;
- }).join('')||'<span class="small">Добавь свою первую привычку</span>';
-
- const completedHabits=db.habits.filter(h=>
-  Array.isArray(h.completed)&&h.completed.includes(today)
- ).length;
- document.getElementById('habitProgress').textContent=
-  completedHabits+'/'+db.habits.length;
- document.getElementById('habitBar').style.width=
-  (db.habits.length?completedHabits/db.habits.length*100:0)+'%';
-
- document.getElementById('eventList').innerHTML=db.events
-  .map((ev,i)=>({ev,i}))
-  .sort((a,b)=>a.ev.date.localeCompare(b.ev.date))
-  .map(({ev,i})=>`
-   <div class="item row">
-    <div><b>${esc(ev.name)}</b><div class="small">${esc(ev.date)}</div></div>
-    <button class="delete" onclick="deleteEvent(${i})">×</button>
-   </div>`).join('')||'<span class="small">Планов пока нет</span>';
-
- renderStats();
-}
-
-function saveGoal(){
- const n=Number(document.getElementById('waterGoal').value);
- if(n>0){db.goal=n;save();alert('Цель сохранена!')}
-}
-
-function backup(){
- const blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});
- const url=URL.createObjectURL(blob);
- const a=document.createElement('a');
- a.href=url;a.download='health-diary-backup.json';a.click();
- setTimeout(()=>URL.revokeObjectURL(url),1000);
-}
-
-function restore(e){
- const f=e.target.files[0];
- if(!f)return;
- const r=new FileReader();
- r.onload=()=>{
-  try{
-   const d=JSON.parse(r.result);
-   if(!confirm('Заменить текущие данные данными из копии?')){
-    e.target.value='';return;
-   }
-   db={...db,...d};
-   if(!Array.isArray(db.water))db.water=[];
-   if(!Array.isArray(db.health))db.health=[];
-   if(!Array.isArray(db.tasks))db.tasks=[];
-   if(!Array.isArray(db.notes))db.notes=[];
-   if(!Array.isArray(db.habits))db.habits=[];
-   if(!Array.isArray(db.events))db.events=[];
-   if(!Array.isArray(db.money))db.money=[];
-   if(!db.moods)db.moods={};
-   save();
-   alert('Данные восстановлены!');
-  }catch(err){alert('Не удалось прочитать файл')}
-  e.target.value='';
- };
- r.readAsText(f);
-}
-
-function esc(s){
- return String(s??'').replace(/[&<>"']/g,c=>({
-  '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
- }[c]));
-}
-
+function dateKey(d=new Date()){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function parseDate(s){return new Date(s+'T12:00:00')}
+function shiftDate(s,n){let d=parseDate(s);d.setDate(d.getDate()+n);return dateKey(d)}
+function fmt(s){return parseDate(s).toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'})}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function save(){localStorage.setItem(key,JSON.stringify(db));render()}
+function show(id){document.querySelectorAll('main section').forEach(s=>s.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));render()}
+let selectedDay=dateKey(),calendarMonth=new Date(),weekOffset=0;
+function sumWater(day){return db.water.filter(x=>x.date===day).reduce((s,x)=>s+Number(x.amount||0),0)}
+function addWater(){db.water.push({date:dateKey(),amount:250});save()}
+function customWater(){let n=Number(prompt('Сколько миллилитров?'));if(n>0){db.water.push({date:dateKey(),amount:n});save()}}
+function addHealth(e){e.preventDefault();db.health.unshift({type:healthType.value,value:healthValue.value,comment:healthComment.value,date:dateKey()});e.target.reset();save()}
+function addTask(e){e.preventDefault();db.tasks.unshift({name:taskName.value.trim(),done:false,date:taskDate.value,quadrant:taskQuadrant.value});e.target.reset();taskDate.value=selectedDay;save()}
+function toggleTask(i){db.tasks[i].done=!db.tasks[i].done;save()}
+function deleteTask(i){if(confirm('Удалить задачу?')){db.tasks.splice(i,1);save()}}
+function editTask(i){let t=db.tasks[i],name=prompt('Изменить название задачи',t.name);if(name===null)return;if(!name.trim())return;let date=prompt('Дата задачи ГГГГ-ММ-ДД',t.date);if(date&&!/^\d{4}-\d{2}-\d{2}$/.test(date)){alert('Проверь формат даты');return}let q=prompt('Квадрант: q1, q2, q3 или q4',t.quadrant);if(q&&!['q1','q2','q3','q4'].includes(q)){alert('Укажи q1, q2, q3 или q4');return}t.name=name.trim();if(date)t.date=date;if(q)t.quadrant=q;save()}
+function shiftDay(n){selectedDay=shiftDate(selectedDay,n);render()}
+function selectDay(v){if(v){selectedDay=v;render()}}
+function addHabit(e){e.preventDefault();db.habits.push({name:habitName.value.trim(),completed:[]});e.target.reset();save()}
+function toggleHabit(i,day){let a=db.habits[i].completed;if(!Array.isArray(a))a=[];let p=a.indexOf(day);if(p>=0)a.splice(p,1);else a.push(day);db.habits[i].completed=a;save()}
+function deleteHabit(i){if(confirm('Удалить привычку и её историю отметок?')){db.habits.splice(i,1);save()}}
+function shiftWeek(n){weekOffset+=n;render()}
+function addEvent(e){e.preventDefault();db.events.push({date:eventDate.value,name:eventName.value.trim()});e.target.reset();save()}
+function deleteEvent(i){if(confirm('Удалить событие?')){db.events.splice(i,1);save()}}
+function editEvent(i){let n=prompt('Название события',db.events[i].name);if(n===null)return;let d=prompt('Дата ГГГГ-ММ-ДД',db.events[i].date);if(d&&!/^\d{4}-\d{2}-\d{2}$/.test(d)){alert('Неверная дата');return}db.events[i].name=n.trim();if(d)db.events[i].date=d;save()}
+function addNote(e){e.preventDefault();db.notes.unshift({type:noteType.value,title:noteTitle.value.trim(),text:noteText.value,date:dateKey()});e.target.reset();save()}
+function deleteNote(i){if(confirm('Удалить запись?')){db.notes.splice(i,1);save()}}
+function saveGoal(){let n=Number(waterGoal.value);if(n>0){db.goal=n;save();alert('Цель сохранена')}}
+const moods=['😊 Отлично','🙂 Хорошо','😐 Нормально','😔 Устала','🥺 Тяжело'];
+function addMood(m){db.moodEntries.push({date:dateKey(),time:new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}),mood:m});save()}
+function dayMoods(day){let a=db.moodEntries.filter(x=>x.date===day);if(!a.length&&db.moods[day])return [{date:day,time:'',mood:db.moods[day]}];return a}
+function moodSummary(day){let a=dayMoods(day);if(!a.length)return 'Нет отметок';let counts={};a.forEach(x=>counts[x.mood]=(counts[x.mood]||0)+1);let max=Math.max(...Object.values(counts));let top=Object.keys(counts).filter(k=>counts[k]===max);return top.length>1?'Смешанное настроение':top[0]}
+function addSupplement(e){e.preventDefault();db.supplements.push({name:suppName.value.trim(),dose:suppDose.value.trim(),time:suppTime.value,history:[]});e.target.reset();save()}
+function toggleSupplement(i){let s=db.supplements[i];let d=dateKey();if(!Array.isArray(s.history))s.history=[];let p=s.history.indexOf(d);if(p>=0)s.history.splice(p,1);else s.history.push(d);save()}
+function deleteSupplement(i){if(confirm('Удалить витамин или добавку?')){db.supplements.splice(i,1);save()}}
+const measureNames=['Грудь','Талия','Живот','Бёдра','Бедро','Рука','Икра'];
+function saveMeasurements(){let values={};measureNames.forEach((n,i)=>{let v=document.getElementById('measure'+i).value;if(v)values[n]=v});if(!Object.keys(values).length){alert('Введи хотя бы один замер');return}db.measurements.unshift({date:measureDate.value||dateKey(),values});save()}
+function deleteMeasurement(i){if(confirm('Удалить замеры?')){db.measurements.splice(i,1);save()}}
+function addLab(e){e.preventDefault();let files=[...labFiles.files];let record={id:'lab_'+Date.now()+'_'+Math.random().toString(36).slice(2),name:labName.value.trim(),value:labValue.value,unit:labUnit.value,min:labMin.value,max:labMax.value,date:labDate.value,comment:labComment.value,files:[]};db.labs.unshift(record);e.target.reset();save();if(files.length)saveLabFiles(record.id,files)}
+function deleteLab(i){if(confirm('Удалить результат анализа и прикреплённые файлы?')){let id=db.labs[i].id;db.labs.splice(i,1);deleteLabFiles(id).then(save);save()}}
+function addSupplementHistory(i){toggleSupplement(i)}
+let idb;
+function openFilesDB(){return new Promise((resolve,reject)=>{let req=indexedDB.open('HealthDiaryFiles',1);req.onupgradeneeded=()=>{let d=req.result;if(!d.objectStoreNames.contains('files'))d.createObjectStore('files',{keyPath:'id'})};req.onsuccess=()=>{idb=req.result;resolve(idb)};req.onerror=()=>reject(req.error)})}
+async function saveLabFiles(labId,files){try{let d=await openFilesDB();for(let f of files){let id=labId+'_'+Date.now()+'_'+Math.random().toString(36).slice(2);await new Promise((res,rej)=>{let tx=d.transaction('files','readwrite');tx.objectStore('files').put({id,labId,name:f.name,type:f.type,blob:f});tx.oncomplete=res;tx.onerror=()=>rej(tx.error)});let lab=db.labs.find(x=>x.id===labId);if(lab)lab.files.push(id)}save()}catch(e){alert('Не удалось сохранить файл. Проверь доступное место на устройстве.');console.error(e)}}
+async function getLabFiles(labId){let d=await openFilesDB();return new Promise((res,rej)=>{let tx=d.transaction('files','readonly'),r=tx.objectStore('files').getAll();r.onsuccess=()=>res(r.result.filter(x=>x.labId===labId));r.onerror=()=>rej(r.error)})}
+async function deleteLabFiles(labId){try{let files=await getLabFiles(labId),d=await openFilesDB();for(let f of files)await new Promise(res=>{let tx=d.transaction('files','readwrite');tx.objectStore('files').delete(f.id);tx.oncomplete=res})}catch(e){}}
+async function openLabFile(id){let d=await openFilesDB();let f=await new Promise((res,rej)=>{let r=d.transaction('files','readonly').objectStore('files').get(id);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});if(!f){alert('Файл не найден на этом устройстве');return}let url=URL.createObjectURL(f.blob);let a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener';a.click();setTimeout(()=>URL.revokeObjectURL(url),60000)}
+function shiftMonth(n){calendarMonth.setMonth(calendarMonth.getMonth()+n);renderCalendar()}
+function renderCalendar(){let y=calendarMonth.getFullYear(),m=calendarMonth.getMonth();monthTitle.textContent=calendarMonth.toLocaleDateString('ru-RU',{month:'long',year:'numeric'});let first=new Date(y,m,1),offset=(first.getDay()+6)%7,days=new Date(y,m+1,0).getDate();let html=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'].map(x=>`<div class="cal-head">${x}</div>`).join('');for(let i=0;i<offset;i++)html+='<div></div>';for(let n=1;n<=days;n++){let d=dateKey(new Date(y,m,n)),has=db.events.some(x=>x.date===d)||db.tasks.some(x=>x.date===d);html+=`<div class="cal-day ${selectedDay===d?'selected':''}" onclick="selectCalendarDay('${d}')">${n}${has?'<div class="dot">●</div>':'<div class="dot">&nbsp;</div>'}</div>`}calendarGrid.innerHTML=html}
+function selectCalendarDay(d){selectedDay=d;renderCalendar();renderCalendarItems()}
+function renderCalendarItems(){selectedDateTitle.textContent=fmt(selectedDay);let tasks=db.tasks.map((x,i)=>({...x,index:i})).filter(x=>x.date===selectedDay);let events=db.events.map((x,i)=>({...x,index:i})).filter(x=>x.date===selectedDay);let html=tasks.map(t=>`<div class="item"><div class="row"><span>${t.done?'✓':'○'} ${esc(t.name)}</span><span class="badge">Задача</span></div><div class="small">${esc(t.quadrant)}</div><button onclick="editTask(${t.index})">Изменить</button></div>`).join('');html+=events.map(x=>`<div class="item"><div class="row"><b>${esc(x.name)}</b><span class="badge">Событие</span></div><button onclick="editEvent(${x.index})">Изменить</button> <button class="delete" onclick="deleteEvent(${x.index})">Удалить</button></div>`).join('');calendarDayItems.innerHTML=html||'<div class="small">На этот день пока ничего не запланировано</div>';eventDate.value=selectedDay}
+function renderDay(){dayPicker.value=selectedDay;taskDate.value=selectedDay;dayTitle.textContent=parseDate(selectedDay).toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'});let labels={q1:'1. Срочно и важно',q2:'2. Важно, не срочно',q3:'3. Срочно, не важно',q4:'4. Не срочно и не важно'};let html='';for(let q of ['q1','q2','q3','q4']){let arr=db.tasks.map((t,i)=>({...t,index:i})).filter(t=>t.date===selectedDay&&(t.quadrant||'q2')===q);html+=`<div class="quadrant ${q}"><b>${labels[q]}</b>${arr.length?arr.map(t=>`<div class="item"><div class="row"><label><input type="checkbox" ${t.done?'checked':''} onchange="toggleTask(${t.index})"> <span class="${t.done?'done':''}">${esc(t.name)}</span></label><button class="delete" onclick="deleteTask(${t.index})">×</button></div><div style="margin-top:7px"><button onclick="editTask(${t.index})">Изменить / перенести</button></div></div>`).join(''):'<div class="small" style="margin-top:8px">Задач нет</div>'}</div>`}dayTasks.innerHTML=html}
+function renderHabits(){let start=shiftDate(dateKey(),-((new Date().getDay()+6)%7)+weekOffset*7);let days=Array.from({length:7},(_,i)=>shiftDate(start,i));let end=days[6];weekTitle.textContent=fmt(days[0])+' — '+fmt(end);habitTable.innerHTML=db.habits.map((h,i)=>`<div class="item"><div class="row"><b>${esc(h.name)}</b><button class="delete" onclick="deleteHabit(${i})">Удалить</button></div><div class="week-grid">${days.map((d,j)=>`<div class="week-cell ${d===dateKey()?'today':''}"><div>${['Пн','Вт','Ср','Чт','Пт','Сб','Вс'][j]}</div><div>${parseDate(d).getDate()}</div><button onclick="toggleHabit(${i},'${d}')">${(h.completed||[]).includes(d)?'●':'○'}</button></div>`).join('')}</div></div>`).join('')||'<div class="small">Добавь первую привычку</div>'}
+function render(){let today=dateKey(),hour=new Date().getHours();greeting.textContent=hour<12?'Доброе утро!':hour<18?'Добрый день!':'Добрый вечер!';todayText.textContent=fmt(today);let water=sumWater(today),goal=Number(db.goal)||2100;homeWater.textContent=water+' мл';homeWaterBar.style.width=Math.min(100,water/goal*100)+'%';healthWater.textContent=water+' мл';waterGoal.value=goal;let tasks=db.tasks.filter(x=>x.date===today),done=tasks.filter(x=>x.done).length;homeTaskCount.textContent=done+'/'+tasks.length;homeTaskBar.style.width=(tasks.length?done/tasks.length*100:0)+'%';let focus=tasks.find(x=>!x.done);homeFocus.textContent=focus?focus.name:(tasks.length?'Все задачи выполнены ☁️':'Добавь задачу в «Мой день»');moodButtons.innerHTML=moods.map(m=>`<button onclick="addMood('${m}')">${m.split(' ')[0]}<small>${m.split(' ').slice(1).join(' ')}</small></button>`).join('');moodToday.textContent='Сегодня: '+dayMoods(today).map(x=>x.time+' '+x.mood).join(' · ')+' | Итог: '+moodSummary(today);
+homeHabits.innerHTML=db.habits.map((h,i)=>`<div class="item row"><label><input type="checkbox" ${(h.completed||[]).includes(today)?'checked':''} onchange="toggleHabit(${i},'${today}')"> ${esc(h.name)}</label></div>`).join('')||'<span class="small">Пока нет привычек</span>';let hc=db.habits.filter(h=>(h.completed||[]).includes(today)).length;homeHabitBar.style.width=(db.habits.length?hc/db.habits.length*100:0)+'%';
+healthList.innerHTML=db.health.map((x,i)=>`<div class="item row"><div><b>${esc(x.type)}: ${esc(x.value)}</b><div class="small">${esc(x.date)} ${esc(x.comment||'')}</div></div><button class="delete" onclick="delHealth(${i})">×</button></div>`).join('')||'<span class="small">Записей пока нет</span>';
+supplementList.innerHTML=db.supplements.map((s,i)=>`<div class="item"><div class="row"><b>${esc(s.name)}</b><button class="delete" onclick="deleteSupplement(${i})">×</button></div><div class="small">${esc(s.dose)} ${s.time?'· '+esc(s.time):''}</div><label><input type="checkbox" ${(s.history||[]).includes(today)?'checked':''} onchange="toggleSupplement(${i})"> Принято сегодня</label><div class="small">Приёмов отмечено: ${(s.history||[]).length}</div></div>`).join('')||'<span class="small">Добавок пока нет</span>';
+measureInputs.innerHTML=measureNames.map((n,i)=>`<div><label>${n}, см</label><input id="measure${i}" type="number" step="0.1" placeholder="—"></div>`).join('');if(!measureDate.value)measureDate.value=today;
+measureList.innerHTML=db.measurements.slice(0,10).map((x,i)=>`<div class="item"><div class="row"><b>${esc(x.date)}</b><button class="delete" onclick="deleteMeasurement(${i})">×</button></div>${Object.entries(x.values).map(([k,v])=>`<span class="badge">${esc(k)}: ${esc(v)} см</span>`).join(' ')}</div>`).join('')||'<span class="small">Замеров пока нет</span>';
+labList.innerHTML=db.labs.map((x,i)=>`<div class="item"><div class="row"><b>${esc(x.name)}: ${esc(x.value)} ${esc(x.unit)}</b><button class="delete" onclick="deleteLab(${i})">×</button></div><div class="small">${esc(x.date)} · Норма: ${esc(x.min||'—')}–${esc(x.max||'—')} ${esc(x.unit)}</div><div class="small">${esc(x.comment||'')}</div><div id="files_${esc(x.id)}" class="small">Загрузка списка файлов…</div></div>`).join('')||'<span class="small">Анализов пока нет</span>';
+db.labs.forEach(async x=>{let el=document.getElementById('files_'+x.id);if(!el)return;try{let fs=await getLabFiles(x.id);el.innerHTML=fs.map(f=>`<div class="file-card"><a href="#" onclick="openLabFile('${f.id}');return false">${esc(f.name)}</a></div>`).join('')||'Файлы не прикреплены'}catch(e){el.textContent='Файлы недоступны'}});
+renderDay();renderHabits();renderCalendar();renderCalendarItems();renderNotes();renderStats()}
+function delHealth(i){if(confirm('Удалить запись?')){db.health.splice(i,1);save()}}
+function renderNotes(){noteList.innerHTML=db.notes.map((x,i)=>`<div class="item"><div class="row"><b>${esc(x.title)}</b><button class="delete" onclick="deleteNote(${i})">×</button></div><div class="small">${esc(x.type)} · ${esc(x.date)}</div><p>${esc(x.text||'')}</p></div>`).join('')||'<span class="small">Записей пока нет</span>'}
+function renderStats(){let days=Array.from({length:7},(_,i)=>shiftDate(today,-6+i));let today=dateKey();let total=days.reduce((s,d)=>s+sumWater(d),0);weekWater.textContent=total+' мл';let max=Math.max(2100,...days.map(sumWater));waterChart.innerHTML=days.map(d=>`<div class="chart-col"><div class="chart-value">${sumWater(d)||''}</div><div class="chart-bar-wrap"><div class="chart-bar" style="height:${Math.max(3,sumWater(d)/max*100)}%"></div></div><div class="chart-label">${parseDate(d).toLocaleDateString('ru-RU',{weekday:'short'})}</div></div>`).join('');let ts=db.tasks.filter(x=>days.includes(x.date)),td=ts.filter(x=>x.done).length,tp=ts.length?Math.round(td/ts.length*100):0;taskStats.textContent=tp+'%';taskStatsBar.style.width=tp+'%';let possible=db.habits.length*7,checks=db.habits.reduce((s,h)=>s+(h.completed||[]).filter(d=>days.includes(d)).length,0),hp=possible?Math.round(checks/possible*100):0;habitStats.textContent=hp+'%';habitStatsBar.style.width=hp+'%';let weights=db.health.filter(x=>x.type==='Вес');weightStats.innerHTML=weights.slice(0,8).map(x=>`${esc(x.date)} — ${esc(x.value)}`).join('<br>')||'Пока нет записей о весе';moodStats.innerHTML=days.map(d=>`<div class="item row"><span>${fmt(d)}</span><span>${esc(moodSummary(d))}</span></div>`).join('')}
+async function backup(){try{let files=[];let d=await openFilesDB();let all=await new Promise((res,rej)=>{let r=d.transaction('files','readonly').objectStore('files').getAll();r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});for(let f of all){let data=await new Promise((res,rej)=>{let r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(f.blob)});files.push({id:f.id,labId:f.labId,name:f.name,type:f.type,data})}let payload={version:2,db,files};let blob=new Blob([JSON.stringify(payload)],{type:'application/json'});let url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='health-diary-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),2000)}catch(e){alert('Не удалось создать копию файлов. Попробуй ещё раз.');console.error(e)}}
+async function restore(e){let f=e.target.files[0];if(!f)return;try{let data=JSON.parse(await f.text());if(!confirm('Восстановить данные из этой копии? Текущие записи будут заменены.'))return;let restored=data.db||data;db={...defaults,...restored};['water','health','tasks','notes','habits','events','money','moodEntries','supplements','measurements','labs'].forEach(k=>{if(!Array.isArray(db[k]))db[k]=[]});if(!db.moods)db.moods={};if(data.files){let d=await openFilesDB();for(let f of data.files){let blob=await (await fetch(f.data)).blob();await new Promise((res,rej)=>{let tx=d.transaction('files','readwrite');tx.objectStore('files').put({id:f.id,labId:f.labId,name:f.name,type:f.type,blob});tx.oncomplete=res;tx.onerror=()=>rej(tx.error)})}}save();alert('Данные восстановлены')}catch(err){alert('Не удалось прочитать резервную копию');console.error(err)}finally{e.target.value=''}}
+document.getElementById('todayText').textContent=fmt(dateKey());
 render();
 </script>
 </body>
