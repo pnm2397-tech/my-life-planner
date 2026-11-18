@@ -6,52 +6,128 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#eee8fa">
 <title>Health Diary</title>
+
 <style>
 :root {
- --bg:#f8f6fb;--card:#fff;--purple:#9b83c7;
- --dark:#594879;--soft:#eee8f8;--text:#393343;
- --muted:#92899c;--pink:#f6e8f0;
+ --bg:#f8f6fb;
+ --card:#fff;
+ --purple:#9b83c7;
+ --dark:#594879;
+ --soft:#eee8f8;
+ --text:#393343;
+ --muted:#92899c;
+ --pink:#f6e8f0;
 }
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:90px}
-header{padding:27px 20px 20px;background:linear-gradient(135deg,#eee8fa,#f8eaf1);border-radius:0 0 28px 28px}
+body{
+ margin:0;
+ background:var(--bg);
+ color:var(--text);
+ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+ padding-bottom:90px
+}
+header{
+ padding:27px 20px 20px;
+ background:linear-gradient(135deg,#eee8fa,#f8eaf1);
+ border-radius:0 0 28px 28px
+}
 h1{font-size:27px;margin:0;color:var(--dark)}
 .sub{color:var(--muted);font-size:13px;margin-top:6px}
 main{padding:18px;max-width:650px;margin:auto}
 h2{font-size:19px;margin:22px 0 12px}
-.card{background:var(--card);border-radius:20px;padding:17px;margin-bottom:13px;box-shadow:0 4px 18px #51416b0b}
+.card{
+ background:var(--card);
+ border-radius:20px;
+ padding:17px;
+ margin-bottom:13px;
+ box-shadow:0 4px 18px #51416b0b
+}
 .row{display:flex;justify-content:space-between;align-items:center;gap:12px}
 .small{font-size:13px;color:var(--muted)}
 .big{font-size:25px;font-weight:700;color:var(--dark)}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-button{border:0;border-radius:14px;background:var(--soft);color:var(--dark);padding:12px 15px;font-size:14px;font-weight:600;cursor:pointer}
+button{
+ border:0;
+ border-radius:14px;
+ background:var(--soft);
+ color:var(--dark);
+ padding:12px 15px;
+ font-size:14px;
+ font-weight:600;
+ cursor:pointer
+}
 button.primary{background:var(--purple);color:white}
-input,select,textarea{width:100%;border:1px solid #e9e2f0;background:#fcfbfd;border-radius:12px;padding:12px;font-size:16px;color:var(--text);margin:6px 0 12px}
+input,select,textarea{
+ width:100%;
+ border:1px solid #e9e2f0;
+ background:#fcfbfd;
+ border-radius:12px;
+ padding:12px;
+ font-size:16px;
+ color:var(--text);
+ margin:6px 0 12px
+}
 textarea{min-height:75px}
 label{font-size:13px;color:var(--muted)}
 .item{padding:12px 0;border-bottom:1px solid #f0edf3}
 .item:last-child{border:0}
 .done{text-decoration:line-through;color:var(--muted)}
-.progress{height:9px;background:#eeeaf3;border-radius:9px;overflow:hidden;margin:10px 0}
+.progress{
+ height:9px;
+ background:#eeeaf3;
+ border-radius:9px;
+ overflow:hidden;
+ margin:10px 0
+}
 .progress div{height:100%;background:var(--purple);border-radius:9px}
 .hidden{display:none}
 .delete{background:#f8edf1;color:#a46c82;padding:7px 10px}
-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;justify-content:space-around;padding:9px 2px calc(9px + env(safe-area-inset-bottom));box-shadow:0 -4px 18px #51416b10;z-index:5}
-nav button{background:transparent;padding:7px 4px;font-size:11px;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--muted);flex:1}
+nav{
+ position:fixed;
+ bottom:0;
+ left:0;
+ right:0;
+ background:#fff;
+ display:flex;
+ justify-content:space-around;
+ padding:9px 2px calc(9px + env(safe-area-inset-bottom));
+ box-shadow:0 -4px 18px #51416b10;
+ z-index:5
+}
+nav button{
+ background:transparent;
+ padding:7px 4px;
+ font-size:11px;
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ gap:4px;
+ color:var(--muted);
+ flex:1
+}
 nav button.active{color:var(--dark);background:var(--soft)}
 nav span{font-size:19px}
 </style>
 </head>
+
 <body>
+
 <header>
  <div class="row">
-  <div><h1>Health Diary ♡</h1><div class="sub" id="today"></div></div>
+  <div>
+   <h1>Health Diary ♡</h1>
+   <div class="sub" id="today"></div>
+  </div>
   <div style="font-size:35px">☁️</div>
  </div>
 </header>
+
 <main>
+
+<!-- ГЛАВНАЯ -->
 <section id="home">
  <h2>Мой день ✨</h2>
+
  <div class="grid">
   <div class="card">
    <div class="small">Вода сегодня</div>
@@ -59,21 +135,26 @@ nav span{font-size:19px}
    <div class="progress"><div id="waterBar" style="width:0%"></div></div>
    <button onclick="addWater()">+ Стакан воды</button>
   </div>
+
   <div class="card">
    <div class="small">Мои задачи</div>
    <div class="big" id="taskTotal">0</div>
    <div class="small">выполнено сегодня</div>
   </div>
  </div>
+
  <div class="card">
   <div class="row"><b>Мой настрой</b><span>🌷</span></div>
   <select id="mood" onchange="saveMood()">
    <option value="">Как ты себя чувствуешь?</option>
-   <option>😊 Отлично</option><option>🙂 Хорошо</option>
-   <option>😐 Нормально</option><option>😔 Устала</option>
+   <option>😊 Отлично</option>
+   <option>🙂 Хорошо</option>
+   <option>😐 Нормально</option>
+   <option>😔 Устала</option>
    <option>🥺 Тяжёлый день</option>
   </select>
  </div>
+
  <h2>Быстрый доступ</h2>
  <div class="grid">
   <button onclick="show('health')">💧 Здоровье</button>
@@ -81,38 +162,54 @@ nav span{font-size:19px}
   <button onclick="show('money')">💰 Финансы</button>
   <button onclick="show('notes')">📚 Мои записи</button>
  </div>
+
  <h2>Сегодняшние задачи</h2>
  <div class="card" id="homeTasks"></div>
 </section>
 
+<!-- ЗДОРОВЬЕ -->
 <section id="health" class="hidden">
  <h2>Здоровье 🌿</h2>
+
  <div class="card">
   <div class="small">Вода за сегодня</div>
   <div class="big" id="healthWater">0 мл</div>
   <button onclick="addWater()">+ 250 мл</button>
   <button onclick="addCustomWater()">Другое количество</button>
  </div>
- <div class="card"><b>Добавить показатель</b>
+
+ <div class="card">
+  <b>Добавить показатель</b>
   <form onsubmit="addHealth(event)">
    <label>Что записываем?</label>
    <select id="healthType">
-    <option>Вес</option><option>Сон</option><option>Шаги</option>
-    <option>Калории</option><option>Самочувствие</option>
-    <option>Лекарства</option><option>Другое</option>
+    <option>Вес</option>
+    <option>Сон</option>
+    <option>Шаги</option>
+    <option>Калории</option>
+    <option>Самочувствие</option>
+    <option>Лекарства</option>
+    <option>Другое</option>
    </select>
+
    <label>Значение</label>
    <input id="healthValue" required placeholder="Например, 70 кг или 8 часов">
+
    <label>Комментарий</label>
    <input id="healthComment" placeholder="Необязательно">
+
    <button class="primary" type="submit">Сохранить</button>
   </form>
  </div>
- <h2>История</h2><div class="card" id="healthList"></div>
+
+ <h2>История</h2>
+ <div class="card" id="healthList"></div>
 </section>
 
+<!-- ЗАДАЧИ -->
 <section id="tasks" class="hidden">
  <h2>Мои задачи ☑️</h2>
+
  <div class="card">
   <form onsubmit="addTask(event)">
    <label>Новая задача</label>
@@ -120,33 +217,57 @@ nav span{font-size:19px}
    <button class="primary" type="submit">Добавить задачу</button>
   </form>
  </div>
+
  <div class="card" id="taskList"></div>
 </section>
 
+<!-- ФИНАНСЫ -->
 <section id="money" class="hidden">
  <h2>Мои финансы 💰</h2>
+
  <div class="grid">
-  <div class="card"><div class="small">Доходы</div><div class="big" id="income">0 ₽</div></div>
-  <div class="card"><div class="small">Расходы</div><div class="big" id="expenses">0 ₽</div></div>
+  <div class="card">
+   <div class="small">Доходы</div>
+   <div class="big" id="income">0 ₽</div>
+  </div>
+  <div class="card">
+   <div class="small">Расходы</div>
+   <div class="big" id="expenses">0 ₽</div>
+  </div>
  </div>
- <div class="card"><div class="small">Остаток</div><div class="big" id="balance">0 ₽</div></div>
- <div class="card"><b>Новая операция</b>
+
+ <div class="card">
+  <div class="small">Остаток</div>
+  <div class="big" id="balance">0 ₽</div>
+ </div>
+
+ <div class="card">
+  <b>Новая операция</b>
   <form onsubmit="addMoney(event)">
    <label>Тип операции</label>
-   <select id="moneyType"><option value="expense">Расход</option><option value="income">Доход</option></select>
+   <select id="moneyType">
+    <option value="expense">Расход</option>
+    <option value="income">Доход</option>
+   </select>
+
    <label>Сумма, ₽</label>
    <input id="moneyAmount" type="number" min="1" required placeholder="0">
+
    <label>Категория</label>
    <input id="moneyCategory" required placeholder="Продукты, транспорт...">
+
    <button class="primary" type="submit">Сохранить</button>
   </form>
  </div>
- <h2>История операций</h2><div class="card" id="moneyList"></div>
+
+ <h2>История операций</h2>
+ <div class="card" id="moneyList"></div>
 </section>
 
-
+<!-- ПРИВЫЧКИ -->
 <section id="habits" class="hidden">
  <h2>Мои привычки 🌱</h2>
+
  <div class="card">
   <b>Новая привычка</b>
   <form onsubmit="addHabit(event)">
@@ -155,159 +276,280 @@ nav span{font-size:19px}
    <button class="primary" type="submit">Добавить привычку</button>
   </form>
  </div>
+
  <div class="card">
-  <div class="row"><b>Мой прогресс сегодня</b><span id="habitProgress">0/0</span></div>
-  <div class="progress"><div id="habitBar" style="width:0%"></div></div>
+  <div class="row">
+   <b>Мой прогресс сегодня</b>
+   <span id="habitProgress">0/0</span>
+  </div>
+  <div class="progress">
+   <div id="habitBar" style="width:0%"></div>
+  </div>
   <div id="habitList"></div>
  </div>
 </section>
 
+<!-- КАЛЕНДАРЬ -->
 <section id="calendar" class="hidden">
  <h2>Мой календарь 📅</h2>
+
  <div class="card">
   <label>Выбери дату</label>
   <input type="date" id="eventDate">
+
   <label>План или событие</label>
   <input id="eventName" placeholder="Например, тренировка">
+
   <button class="primary" onclick="addEvent()">Добавить в календарь</button>
  </div>
+
  <h2>Мои планы</h2>
  <div class="card" id="eventList"></div>
 </section>
+
+<!-- ЗАПИСИ -->
 <section id="notes" class="hidden">
  <h2>Моё пространство 📚</h2>
- <div class="card"><b>Новая запись</b>
+
+ <div class="card">
+  <b>Новая запись</b>
   <form onsubmit="addNote(event)">
    <label>Раздел</label>
    <select id="noteType">
-    <option>Заметка</option><option>Книга</option>
-    <option>Фильм или сериал</option><option>Покупки</option>
-    <option>Желание</option><option>Идея</option><option>План</option>
+    <option>Заметка</option>
+    <option>Книга</option>
+    <option>Фильм или сериал</option>
+    <option>Покупки</option>
+    <option>Желание</option>
+    <option>Идея</option>
+    <option>План</option>
    </select>
+
    <label>Название</label>
    <input id="noteTitle" required placeholder="Название">
+
    <label>Описание</label>
    <textarea id="noteText" placeholder="Добавь подробности..."></textarea>
+
    <button class="primary" type="submit">Сохранить</button>
   </form>
  </div>
- <h2>Мои записи</h2><div class="card" id="noteList"></div>
+
+ <h2>Мои записи</h2>
+ <div class="card" id="noteList"></div>
 </section>
 
+<!-- НАСТРОЙКИ -->
 <section id="settings" class="hidden">
  <h2>Настройки ⚙️</h2>
+
  <div class="card">
   <b>Цель по воде</b>
   <input id="waterGoal" type="number" min="100" value="2100">
   <button onclick="saveGoal()">Сохранить цель</button>
  </div>
+
  <div class="card">
   <b>Резервная копия</b>
   <p class="small">Сохрани свои записи в файл, чтобы не потерять их.</p>
   <button class="primary" onclick="backup()">Скачать резервную копию</button>
+
   <p></p>
   <label>Восстановить данные из копии</label>
   <input type="file" id="restoreFile" accept=".json" onchange="restore(event)">
  </div>
+
  <div class="card">
   <b>О приложении</b>
-  <p class="small">Health Diary — твоё уютное пространство для заботы о себе и организации жизни. Данные хранятся в браузере на этом устройстве.</p>
+  <p class="small">
+   Health Diary — твоё уютное пространство для заботы о себе
+   и организации жизни. Данные хранятся в браузере на этом устройстве.
+  </p>
  </div>
 </section>
+
 </main>
 
+<!-- НИЖНЕЕ МЕНЮ -->
 <nav>
- <button class="active" data-tab="home" onclick="show('home')"><span>⌂</span>Главная</button>
- <button data-tab="health" onclick="show('health')"><span>♡</span>Здоровье</button>
- <button data-tab="tasks" onclick="show('tasks')"><span>✓</span>Задачи</button>
- <button data-tab="money" onclick="show('money')"><span>₽</span>Финансы</button>
- <button data-tab="habits" onclick="show('habits')"><span>🌱</span>Привычки</button>
- <button data-tab="calendar" onclick="show('calendar')"><span>📅</span>Календарь</button>
-
-<section id="habits" class="hidden">
- <h2>Мои привычки 🌱</h2>
- <div class="card">
-  <b>Новая привычка</b>
-  <form onsubmit="addHabit(event)">
-   <label>Название привычки</label>
-   <input id="habitName" required placeholder="Например, зарядка">
-   <button class="primary" type="submit">Добавить привычку</button>
-  </form>
- </div>
- <div class="card">
-  <div class="row"><b>Мой прогресс сегодня</b><span id="habitProgress">0/0</span></div>
-  <div class="progress"><div id="habitBar" style="width:0%"></div></div>
-  <div id="habitList"></div>
- </div>
-</section>
-
-<section id="calendar" class="hidden">
- <h2>Мой календарь 📅</h2>
- <div class="card">
-  <label>Выбери дату</label>
-  <input type="date" id="eventDate">
-  <label>План или событие</label>
-  <input id="eventName" placeholder="Например, тренировка">
-  <button class="primary" onclick="addEvent()">Добавить в календарь</button>
- </div>
- <h2>Мои планы</h2>
- <div class="card" id="eventList"></div>
-</section>
- <button data-tab="notes" onclick="show('notes')"><span>✿</span>Записи</button>
- <button data-tab="settings" onclick="show('settings')"><span>⚙</span>Ещё</button>
+ <button class="active" data-tab="home" onclick="show('home')">
+  <span>⌂</span>Главная
+ </button>
+ <button data-tab="health" onclick="show('health')">
+  <span>♡</span>Здоровье
+ </button>
+ <button data-tab="tasks" onclick="show('tasks')">
+  <span>✓</span>Задачи
+ </button>
+ <button data-tab="money" onclick="show('money')">
+  <span>₽</span>Финансы
+ </button>
+ <button data-tab="habits" onclick="show('habits')">
+  <span>🌱</span>Привычки
+ </button>
+ <button data-tab="calendar" onclick="show('calendar')">
+  <span>📅</span>Календарь
+ </button>
+ <button data-tab="notes" onclick="show('notes')">
+  <span>✿</span>Записи
+ </button>
+ <button data-tab="settings" onclick="show('settings')">
+  <span>⚙</span>Ещё
+ </button>
 </nav>
 
 <script>
-const today=new Date().toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'});
-document.getElementById('today').textContent=today.charAt(0).toUpperCase()+today.slice(1);
+const today = new Date().toLocaleDateString('ru-RU',{
+ weekday:'long',
+ day:'numeric',
+ month:'long'
+});
 
-const key='healthDiaryData';
-let db={water:[],health:[],tasks:[],money:[],notes:[],habits:[],events:[],goal:2100,moods:{}};
-try{db={...db,...JSON.parse(localStorage.getItem(key)||'{}')}}catch(e){}
+document.getElementById('today').textContent =
+ today.charAt(0).toUpperCase() + today.slice(1);
 
-function save(){localStorage.setItem(key,JSON.stringify(db));render()}
-function dateKey(){return new Date().toLocaleDateString('sv-SE')}
+const key = 'healthDiaryData';
 
-function show(id){
- document.querySelectorAll('main section').forEach(s=>s.classList.add('hidden'));
- document.getElementById(id).classList.remove('hidden');
- document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));
+let db = {
+ water:[],
+ health:[],
+ tasks:[],
+ money:[],
+ notes:[],
+ habits:[],
+ events:[],
+ goal:2100,
+ moods:{}
+};
+
+try {
+ const stored = JSON.parse(localStorage.getItem(key) || '{}');
+ db = {...db,...stored};
+
+ if(!Array.isArray(db.habits)) db.habits = [];
+ if(!Array.isArray(db.events)) db.events = [];
+ if(!db.moods) db.moods = {};
+} catch(e) {
+ console.error('Ошибка чтения данных',e);
+}
+
+function dateKey(){
+ return new Date().toLocaleDateString('sv-SE');
+}
+
+function save(){
+ localStorage.setItem(key,JSON.stringify(db));
  render();
 }
 
-function addWater(){db.water.push({date:dateKey(),amount:250});save()}
-function addCustomWater(){
- let n=Number(prompt('Сколько миллилитров?'));
- if(n>0){db.water.push({date:dateKey(),amount:n});save()}
+function show(id){
+ document.querySelectorAll('main section').forEach(section=>{
+  section.classList.add('hidden');
+ });
+
+ const target = document.getElementById(id);
+ if(target) target.classList.remove('hidden');
+
+ document.querySelectorAll('nav button').forEach(button=>{
+  button.classList.toggle('active',button.dataset.tab===id);
+ });
+
+ render();
 }
-function saveMood(){db.moods[dateKey()]=document.getElementById('mood').value;save()}
+
+function addWater(){
+ db.water.push({
+  date:dateKey(),
+  amount:250
+ });
+ save();
+}
+
+function addCustomWater(){
+ const n = Number(prompt('Сколько миллилитров?'));
+
+ if(n>0){
+  db.water.push({
+   date:dateKey(),
+   amount:n
+  });
+  save();
+ }
+}
+
+function saveMood(){
+ db.moods[dateKey()] = document.getElementById('mood').value;
+ save();
+}
 
 function addHealth(e){
  e.preventDefault();
- db.health.unshift({type:healthType.value,value:healthValue.value,comment:healthComment.value,date:dateKey()});
- e.target.reset();save();
+
+ db.health.unshift({
+  type:document.getElementById('healthType').value,
+  value:document.getElementById('healthValue').value,
+  comment:document.getElementById('healthComment').value,
+  date:dateKey()
+ });
+
+ e.target.reset();
+ save();
 }
+
 function addTask(e){
  e.preventDefault();
- db.tasks.unshift({name:taskName.value,done:false,date:dateKey()});
- e.target.reset();save();
+
+ db.tasks.unshift({
+  name:document.getElementById('taskName').value.trim(),
+  done:false,
+  date:dateKey()
+ });
+
+ e.target.reset();
+ save();
 }
-function toggleTask(i){db.tasks[i].done=!db.tasks[i].done;save()}
+
+function toggleTask(i){
+ db.tasks[i].done = !db.tasks[i].done;
+ save();
+}
 
 function addMoney(e){
  e.preventDefault();
- db.money.unshift({type:moneyType.value,amount:Number(moneyAmount.value),category:moneyCategory.value,date:dateKey()});
- e.target.reset();save();
-}
-function addNote(e){
- e.preventDefault();
- db.notes.unshift({type:noteType.value,title:noteTitle.value,text:noteText.value,date:dateKey()});
- e.target.reset();save();
-}
-function del(arr,i){
- if(confirm('Удалить эту запись?')){arr.splice(i,1);save()}
+
+ db.money.unshift({
+  type:document.getElementById('moneyType').value,
+  amount:Number(document.getElementById('moneyAmount').value),
+  category:document.getElementById('moneyCategory').value.trim(),
+  date:dateKey()
+ });
+
+ e.target.reset();
+ save();
 }
 
+function addNote(e){
+ e.preventDefault();
+
+ db.notes.unshift({
+  type:document.getElementById('noteType').value,
+  title:document.getElementById('noteTitle').value.trim(),
+  text:document.getElementById('noteText').value,
+  date:dateKey()
+ });
+
+ e.target.reset();
+ save();
+}
+
+function del(arr,i){
+ if(confirm('Удалить эту запись?')){
+  arr.splice(i,1);
+  save();
+ }
+}
+
+/* ПРИВЫЧКИ */
 
 function addHabit(e){
  e.preventDefault();
@@ -318,8 +560,8 @@ function addHabit(e){
  if(!name) return;
 
  db.habits.push({
-  name: name,
-  completed: []
+  name:name,
+  completed:[]
  });
 
  input.value = '';
@@ -327,23 +569,36 @@ function addHabit(e){
 }
 
 function toggleHabit(i){
- const today=dateKey();
- const dates=db.habits[i].completed;
- const index=dates.indexOf(today);
- if(index>=0) dates.splice(index,1);
- else dates.push(today);
+ const today = dateKey();
+ const dates = db.habits[i].completed;
+ const index = dates.indexOf(today);
+
+ if(index>=0){
+  dates.splice(index,1);
+ } else {
+  dates.push(today);
+ }
+
  save();
 }
 
+/* КАЛЕНДАРЬ */
+
 function addEvent(){
- const date=document.getElementById('eventDate').value;
- const name=document.getElementById('eventName').value.trim();
+ const date = document.getElementById('eventDate').value;
+ const name = document.getElementById('eventName').value.trim();
+
  if(!date || !name){
   alert('Укажи дату и название события');
   return;
  }
- db.events.push({date,name});
- document.getElementById('eventName').value='';
+
+ db.events.push({
+  date:date,
+  name:name
+ });
+
+ document.getElementById('eventName').value = '';
  save();
 }
 
@@ -353,98 +608,253 @@ function deleteEvent(i){
   save();
  }
 }
+
+/* ОТРИСОВКА ДАННЫХ */
+
 function render(){
- const water=db.water.filter(x=>x.date===dateKey()).reduce((s,x)=>s+x.amount,0);
- document.getElementById('waterTotal').textContent=water+' мл';
- document.getElementById('healthWater').textContent=water+' мл';
- document.getElementById('waterBar').style.width=Math.min(100,water/(db.goal||2100)*100)+'%';
- document.getElementById('taskTotal').textContent=
- db.tasks.filter(x=>x.date===dateKey()&&x.done).length+'/'+
- db.tasks.filter(x=>x.date===dateKey()).length;
- document.getElementById('mood').value=db.moods[dateKey()]||'';
- document.getElementById('waterGoal').value=db.goal;
 
- const tasks=db.tasks.filter(x=>x.date===dateKey());
- document.getElementById('homeTasks').innerHTML=tasks.length?
- tasks.map(t=>`<div class="item ${t.done?'done':''}">${t.done?'✓':'○'} ${esc(t.name)}</div>`).join(''):
- '<span class="small">Пока задач нет. Можно выдохнуть ☁️</span>';
+ const today = dateKey();
 
- document.getElementById('taskList').innerHTML=tasks.length?
- tasks.map(t=>{
- let i=db.tasks.indexOf(t);
- return `<div class="item row"><label><input style="width:auto;margin-right:8px" type="checkbox" ${t.done?'checked':''} onchange="toggleTask(${i})"><span class="${t.done?'done':''}">${esc(t.name)}</span></label><button class="delete" onclick="del(db.tasks,${i})">×</button></div>`
- }).join(''):'<span class="small">Добавь первую задачу выше 🌷</span>';
+ /* ВОДА */
 
- document.getElementById('healthList').innerHTML=db.health.map((x,i)=>
- `<div class="item row"><div><b>${esc(x.type)}: ${esc(x.value)}</b><div class="small">${x.date} · ${esc(x.comment||'')}</div></div><button class="delete" onclick="del(db.health,${i})">×</button></div>`
- ).join('')||'<span class="small">Записей пока нет</span>';
+ const water = db.water
+  .filter(x=>x.date===today)
+  .reduce((s,x)=>s+Number(x.amount),0);
 
- let inc=db.money.filter(x=>x.type==='income').reduce((s,x)=>s+x.amount,0);
- let out=db.money.filter(x=>x.type==='expense').reduce((s,x)=>s+x.amount,0);
- document.getElementById('income').textContent=inc.toLocaleString('ru-RU')+' ₽';
- document.getElementById('expenses').textContent=out.toLocaleString('ru-RU')+' ₽';
- document.getElementById('balance').textContent=(inc-out).toLocaleString('ru-RU')+' ₽';
+ document.getElementById('waterTotal').textContent = water+' мл';
+ document.getElementById('healthWater').textContent = water+' мл';
 
- document.getElementById('moneyList').innerHTML=db.money.map((x,i)=>
- `<div class="item row"><div><b>${x.type==='income'?'+':'−'}${x.amount.toLocaleString('ru-RU')} ₽ · ${esc(x.category)}</b><div class="small">${x.date}</div></div><button class="delete" onclick="del(db.money,${i})">×</button></div>`
- ).join('')||'<span class="small">Операций пока нет</span>';
+ document.getElementById('waterBar').style.width =
+  Math.min(100,water/(db.goal||2100)*100)+'%';
 
- document.getElementById('noteList').innerHTML=db.notes.map((x,i)=>
- `<div class="item"><div class="row"><b>${esc(x.title)}</b><button class="delete" onclick="del(db.notes,${i})">×</button></div><div class="small">${esc(x.type)} · ${x.date}</div><p>${esc(x.text||'')}</p></div>`
- ).join('')||'<span class="small">Записей пока нет</span>';
+ /* ЗАДАЧИ */
+
+ const todayTasks = db.tasks.filter(x=>x.date===today);
+
+ const completedTasks = todayTasks.filter(x=>x.done).length;
+
+ document.getElementById('taskTotal').textContent =
+  completedTasks+'/'+todayTasks.length;
+
+ document.getElementById('mood').value =
+  db.moods[today]||'';
+
+ document.getElementById('waterGoal').value = db.goal;
+
+ document.getElementById('homeTasks').innerHTML =
+  todayTasks.length
+   ? todayTasks.map(t=>
+      `<div class="item ${t.done?'done':''}">
+       ${t.done?'✓':'○'} ${esc(t.name)}
+      </div>`
+     ).join('')
+   : '<span class="small">Пока задач нет. Можно выдохнуть ☁️</span>';
+
+ document.getElementById('taskList').innerHTML =
+  todayTasks.length
+   ? todayTasks.map(t=>{
+      const i = db.tasks.indexOf(t);
+
+      return `
+       <div class="item row">
+        <label>
+         <input
+          style="width:auto;margin-right:8px"
+          type="checkbox"
+          ${t.done?'checked':''}
+          onchange="toggleTask(${i})">
+         <span class="${t.done?'done':''}">${esc(t.name)}</span>
+        </label>
+        <button class="delete" onclick="del(db.tasks,${i})">×</button>
+       </div>
+      `;
+     }).join('')
+   : '<span class="small">Добавь первую задачу выше 🌷</span>';
+
+ /* ЗДОРОВЬЕ */
+
+ document.getElementById('healthList').innerHTML =
+  db.health.map((x,i)=>`
+   <div class="item row">
+    <div>
+     <b>${esc(x.type)}: ${esc(x.value)}</b>
+     <div class="small">${esc(x.date)} · ${esc(x.comment||'')}</div>
+    </div>
+    <button class="delete" onclick="del(db.health,${i})">×</button>
+   </div>
+  `).join('') || '<span class="small">Записей пока нет</span>';
+
+ /* ФИНАНСЫ */
+
+ const inc = db.money
+  .filter(x=>x.type==='income')
+  .reduce((s,x)=>s+Number(x.amount),0);
+
+ const out = db.money
+  .filter(x=>x.type==='expense')
+  .reduce((s,x)=>s+Number(x.amount),0);
+
+ document.getElementById('income').textContent =
+  inc.toLocaleString('ru-RU')+' ₽';
+
+ document.getElementById('expenses').textContent =
+  out.toLocaleString('ru-RU')+' ₽';
+
+ document.getElementById('balance').textContent =
+  (inc-out).toLocaleString('ru-RU')+' ₽';
+
+ document.getElementById('moneyList').innerHTML =
+  db.money.map((x,i)=>`
+   <div class="item row">
+    <div>
+     <b>${x.type==='income'?'+':'−'}${Number(x.amount).toLocaleString('ru-RU')} ₽ · ${esc(x.category)}</b>
+     <div class="small">${esc(x.date)}</div>
+    </div>
+    <button class="delete" onclick="del(db.money,${i})">×</button>
+   </div>
+  `).join('') || '<span class="small">Операций пока нет</span>';
+
+ /* ЗАПИСИ */
+
+ document.getElementById('noteList').innerHTML =
+  db.notes.map((x,i)=>`
+   <div class="item">
+    <div class="row">
+     <b>${esc(x.title)}</b>
+     <button class="delete" onclick="del(db.notes,${i})">×</button>
+    </div>
+    <div class="small">${esc(x.type)} · ${esc(x.date)}</div>
+    <p>${esc(x.text||'')}</p>
+   </div>
+  `).join('') || '<span class="small">Записей пока нет</span>';
+
+ /* ПРИВЫЧКИ */
+
+ document.getElementById('habitList').innerHTML =
+  db.habits.map((h,i)=>{
+   if(!Array.isArray(h.completed)) h.completed = [];
+
+   const done = h.completed.includes(today);
+
+   return `
+    <div class="item row">
+     <label>
+      <input
+       style="width:auto"
+       type="checkbox"
+       ${done?'checked':''}
+       onchange="toggleHabit(${i})">
+      <span class="${done?'done':''}">${esc(h.name)}</span>
+     </label>
+     <span class="small">${h.completed.length} дн.</span>
+    </div>
+   `;
+  }).join('') || '<span class="small">Добавь свою первую привычку 🌱</span>';
+
+ const completedHabits = db.habits.filter(h=>
+  Array.isArray(h.completed) && h.completed.includes(today)
+ ).length;
+
+ document.getElementById('habitProgress').textContent =
+  completedHabits+'/'+db.habits.length;
+
+ document.getElementById('habitBar').style.width =
+  (db.habits.length ? completedHabits/db.habits.length*100 : 0)+'%';
+
+ /* КАЛЕНДАРЬ */
+
+ document.getElementById('eventList').innerHTML =
+  db.events
+   .map((ev,i)=>({ev,i}))
+   .sort((a,b)=>a.ev.date.localeCompare(b.ev.date))
+   .map(({ev,i})=>`
+    <div class="item row">
+     <div>
+      <b>${esc(ev.name)}</b>
+      <div class="small">${esc(ev.date)}</div>
+     </div>
+     <button class="delete" onclick="deleteEvent(${i})">×</button>
+    </div>
+   `).join('') || '<span class="small">Планов пока нет 📅</span>';
 }
+
+/* ЦЕЛЬ ПО ВОДЕ */
 
 function saveGoal(){
- let n=Number(waterGoal.value);
- if(n>0){db.goal=n;save();alert('Цель сохранена!')}
+ const n = Number(document.getElementById('waterGoal').value);
 
- document.getElementById('habitList').innerHTML=db.habits.map((h,i)=>{
-  const done=h.completed.includes(dateKey());
-  return `<div class="item row">
-   <label>
-    <input style="width:auto" type="checkbox" ${done?'checked':''} onchange="toggleHabit(${i})">
-    <span class="${done?'done':''}">${esc(h.name)}</span>
-   </label>
-   <span class="small">${h.completed.length} дн.</span>
-  </div>`;
- }).join('')||'<span class="small">Добавь свою первую привычку 🌱</span>';
-
- const completed=db.habits.filter(h=>h.completed.includes(dateKey())).length;
- document.getElementById('habitProgress').textContent=completed+'/'+db.habits.length;
- document.getElementById('habitBar').style.width=(db.habits.length?completed/db.habits.length*100:0)+'%';
-
- document.getElementById('eventList').innerHTML=db.events
-  .map((ev,i)=>({ev,i}))
-  .sort((a,b)=>a.ev.date.localeCompare(b.ev.date))
-  .map(({ev,i})=>`<div class="item row">
-   <div><b>${esc(ev.name)}</b><div class="small">${ev.date}</div></div>
-   <button class="delete" onclick="deleteEvent(${i})">×</button>
-  </div>`).join('')||'<span class="small">Планов пока нет 📅</span>';
+ if(n>0){
+  db.goal = n;
+  save();
+  alert('Цель сохранена!');
+ }
 }
+
+/* РЕЗЕРВНАЯ КОПИЯ */
+
 function backup(){
- let blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});
- let a=document.createElement('a');
- a.href=URL.createObjectURL(blob);
- a.download='health-diary-backup.json';
+ const blob = new Blob(
+  [JSON.stringify(db,null,2)],
+  {type:'application/json'}
+ );
+
+ const url = URL.createObjectURL(blob);
+ const a = document.createElement('a');
+
+ a.href = url;
+ a.download = 'health-diary-backup.json';
  a.click();
- URL.revokeObjectURL(a.href);
+
+ URL.revokeObjectURL(url);
 }
+
+/* ВОССТАНОВЛЕНИЕ ДАННЫХ */
+
 function restore(e){
- let f=e.target.files[0];if(!f)return;
- let r=new FileReader();
- r.onload=()=>{
+ const f = e.target.files[0];
+ if(!f) return;
+
+ const r = new FileReader();
+
+ r.onload = ()=>{
   try{
-   let d=JSON.parse(r.result);
-   if(!confirm('Заменить текущие данные данными из копии?'))return;
-   db={...db,...d};save();alert('Данные восстановлены!');
-  }catch(err){alert('Не удалось прочитать файл')}
+   const d = JSON.parse(r.result);
+
+   if(!confirm('Заменить текущие данные данными из копии?')){
+    return;
+   }
+
+   db = {...db,...d};
+
+   if(!Array.isArray(db.habits)) db.habits = [];
+   if(!Array.isArray(db.events)) db.events = [];
+
+   save();
+   alert('Данные восстановлены!');
+  }catch(err){
+   alert('Не удалось прочитать файл');
+  }
  };
+
  r.readAsText(f);
 }
+
+/* ЗАЩИТА ТЕКСТА */
+
 function esc(s){
- return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ return String(s??'').replace(/[&<>"']/g,c=>({
+  '&':'&amp;',
+  '<':'&lt;',
+  '>':'&gt;',
+  '"':'&quot;',
+  "'":'&#39;'
+ }[c]));
 }
+
+/* ЗАПУСК */
+
 render();
+
 </script>
 </body>
 </html>
