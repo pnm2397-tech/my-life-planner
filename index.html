@@ -144,6 +144,36 @@ nav span{font-size:19px}
  <h2>История операций</h2><div class="card" id="moneyList"></div>
 </section>
 
+
+<section id="habits" class="hidden">
+ <h2>Мои привычки 🌱</h2>
+ <div class="card">
+  <b>Новая привычка</b>
+  <form onsubmit="addHabit(event)">
+   <label>Название привычки</label>
+   <input id="habitName" required placeholder="Например, зарядка">
+   <button class="primary" type="submit">Добавить привычку</button>
+  </form>
+ </div>
+ <div class="card">
+  <div class="row"><b>Мой прогресс сегодня</b><span id="habitProgress">0/0</span></div>
+  <div class="progress"><div id="habitBar" style="width:0%"></div></div>
+  <div id="habitList"></div>
+ </div>
+</section>
+
+<section id="calendar" class="hidden">
+ <h2>Мой календарь 📅</h2>
+ <div class="card">
+  <label>Выбери дату</label>
+  <input type="date" id="eventDate">
+  <label>План или событие</label>
+  <input id="eventName" placeholder="Например, тренировка">
+  <button class="primary" onclick="addEvent()">Добавить в календарь</button>
+ </div>
+ <h2>Мои планы</h2>
+ <div class="card" id="eventList"></div>
+</section>
 <section id="notes" class="hidden">
  <h2>Моё пространство 📚</h2>
  <div class="card"><b>Новая запись</b>
