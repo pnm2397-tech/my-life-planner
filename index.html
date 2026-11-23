@@ -1,103 +1,674 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#f6f4f0">
+<meta name="theme-color" content="#ffffff">
 <title>Health Diary</title>
 <style>
-:root{--bg:#FFF8DF;--card:#FFFFFF;--ink:#45413D;--muted:#8E8983;--accent:#D9CDA7;--accent2:#F7F1DF;--line:#EEE8D9;--danger:#B78E8A;--nav:rgba(255,255,255,.94);--radius:18px}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:calc(94px + env(safe-area-inset-bottom))}header{padding:24px 18px 14px;max-width:850px;margin:auto}header h1{font-size:25px;margin:0 0 4px;font-weight:750}header p{margin:0;color:var(--muted)}main{max-width:850px;margin:auto;padding:0 14px}section{display:none;padding:8px 0 22px}section.active{display:block}.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin:10px 0;box-shadow:0 3px 12px #33333306}.card h2,.card h3{margin:0 0 12px}.card h2{font-size:19px}.card h3{font-size:16px}.muted,small{color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.stats-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.stat{background:var(--accent2);border-radius:14px;padding:12px}.stat b{display:block;font-size:20px}.stat small{font-size:12px}button,.button{border:0;border-radius:12px;background:var(--accent);color:white;padding:11px 14px;font:inherit;font-weight:600;cursor:pointer}button.secondary,.button.secondary{background:var(--accent2);color:var(--ink)}button.danger{background:var(--accent2);color:var(--danger)}button:disabled{opacity:.5}input,select,textarea{width:100%;border:1px solid var(--line);background:var(--card);border-radius:11px;padding:11px 12px;font:inherit;color:var(--ink);margin:5px 0 11px;min-width:0}textarea{min-height:82px;resize:vertical}label{display:block;font-size:13px;color:var(--muted);font-weight:600}form .row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.actions{display:flex;gap:8px;flex-wrap:wrap}.item{border-top:1px solid var(--line);padding:12px 0;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.item:first-child{border-top:0}.item-main{min-width:0;flex:1}.item-title{font-weight:650}.item-meta{font-size:12px;color:var(--muted);margin-top:3px}.item p{margin:5px 0}.item-actions{display:flex;gap:5px;align-items:center;flex-wrap:wrap}.item-actions button{padding:7px 9px;font-size:12px}.checkline{display:flex;align-items:center;gap:8px;color:var(--ink);font-weight:500}.checkline input{width:auto;margin:0}.progress{height:9px;background:var(--line);border-radius:20px;overflow:hidden;margin:8px 0}.progress span{display:block;height:100%;background:var(--accent);width:0}.macro-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin:10px 0}.macro{background:var(--accent2);padding:10px 6px;border-radius:12px;text-align:center}.macro b{display:block;font-size:17px}.macro small{font-size:11px}.bottom-nav{position:fixed;z-index:10;bottom:0;left:0;right:0;background:var(--nav);backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:8px 8px calc(8px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:2px}.bottom-nav button{background:transparent;color:var(--muted);padding:7px 1px;font-size:10px;font-weight:600;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:3px}.bottom-nav button span{font-size:19px}.bottom-nav button.active{background:var(--accent2);color:#3e5b45}.empty{color:var(--muted);padding:12px 0}.pill{display:inline-block;background:var(--accent2);border-radius:30px;padding:4px 9px;font-size:12px}.calendar-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}.calendar-cell{background:var(--accent2);border:1px solid var(--line);border-radius:8px;min-height:64px;padding:5px 3px;font-size:11px;overflow:hidden}.calendar-cell.today{border:2px solid var(--accent)}.calendar-cell .daynum{font-weight:700}.calendar-cell .event-dot{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#52745b}.calendar-head{text-align:center;color:var(--muted);font-size:11px;padding:4px}.food-panel{scroll-margin-top:12px}.food-entry{background:var(--accent2);border-radius:12px;padding:10px;margin:7px 0}.food-entry .item{padding:5px 0}.food-entry .item:first-child{border:0}.mood-buttons{display:flex;gap:8px;flex-wrap:wrap}.mood-buttons button{font-size:24px;background:var(--accent2);padding:9px 12px}.hidden{display:none!important}.footnote{font-size:12px;color:var(--muted)}.habit-week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px;margin:12px 0 5px}.habit-day{text-align:center;font-size:11px;color:var(--muted)}.habit-date{display:block;font-size:10px;margin-top:2px}.habit-dots{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px;margin-top:8px}.habit-dot{width:30px;height:30px;padding:0;margin:auto;border-radius:50%;border:1px solid var(--line);background:var(--card);color:transparent;display:flex;align-items:center;justify-content:center}.habit-dot.done{background:var(--accent2);border-color:var(--accent);color:var(--ink)}.habit-row{padding:13px 0;border-top:1px solid var(--line)}.habit-name{display:flex;justify-content:space-between;align-items:center;gap:8px;font-weight:650}.habit-week-nav{display:flex;justify-content:space-between;align-items:center;gap:8px}.habit-week-nav button{padding:7px 10px}.theme-choice{max-width:100%}@media(min-width:650px){.stats-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.bottom-nav{left:50%;transform:translateX(-50%);width:min(850px,100%);border-radius:18px 18px 0 0}}
+:root{
+  --bg:#f7f7f9;--card:#fff;--text:#292a30;--muted:#858792;
+  --accent:#a8bce9;--accent2:#e9efff;--border:#ececf1;
+  --danger:#e58e9b;--success:#83b99a;--shadow:0 4px 18px #2525450a;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:15px}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.app{max-width:760px;margin:auto;min-height:100vh;padding-bottom:100px}
+header{padding:24px 18px 12px;display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:22px;font-weight:800;letter-spacing:-.7px}
+.date{font-size:12px;color:var(--muted);margin-top:4px}
+main{padding:8px 15px 24px}
+.page{display:none}.page.active{display:block}
+h1{font-size:25px;margin:10px 0 5px;letter-spacing:-.6px}
+h2{font-size:18px;margin:0 0 12px}
+h3{font-size:15px;margin:0 0 9px}
+p{line-height:1.5}
+.muted{color:var(--muted);font-size:13px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:19px;padding:16px;margin:12px 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.metric{background:var(--card);border:1px solid var(--border);border-radius:17px;padding:14px;min-width:0}
+.metric .value{font-size:23px;font-weight:750;margin:6px 0}
+.metric .label{font-size:12px;color:var(--muted)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.row.wrap{flex-wrap:wrap}
+.pill{display:inline-flex;padding:6px 10px;border-radius:20px;background:var(--accent2);font-size:12px}
+.progress{height:9px;background:var(--border);border-radius:20px;overflow:hidden;margin-top:9px}
+.progress span{display:block;height:100%;background:var(--accent);border-radius:20px;width:0}
+.btn{border:0;border-radius:13px;padding:11px 14px;background:var(--accent2);color:var(--text);font-weight:650}
+.btn.primary{background:var(--accent);color:#20283b}
+.btn.danger{background:#fae8eb;color:#9e4556}
+.btn.small{padding:7px 10px;font-size:12px}
+.btn.block{width:100%}
+.btn:active{transform:scale(.98)}
+input,textarea,select{width:100%;padding:12px;border:1px solid var(--border);border-radius:12px;background:var(--card);color:var(--text);outline:none}
+textarea{min-height:85px;resize:vertical}
+.field{margin:10px 0}
+.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.list{display:flex;flex-direction:column;gap:9px}
+.listitem{display:flex;align-items:center;gap:10px;padding:11px;border:1px solid var(--border);border-radius:13px}
+.listitem .grow{flex:1;min-width:0}
+.listitem.done .grow{text-decoration:line-through;color:var(--muted)}
+.iconbtn{border:0;background:transparent;color:var(--muted);font-size:18px;padding:5px}
+.tabs{display:flex;gap:7px;overflow:auto;padding:4px 0 10px}
+.tabs button{white-space:nowrap;border:1px solid var(--border);background:var(--card);border-radius:20px;padding:8px 12px;font-size:12px}
+.tabs button.selected{background:var(--accent2);border-color:var(--accent)}
+.bottomnav{position:fixed;bottom:0;left:0;right:0;z-index:10;background:var(--card);border-top:1px solid var(--border);display:flex;justify-content:center;padding:9px 5px calc(9px + env(safe-area-inset-bottom))}
+.navinner{width:100%;max-width:760px;display:grid;grid-template-columns:repeat(5,1fr);gap:2px}
+.navitem{border:0;background:none;color:var(--muted);font-size:10px;padding:5px 1px;display:flex;flex-direction:column;align-items:center;gap:4px}
+.navitem b{font-size:20px;font-weight:500}
+.navitem.active{color:var(--text)}
+.navitem.active b{background:var(--accent2);border-radius:12px;padding:3px 13px}
+.score{font-size:38px;font-weight:800;letter-spacing:-1px}
+.scorecircle{width:105px;height:105px;border-radius:50%;display:grid;place-items:center;background:var(--accent2);margin:auto}
+hr{border:0;border-top:1px solid var(--border);margin:14px 0}
+.empty{text-align:center;padding:20px;color:var(--muted);font-size:13px}
+.tag{font-size:11px;padding:4px 7px;border-radius:8px;background:var(--accent2)}
+.check{width:19px;height:19px;accent-color:var(--accent)}
+.smalltext{font-size:12px;color:var(--muted)}
+.themegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.themechoice{border:2px solid var(--border);border-radius:14px;padding:10px;background:var(--card);text-align:left}
+.themechoice.active{border-color:var(--accent)}
+.theme-swatch{height:24px;border-radius:8px;margin-bottom:7px}
+canvas{max-width:100%}
+@media(min-width:600px){main{padding:12px 22px 30px}.card{padding:19px}}
 </style>
 </head>
 <body>
-<header><h1>Health Diary 🌿</h1><p>Твой дневник заботы о себе</p></header>
+<div class="app">
+<header>
+  <div>
+    <div class="logo">♡ Health Diary</div>
+    <div class="date" id="headerDate"></div>
+  </div>
+  <button class="btn small" onclick="navigate('more')">⚙</button>
+</header>
+
 <main>
-<section id="home" class="active">
- <div class="card"><h2>Сегодня</h2><div class="stats-grid"><div class="stat"><b id="homeWater">0 мл</b><small>Вода</small></div><div class="stat"><b id="homeFood">0 ккал</b><small>Питание</small></div><div class="stat"><b id="homeTasks">0/0</b><small>Задачи</small></div><div class="stat"><b id="homeMood">—</b><small>Настроение</small></div></div></div>
- <div class="card"><h3>Вода</h3><div class="progress"><span id="waterProgress"></span></div><p class="muted" id="waterGoalText">Цель: 2100 мл</p><div class="actions"><button onclick="addWater(150)">+150 мл</button><button onclick="addWater(250)">+250 мл</button><button onclick="addWater(500)">+500 мл</button></div><label style="margin-top:12px">Своя порция, мл</label><div class="actions"><input id="customWater" type="number" min="1" placeholder="Например, 300" style="max-width:150px;margin:0"><button onclick="addWater(document.getElementById('customWater').value)">Добавить</button></div></div>
+<section class="page active" id="page-home">
+  <h1 id="greeting">Доброе утро!</h1>
+  <div class="muted" id="homeDate"></div>
+  <div class="card">
+    <div class="row">
+      <div><div class="muted">Индекс успеха дня</div><div class="score" id="homeScore">0</div></div>
+      <div class="scorecircle"><span style="font-size:28px">✦</span></div>
+    </div>
+    <div class="progress"><span id="scoreBar"></span></div>
+    <div class="muted" id="scoreHint" style="margin-top:9px">Твой день только начинается</div>
+  </div>
+  <div class="grid">
+    <div class="metric"><div class="label">💧 Вода</div><div class="value" id="homeWater">0 мл</div><div class="muted" id="waterGoalText">Цель 2100 мл</div><div class="progress"><span id="waterBar"></span></div></div>
+    <div class="metric"><div class="label">☕ Кофе</div><div class="value" id="homeCoffee">0 мл</div><div class="muted">Учитывается отдельно</div></div>
+    <div class="metric"><div class="label">🌙 Сон</div><div class="value" id="homeSleep">—</div><div class="muted">За прошлую ночь</div></div>
+    <div class="metric"><div class="label">👟 Шаги</div><div class="value" id="homeSteps">0</div><div class="muted">За сегодня</div></div>
+  </div>
+  <div class="card">
+    <div class="row"><h2>Питание</h2><span class="pill" id="homeCalories">0 / 1450 ккал</span></div>
+    <div class="progress"><span id="calorieBar"></span></div>
+    <div class="grid" style="margin-top:13px">
+      <div><div class="muted">Белки</div><b id="homeP">0 / 100 г</b></div>
+      <div><div class="muted">Жиры</div><b id="homeF">0 / 50 г</b></div>
+      <div><div class="muted">Углеводы</div><b id="homeC">0 / 150 г</b></div>
+      <div><div class="muted">Осталось</div><b id="homeRemain">1450 ккал</b></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="row"><h2>Задачи на сегодня</h2><button class="btn small" onclick="navigate('day')">Все задачи</button></div>
+    <div id="homeTasks" class="list"></div>
+  </div>
 </section>
-<section id="day">
- <div class="card"><h2>Мой день</h2><label>Дата</label><input type="date" id="dayDate"><form id="taskForm"><label>Новая задача</label><input id="taskName" required placeholder="Что нужно сделать?"><div class="row"><div><label>Дата задачи</label><input type="date" id="taskDate"></div><div><label>Время начала</label><input type="time" id="taskTime"></div></div><label>Категория</label><select id="taskQuadrant"><option value="Важно и срочно">Важно и срочно</option><option value="Важно, не срочно">Важно, не срочно</option><option value="Срочно, не важно">Срочно, не важно</option><option value="Не срочно и не важно">Не срочно и не важно</option></select><button type="submit">Добавить задачу</button></form></div>
- <div class="card"><h3>Задачи на выбранный день</h3><div id="dayTasks"></div></div>
+
+<section class="page" id="page-day">
+  <h1>Мой день</h1><p class="muted">Планируй, выполняй и отмечай важное.</p>
+  <div class="tabs">
+    <button class="selected" onclick="showSub('day','tasks',this)">Задачи</button>
+    <button onclick="showSub('day','habits',this)">Привычки</button>
+    <button onclick="showSub('day','calendar',this)">Календарь</button>
+    <button onclick="showSub('day','notes',this)">Заметки</button>
+  </div>
+  <div id="day-tasks" class="subpage">
+    <div class="card">
+      <h2>Новая задача</h2>
+      <div class="field"><input id="taskTitle" placeholder="Что нужно сделать?"></div>
+      <div class="formgrid">
+        <div class="field"><label>Приоритет</label><select id="taskPriority"><option value="important">Важно и срочно</option><option value="plan">Важно, не срочно</option><option value="delegate">Срочно, не важно</option><option value="later">Не срочно и не важно</option></select></div>
+        <div class="field"><label>Дата</label><input type="date" id="taskDate"></div>
+      </div>
+      <button class="btn primary block" onclick="addTask()">Добавить задачу</button>
+    </div>
+    <div class="card"><h2>Матрица Эйзенхауэра</h2><div id="taskList" class="list"></div></div>
+  </div>
+  <div id="day-habits" class="subpage" style="display:none">
+    <div class="card"><h2>Новая привычка</h2><input id="habitTitle" placeholder="Например, прогулка 20 минут"><button class="btn primary block" style="margin-top:9px" onclick="addHabit()">Добавить</button></div>
+    <div class="card"><h2>Мои привычки</h2><div id="habitList" class="list"></div></div>
+  </div>
+  <div id="day-calendar" class="subpage" style="display:none">
+    <div class="card"><h2>Календарь</h2><div class="row"><button class="btn small" onclick="changeMonth(-1)">‹</button><b id="monthTitle"></b><button class="btn small" onclick="changeMonth(1)">›</button></div><div id="calendarGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:13px"></div><p class="muted" id="calendarSelected"></p></div>
+  </div>
+  <div id="day-notes" class="subpage" style="display:none">
+    <div class="card"><h2>Заметки</h2><input id="noteTitle" placeholder="Заголовок"><div class="field"><textarea id="noteText" placeholder="Запиши мысли, идеи или планы..."></textarea></div><button class="btn primary block" onclick="addNote()">Сохранить заметку</button></div>
+    <div id="noteList" class="list"></div>
+  </div>
 </section>
-<section id="health">
- <div class="card"><h2>Показатели здоровья</h2><form id="healthForm"><label>Показатель</label><select id="healthType"><option>Вес</option><option>Давление</option><option>Пульс</option><option>Температура</option><option>Шаги</option><option>Сон</option><option>Калории</option><option>Другое</option></select><div class="row"><div><label>Значение</label><input id="healthValue" required placeholder="Например, 68.5"></div><div><label>Дата</label><input type="date" id="healthDate"></div></div><label>Комментарий</label><input id="healthComment" placeholder="Необязательно"><button type="submit">Сохранить показатель</button></form><div id="healthList"></div></div>
- <div class="card"><h3>Замеры тела, см</h3><div class="row"><div><label>Грудь</label><input id="measureChest" type="number" step="0.1"></div><div><label>Талия</label><input id="measureWaist" type="number" step="0.1"></div><div><label>Бёдра</label><input id="measureHips" type="number" step="0.1"></div><div><label>Рука</label><input id="measureArm" type="number" step="0.1"></div><div><label>Нога</label><input id="measureLeg" type="number" step="0.1"></div></div><button onclick="saveMeasurements()">Сохранить замеры</button><div id="measurementList"></div></div>
- <div class="card"><h3>Анализы и документы</h3><form id="labForm"><label>Название анализа</label><input id="labName" required placeholder="Например, общий анализ крови"><div class="row"><div><label>Дата</label><input id="labDate" type="date"></div><div><label>Файл</label><input id="labFile" type="file" accept="image/*,.pdf"></div></div><label>Комментарий</label><textarea id="labComment"></textarea><button type="submit">Добавить анализ</button></form><div id="labList"></div></div>
- <div class="card"><h3>Добавки и препараты</h3><form id="supplementForm"><label>Название</label><input id="supplementName" required><div class="row"><div><label>Дозировка</label><input id="supplementDose" placeholder="Например, 1 капсула"></div><div><label>Время</label><input id="supplementTime" type="time"></div></div><label>Комментарий</label><input id="supplementComment"><button type="submit">Добавить</button></form><div id="supplementList"></div></div>
- <div id="food" class="food-panel">
-  <div class="card"><h2>Питание и калории</h2><p class="footnote">Учёт питания, калорий и КБЖУ находится здесь, вместе с показателями здоровья.</p></div>
- <div class="card"><h2>Профиль питания</h2><p class="footnote">Заполни данные вручную, чтобы рассчитать ориентировочную норму.</p><form id="nutritionProfileForm"><div class="row"><div><label>Пол</label><select id="nutritionSex"><option value="female">Женский</option><option value="male">Мужской</option></select></div><div><label>Возраст</label><input id="nutritionAge" type="number" min="14" max="100" required></div><div><label>Рост, см</label><input id="nutritionHeight" type="number" min="100" max="230" required></div><div><label>Текущий вес, кг</label><input id="nutritionWeight" type="number" min="30" max="300" step="0.1" required></div><div><label>Желаемый вес, кг</label><input id="nutritionGoalWeight" type="number" min="30" max="300" step="0.1"></div><div><label>Активность</label><select id="nutritionActivity"><option value="sedentary">Низкая</option><option value="light">Лёгкая</option><option value="moderate">Средняя</option><option value="high">Высокая</option><option value="veryhigh">Очень высокая</option></select></div><div><label>Цель</label><select id="nutritionGoal"><option value="lose">Похудение</option><option value="maintain">Поддержание</option><option value="gain">Набор</option></select></div><div><label>Темп</label><select id="nutritionPace"><option value="slow">Медленный</option><option value="moderate" selected>Умеренный</option><option value="fast">Более быстрый</option></select></div></div><button type="submit">Рассчитать норму</button></form><div id="nutritionTargets"></div></div>
- <div class="card"><h3>Добавить еду</h3><label>Дата</label><input type="date" id="foodDate"><form id="foodForm"><label>Приём пищи</label><select id="foodMeal"><option>Завтрак</option><option>Обед</option><option>Ужин</option><option>Перекус</option></select><label>Продукт</label><div class="actions" style="align-items:center"><input id="foodName" required placeholder="Например, творог или йогурт" style="flex:1;min-width:180px;margin:5px 0"><button type="button" onclick="searchFoodProducts()">Найти продукт</button></div><p class="footnote">Введи название и нажми «Найти продукт». Выбери подходящий вариант — КБЖУ заполнятся автоматически.</p><div id="foodSearchStatus" class="footnote" aria-live="polite"></div><div id="foodSearchResults"></div><div class="row"><div><label>Масса, г</label><input id="foodAmount" type="number" min="0.1" step="0.1" required placeholder="100"></div></div><details style="margin:8px 0 12px"><summary style="cursor:pointer;color:var(--muted);font-size:13px">Если продукт не найден — ввести КБЖУ вручную</summary><div class="row" style="margin-top:10px"><div><label>Калории на 100 г</label><input id="foodCalories" type="number" min="0" step="0.1"></div><div><label>Белки на 100 г</label><input id="foodProtein" type="number" min="0" step="0.1"></div><div><label>Жиры на 100 г</label><input id="foodFat" type="number" min="0" step="0.1"></div><div><label>Углеводы на 100 г</label><input id="foodCarbs" type="number" min="0" step="0.1"></div></div></details><button type="submit">Добавить в дневник</button></form></div>
- <div class="card"><h3>Итог за день</h3><div id="foodDailySummary"></div></div><div class="card"><h3>Приёмы пищи</h3><div id="foodEntriesList"></div></div><div class="card"><h3>Мои продукты</h3><div id="foodProductsList"></div></div></div>
+
+<section class="page" id="page-health">
+  <h1>Здоровье</h1><p class="muted">Все показатели в одном месте.</p>
+  <div class="tabs">
+    <button class="selected" onclick="showSub('health','food',this)">Питание</button>
+    <button onclick="showSub('health','water',this)">Вода</button>
+    <button onclick="showSub('health','sleep',this)">Сон</button>
+    <button onclick="showSub('health','activity',this)">Активность</button>
+    <button onclick="showSub('health','weight',this)">Вес</button>
+    <button onclick="showSub('health','wellbeing',this)">Самочувствие</button>
+    <button onclick="showSub('health','meds',this)">Препараты</button>
+  </div>
+
+  <div id="health-food" class="subpage">
+    <div class="card"><h2>Добавить приём пищи</h2>
+      <div class="field"><input id="foodName" placeholder="Название блюда или продукта"></div>
+      <div class="formgrid">
+        <div class="field"><label>Калории, ккал</label><input type="number" id="foodKcal" min="0"></div>
+        <div class="field"><label>Белки, г</label><input type="number" id="foodP" min="0"></div>
+        <div class="field"><label>Жиры, г</label><input type="number" id="foodF" min="0"></div>
+        <div class="field"><label>Углеводы, г</label><input type="number" id="foodC" min="0"></div>
+      </div>
+      <div class="field"><label>Приём пищи</label><select id="foodType"><option>Завтрак</option><option>Перекус</option><option>Обед</option><option>Полдник</option><option>Ужин</option></select></div>
+      <button class="btn primary block" onclick="addFood()">Сохранить приём пищи</button>
+    </div>
+    <div class="card"><h2>Рацион за день</h2><div id="foodList" class="list"></div></div>
+  </div>
+
+  <div id="health-water" class="subpage" style="display:none">
+    <div class="card"><h2>Вода</h2><div class="score" id="waterTotal">0 мл</div><div class="muted" id="waterGoal">Цель 2100 мл</div><div class="progress"><span id="waterProgress"></span></div><div class="row wrap" style="margin-top:14px"><button class="btn" onclick="addDrink('water',150)">+150 мл</button><button class="btn" onclick="addDrink('water',250)">+250 мл</button><button class="btn" onclick="addDrink('water',500)">+500 мл</button></div><div class="field"><label>Свой объём, мл</label><div class="row"><input type="number" id="customWater" placeholder="Например, 300"><button class="btn primary" onclick="addCustomDrink('water')">Добавить</button></div></div></div>
+    <div class="card"><h2>Кофе</h2><div class="score" id="coffeeTotal">0 мл</div><div class="row wrap"><button class="btn" onclick="addDrink('coffee',150)">+150 мл</button><button class="btn" onclick="addDrink('coffee',200)">+200 мл</button><button class="btn" onclick="addDrink('coffee',250)">+250 мл</button></div><div class="field"><label>Свой объём, мл</label><div class="row"><input type="number" id="customCoffee" placeholder="Например, 200"><button class="btn primary" onclick="addCustomDrink('coffee')">Добавить</button></div></div></div>
+    <div class="card"><h2>История напитков</h2><div id="drinkList" class="list"></div></div>
+  </div>
+
+  <div id="health-sleep" class="subpage" style="display:none">
+    <div class="card"><h2>Сон за прошлую ночь</h2><p class="muted">Запись относится к предыдущему календарному дню.</p><div class="formgrid"><div class="field"><label>Легла спать</label><input type="time" id="sleepStart"></div><div class="field"><label>Проснулась</label><input type="time" id="sleepEnd"></div></div><div class="field"><label>Качество сна</label><select id="sleepQuality"><option value="5">Отличное</option><option value="4">Хорошее</option><option value="3">Среднее</option><option value="2">Плохое</option><option value="1">Очень плохое</option></select></div><button class="btn primary block" onclick="saveSleep()">Сохранить сон</button></div>
+    <div class="card"><h2>История сна</h2><div id="sleepHistory"></div></div>
+  </div>
+
+  <div id="health-activity" class="subpage" style="display:none">
+    <div class="card"><h2>Шаги</h2><div class="field"><label>Количество шагов сегодня</label><input type="number" id="stepsInput" min="0" placeholder="Например, 7500"></div><button class="btn primary block" onclick="saveSteps()">Сохранить шаги</button></div>
+    <div class="card"><h2>Тренировка</h2><div class="field"><label>Вид активности</label><input id="workoutName" placeholder="Тренажёрный зал, прогулка..."></div><div class="formgrid"><div class="field"><label>Длительность, мин</label><input type="number" id="workoutDuration"></div><div class="field"><label>Дата</label><input type="date" id="workoutDate"></div></div><button class="btn primary block" onclick="addWorkout()">Сохранить тренировку</button></div>
+    <div class="card"><h2>Тренировки</h2><div id="workoutList"></div></div>
+  </div>
+
+  <div id="health-weight" class="subpage" style="display:none">
+    <div class="card"><h2>Вес</h2><div class="field"><label>Текущий вес, кг</label><input type="number" step="0.1" id="weightInput"></div><button class="btn primary block" onclick="saveWeight()">Записать вес</button><hr><h2>Замеры тела</h2><div class="formgrid"><div class="field"><label>Талия, см</label><input type="number" id="measureWaist"></div><div class="field"><label>Бёдра, см</label><input type="number" id="measureHips"></div><div class="field"><label>Грудь, см</label><input type="number" id="measureChest"></div><div class="field"><label>Бедро, см</label><input type="number" id="measureThigh"></div></div><button class="btn primary block" onclick="saveMeasures()">Сохранить замеры</button></div>
+    <div class="card"><h2>История веса и замеров</h2><div id="weightHistory"></div></div>
+  </div>
+
+  <div id="health-wellbeing" class="subpage" style="display:none">
+    <div class="card"><h2>Самочувствие</h2><div class="field"><label>Настроение</label><select id="mood"><option value="5">😊 Отличное</option><option value="4">🙂 Хорошее</option><option value="3">😐 Нормальное</option><option value="2">😔 Плохое</option><option value="1">😣 Очень плохое</option></select></div><div class="field"><label>Энергия</label><select id="energy"><option value="5">Очень высокая</option><option value="4">Высокая</option><option value="3">Средняя</option><option value="2">Низкая</option><option value="1">Очень низкая</option></select></div><div class="field"><label>Симптомы и заметки</label><textarea id="symptoms" placeholder="Что беспокоит сегодня?"></textarea></div><button class="btn primary block" onclick="saveWellbeing()">Сохранить</button></div>
+    <div class="card"><h2>История самочувствия</h2><div id="wellbeingHistory"></div></div>
+  </div>
+
+  <div id="health-meds" class="subpage" style="display:none">
+    <div class="card"><h2>Добавить препарат или витамин</h2><div class="field"><input id="medName" placeholder="Название"></div><div class="formgrid"><div class="field"><label>Дозировка</label><input id="medDose" placeholder="Например, 1 таблетка"></div><div class="field"><label>Время</label><input type="time" id="medTime"></div></div><div class="field"><label>Комментарий</label><input id="medComment" placeholder="Курс, назначение..."></div><button class="btn primary block" onclick="addMed()">Добавить</button></div>
+    <div class="card"><h2>Мои препараты</h2><div id="medList" class="list"></div></div>
+  </div>
 </section>
-<section id="calendar"><div class="card"><h2>Календарь</h2><div class="actions" style="justify-content:space-between;align-items:center"><button class="secondary" onclick="changeCalendarMonth(-1)">←</button><strong id="calendarTitle"></strong><button class="secondary" onclick="changeCalendarMonth(1)">→</button></div><div class="calendar-grid" id="calendarGrid" style="margin-top:12px"></div></div><div class="card"><h3>Новое событие</h3><form id="eventForm"><label>Название</label><input id="eventName" required><div class="row"><div><label>Дата</label><input id="eventDate" type="date"></div><div><label>Время</label><input id="eventTime" type="time"></div></div><label>Описание</label><textarea id="eventDescription"></textarea><button type="submit">Добавить событие</button></form><div id="eventList"></div></div></section>
-<section id="more">
- <div id="habits" class="card"><h2>Привычки</h2><form id="habitForm"><label>Название привычки</label><input id="habitName" required placeholder="Например, прогулка"><button type="submit">Добавить привычку</button></form><div class="habit-week-nav"><button class="secondary" type="button" onclick="changeHabitWeek(-1)">←</button><b id="habitWeekTitle">Эта неделя</b><button class="secondary" type="button" onclick="changeHabitWeek(1)">→</button></div><div id="habitWeekHeader" class="habit-week"></div><div id="habitList"></div></div>
- <div class="card"><h2>Моё пространство</h2><h3>Как ты себя чувствуешь?</h3><div class="mood-buttons"><button onclick="addMood('😊')">😊</button><button onclick="addMood('🙂')">🙂</button><button onclick="addMood('😐')">😐</button><button onclick="addMood('😔')">😔</button><button onclick="addMood('😣')">😣</button><button onclick="addMood('🥰')">🥰</button></div><div id="moodList"></div></div>
- <div class="card"><h3>Заметки</h3><form id="noteForm"><label>Заголовок</label><input id="noteTitle" placeholder="Название"><label>Текст</label><textarea id="noteText" placeholder="Запиши свои мысли..."></textarea><button type="submit">Сохранить заметку</button></form><div id="noteList"></div></div>
- <div class="card" id="themeSettings"><h2>Оформление</h2><p class="muted">Выбери один из готовых нежных пастельных вариантов.</p><label for="themePreset">Цвет приложения</label><select id="themePreset" class="theme-choice" onchange="selectTheme(this.value)"><option value="vanilla">Ванильный</option><option value="blue">Облачный голубой</option><option value="lavender">Пудровая лаванда</option><option value="white">Белый</option><option value="black">Чёрно-белый</option><option value="gray">Жемчужно-серый</option><option value="beige">Молочный бежевый</option></select></div>
- <div class="card"><h2>Настройки и данные</h2><label>Дневная цель воды, мл</label><input id="waterGoalInput" type="number" min="1" value="2100"><button onclick="setWaterGoal(document.getElementById('waterGoalInput').value)">Сохранить цель воды</button></div><div class="card"><h3>Резервная копия</h3><p class="muted">Экспортируй копию на устройство. В ней будут записи дневника и доступные вложения анализов.</p><div class="actions"><button onclick="exportData()">Скачать резервную копию</button><button class="secondary" onclick="importData()">Восстановить из копии</button></div><input id="importFile" class="hidden" type="file" accept="application/json,.json"></div><div class="card"><p class="footnote">Данные хранятся локально в браузере на этом устройстве. Регулярно сохраняй резервную копию. Не очищай данные сайта, если хочешь сохранить записи.</p></div>
+
+<section class="page" id="page-stats">
+  <h1>Статистика</h1><p class="muted">Твои результаты и динамика.</p>
+  <div class="tabs"><button class="selected" onclick="showStats('week',this)">Неделя</button><button onclick="showStats('month',this)">Месяц</button><button onclick="showStats('year',this)">Год</button></div>
+  <div class="grid">
+    <div class="metric"><div class="label">Средний индекс</div><div class="value" id="statScore">—</div></div>
+    <div class="metric"><div class="label">Средняя вода</div><div class="value" id="statWater">—</div></div>
+    <div class="metric"><div class="label">Всего шагов</div><div class="value" id="statSteps">—</div></div>
+    <div class="metric"><div class="label">Выполнено задач</div><div class="value" id="statTasks">—</div></div>
+  </div>
+  <div class="card"><h2>Индекс успеха</h2><div id="scoreChart"></div></div>
+  <div class="card"><h2>Вес</h2><div id="weightChart"></div></div>
+  <div class="card"><h2>Недельный обзор</h2><p class="muted">Формируется по воскресеньям. Можно запустить вручную.</p><button class="btn primary block" onclick="generateReview()">Сформировать обзор</button><div id="reviewResult"></div></div>
+</section>
+
+<section class="page" id="page-more">
+  <h1>Ещё</h1>
+  <div class="card">
+    <h2>Профиль и цели</h2>
+    <div class="formgrid">
+      <div class="field"><label>Возраст</label><input type="number" id="profileAge"></div>
+      <div class="field"><label>Рост, см</label><input type="number" id="profileHeight"></div>
+      <div class="field"><label>Вес, кг</label><input type="number" step="0.1" id="profileWeight"></div>
+      <div class="field"><label>Целевой вес, кг</label><input type="number" step="0.1" id="profileGoal"></div>
+    </div>
+    <h3>Личные нормы</h3>
+    <div class="formgrid">
+      <div class="field"><label>Калории</label><input type="number" id="targetKcal"></div>
+      <div class="field"><label>Белки, г</label><input type="number" id="targetP"></div>
+      <div class="field"><label>Жиры, г</label><input type="number" id="targetF"></div>
+      <div class="field"><label>Углеводы, г</label><input type="number" id="targetC"></div>
+      <div class="field"><label>Вода, мл</label><input type="number" id="targetWater"></div>
+      <div class="field"><label>Шаги</label><input type="number" id="targetSteps"></div>
+    </div>
+    <button class="btn primary block" onclick="saveProfile()">Сохранить профиль</button>
+  </div>
+  <div class="card">
+    <h2>Оформление</h2><p class="muted">Выбери готовую тему или создай собственную палитру.</p>
+    <div class="themegrid" id="themeGrid"></div>
+    <hr><h3>Своя тема</h3>
+    <div class="formgrid">
+      <div class="field"><label>Название темы</label><input id="customThemeName" placeholder="Моя тема"></div>
+      <div class="field"><label>Фон</label><input type="color" id="customBg" value="#f7f7f9"></div>
+      <div class="field"><label>Карточки</label><input type="color" id="customCard" value="#ffffff"></div>
+      <div class="field"><label>Текст</label><input type="color" id="customText" value="#292a30"></div>
+      <div class="field"><label>Акцент</label><input type="color" id="customAccent" value="#a8bce9"></div>
+      <div class="field"><label>Дополнительный цвет</label><input type="color" id="customAccent2" value="#e9efff"></div>
+    </div>
+    <button class="btn primary block" onclick="saveCustomTheme()">Сохранить свою тему</button>
+  </div>
+  <div class="card">
+    <h2>Резервная копия</h2><p class="muted">Сохраняй копию данных на устройстве и восстанавливай её при необходимости.</p>
+    <button class="btn primary block" onclick="exportBackup()">Экспортировать данные</button>
+    <div class="field"><label>Импорт резервной копии JSON</label><input type="file" id="backupFile" accept=".json,application/json"></div>
+    <button class="btn block" onclick="importBackup()">Импортировать данные</button>
+  </div>
+  <div class="card">
+    <h2>О приложении</h2>
+    <p class="muted">Health Diary · Личный дневник здоровья и привычек.</p>
+    <button class="btn danger block" onclick="clearAll()">Удалить все данные приложения</button>
+  </div>
 </section>
 </main>
-<nav class="bottom-nav"><button data-section="home" class="active" onclick="show('home')"><span>⌂</span>Главная</button><button data-section="day" onclick="show('day')"><span>☑</span>Мой день</button><button data-section="health" onclick="show('health')"><span>♡</span>Здоровье</button><button data-section="calendar" onclick="show('calendar')"><span>▦</span>Календарь</button><button data-section="more" onclick="show('more')"><span>☰</span>Ещё</button></nav>
+
+<nav class="bottomnav">
+  <div class="navinner">
+    <button class="navitem active" data-page="home" onclick="navigate('home')"><b>⌂</b>Главная</button>
+    <button class="navitem" data-page="day" onclick="navigate('day')"><b>☷</b>Мой день</button>
+    <button class="navitem" data-page="health" onclick="navigate('health')"><b>♡</b>Здоровье</button>
+    <button class="navitem" data-page="stats" onclick="navigate('stats')"><b>▥</b>Статистика</button>
+    <button class="navitem" data-page="more" onclick="navigate('more')"><b>•••</b>Ещё</button>
+  </div>
+</nav>
+</div>
+
 <script>
-'use strict';
-const STORAGE_KEY='healthDiaryData';
-const defaults={water:[],health:[],tasks:[],notes:[],habits:[],events:[],goal:2100,moods:{},moodEntries:[],supplements:[],measurements:[],labs:[],foodEntries:[],foodProducts:[],recipes:[],nutritionProfile:{}};
-function loadData(){try{const s=JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}');const d={...defaults,...s};['water','health','tasks','notes','habits','events','moodEntries','supplements','measurements','labs','foodEntries','foodProducts','recipes'].forEach(k=>{if(!Array.isArray(d[k]))d[k]=[]});if(!d.moods||typeof d.moods!=='object')d.moods={};if(!d.nutritionProfile||typeof d.nutritionProfile!=='object')d.nutritionProfile={};return d}catch(e){alert('Не удалось прочитать данные. Не очищай данные браузера.');return {...defaults}}}
-let data=loadData();
-const THEME_KEY='healthDiaryPreset';
-const THEME_PRESETS={
- vanilla:{bg:'#FFF8DF',card:'#FFFFFF',ink:'#45413D',muted:'#8E8983',accent:'#E9DDAF',accent2:'#FBF4DF',line:'#EEE8D9',danger:'#B78E8A',nav:'rgba(255,255,255,.94)'},
- blue:{bg:'#EDF7FC',card:'#FFFFFF',ink:'#41484D',muted:'#87949B',accent:'#C8E2F0',accent2:'#E5F2F9',line:'#DCEAF1',danger:'#B98E91',nav:'rgba(255,255,255,.94)'},
- lavender:{bg:'#F3EFFA',card:'#FFFFFF',ink:'#494451',muted:'#918A9B',accent:'#DED4EE',accent2:'#F0EAF8',line:'#E7E0F0',danger:'#B88E9B',nav:'rgba(255,255,255,.94)'},
- white:{bg:'#FFFFFF',card:'#FFFFFF',ink:'#3F3F3F',muted:'#8C8C8C',accent:'#EAEAEA',accent2:'#F5F5F5',line:'#EAEAEA',danger:'#B58E8E',nav:'rgba(255,255,255,.96)'},
- black:{bg:'#242424',card:'#303030',ink:'#F4F4F4',muted:'#B9B9B9',accent:'#555555',accent2:'#414141',line:'#505050',danger:'#D3A3A3',nav:'rgba(40,40,40,.96)'},
- gray:{bg:'#F7F7F7',card:'#FFFFFF',ink:'#454545',muted:'#929292',accent:'#E5E5E5',accent2:'#F0F0F0',line:'#E8E8E8',danger:'#B58E8E',nav:'rgba(255,255,255,.94)'},
- beige:{bg:'#FAF4EC',card:'#FFFFFF',ink:'#4C463F',muted:'#93897E',accent:'#EADFD1',accent2:'#F5EDE3',line:'#EDE4D9',danger:'#B78F88',nav:'rgba(255,255,255,.94)'}
+const KEY='healthDiaryData';
+const today=()=>new Date().toISOString().slice(0,10);
+const yesterday=()=>{let d=new Date();d.setDate(d.getDate()-1);return d.toISOString().slice(0,10)};
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const defaults={
+  profile:{age:28,height:161,weight:71.4,goal:60,kcal:1450,p:100,f:50,c:150,water:2100,steps:8000},
+  days:{},tasks:[],habits:[],notes:[],weights:[],measures:[],workouts:[],wellbeing:[],meds:[],
+  themes:[],activeTheme:'white',reviews:{},createdAt:new Date().toISOString()
 };
-const THEME_NAMES={vanilla:'Ванильный',blue:'Облачный голубой',lavender:'Пудровая лаванда',white:'Белый',black:'Чёрно-белый',gray:'Жемчужно-серый',beige:'Молочный бежевый'};
-function applyTheme(name){const key=THEME_PRESETS[name]?name:'vanilla',t=THEME_PRESETS[key];const root=document.documentElement;Object.entries(t).forEach(([k,v])=>root.style.setProperty('--'+k,v));try{localStorage.setItem(THEME_KEY,key)}catch(e){}if(el('themePreset'))el('themePreset').value=key;currentTheme=t;}
-function selectTheme(name){applyTheme(name)}
-function getThemeName(){try{const k=localStorage.getItem(THEME_KEY);return THEME_PRESETS[k]?k:'vanilla'}catch{return 'vanilla'}}
-let currentTheme=THEME_PRESETS[getThemeName()];
-function carryOverTasks(){const today=todayKey();let changed=false;data.tasks.forEach(t=>{if(!t.done&&t.date&&t.date<today){t.date=today;changed=true}});if(changed)saveData()}
-function saveData(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(data));return true}catch(e){alert('Не удалось сохранить данные. Создай резервную копию и проверь свободное место.');return false}}
-const el=id=>document.getElementById(id);const val=id=>el(id)?.value?.trim()||'';const num=id=>{const n=Number(val(id).replace(',','.'));return Number.isFinite(n)?n:0};function id(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}function todayKey(){const d=new Date(),x=new Date(d.getTime()-d.getTimezoneOffset()*60000);return x.toISOString().slice(0,10)}function fmtDate(s){return s?String(s).split('-').reverse().join('.'):''}function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function show(s){const parent=({food:'health',habits:'more'})[s]||s;document.querySelectorAll('main section').forEach(x=>x.classList.toggle('active',x.id===parent));document.querySelectorAll('.bottom-nav button').forEach(x=>x.classList.toggle('active',x.dataset.section===parent));renderAll();window.scrollTo({top:0,behavior:'smooth'});if(s==='food'||s==='habits')setTimeout(()=>el(s)?.scrollIntoView({behavior:'smooth',block:'start'}),180)}
-function addWater(n){n=Number(n);if(!Number.isFinite(n)||n<=0)return;data.water.push({id:id(),amount:n,date:todayKey(),time:new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})});saveData();renderAll()}
-function waterTotal(date=todayKey()){return data.water.filter(x=>x.date===date).reduce((a,x)=>a+Number(x.amount||0),0)}function setWaterGoal(n){n=Number(n);if(n>0){data.goal=n;saveData();renderAll()}}
-function renderWater(){const n=waterTotal(),g=Number(data.goal)||2100;['homeWater'].forEach(k=>{if(el(k))el(k).textContent=n+' мл'});if(el('waterGoalText'))el('waterGoalText').textContent='Цель: '+g+' мл';if(el('waterProgress'))el('waterProgress').style.width=Math.min(100,n/g*100)+'%';if(el('waterGoalInput'))el('waterGoalInput').value=g}
-function addTask(e){e.preventDefault();const name=val('taskName');if(!name)return;data.tasks.push({id:id(),name,done:false,date:val('taskDate')||todayKey(),time:val('taskTime'),quadrant:val('taskQuadrant')||'Обычное'});saveData();el('taskForm').reset();el('taskDate').value=todayKey();renderAll()}
-function toggleTask(i){const t=data.tasks.find(x=>x.id===i);if(t){t.done=!t.done;saveData();renderAll()}}function delTask(i){data.tasks=data.tasks.filter(x=>x.id!==i);saveData();renderAll()}function updateTaskTime(i,t){const x=data.tasks.find(a=>a.id===i);if(x){x.time=t;saveData();renderAll()}}
-function renderDay(){const date=val('dayDate')||todayKey(),box=el('dayTasks');if(!box)return;const arr=data.tasks.filter(x=>(x.date||todayKey())===date).sort((a,b)=>a.time&&b.time?a.time.localeCompare(b.time):a.time?-1:b.time?1:0);const groups=['Важно и срочно','Важно, не срочно','Срочно, не важно','Не срочно и не важно'];const taskHtml=t=>`<div class="item"><div class="item-main"><label class="checkline"><input type="checkbox" ${t.done?'checked':''} onchange="toggleTask('${esc(t.id)}')"><span class="item-title" style="${t.done?'text-decoration:line-through;opacity:.55':''}">${esc(t.name)}</span></label><div class="item-meta">${t.time?esc(t.time):'Время не задано'}</div><input type="time" value="${esc(t.time||'')}" aria-label="Время задачи" onchange="updateTaskTime('${esc(t.id)}',this.value)"></div><div class="item-actions"><button class="danger" onclick="delTask('${esc(t.id)}')">×</button></div></div>`;box.innerHTML=arr.length?groups.map(g=>{const list=arr.filter(t=>(t.quadrant||'Обычное')===g);return list.length?`<div class="card" style="margin:8px 0;padding:12px"><b>${g}</b>${list.map(taskHtml).join('')}</div>`:''}).join('')+arr.filter(t=>!groups.includes(t.quadrant||'Обычное')).map(taskHtml).join(''):'<p class="empty">На этот день задач пока нет 🌿</p>';if(el('homeTasks')){const today=data.tasks.filter(x=>x.date===todayKey());el('homeTasks').textContent=today.filter(x=>x.done).length+'/'+today.length}}
-function typeName(t){return ({weight:'Вес',pressure:'Давление',pulse:'Пульс',temperature:'Температура',calories:'Калории',other:'Другое'})[t]||t||'Другое'}function addHealth(e){e.preventDefault();const t=typeName(val('healthType')),v=val('healthValue');if(!v)return;data.health.push({id:id(),type:t,value:v,date:val('healthDate')||todayKey(),comment:val('healthComment')});if(t==='Вес'){const w=Number(v.replace(',','.'));if(w>0&&w<500){data.nutritionProfile.weight=w;if(el('nutritionWeight'))el('nutritionWeight').value=w}}saveData();el('healthForm').reset();el('healthDate').value=todayKey();renderAll()}
-function renderHealth(){const box=el('healthList');if(!box)return;const a=[...data.health].sort((x,y)=>String(y.date).localeCompare(String(x.date)));box.innerHTML=a.length?a.map(x=>`<div class="item"><div class="item-main"><b>${esc(x.type)}</b> — ${esc(x.value)}<div class="item-meta">${fmtDate(x.date)}</div>${x.comment?`<p>${esc(x.comment)}</p>`:''}</div><button class="danger" onclick="deleteHealth('${esc(x.id)}')">×</button></div>`).join(''):'<p class="empty">Записей пока нет</p>'}function deleteHealth(i){data.health=data.health.filter(x=>x.id!==i);saveData();renderAll()}
-function saveMeasurements(){const fields={'Грудь':'measureChest','Талия':'measureWaist','Бёдра':'measureHips','Рука':'measureArm','Нога':'measureLeg'},values={};Object.entries(fields).forEach(([k,v])=>{if(val(v))values[k]=val(v)});if(!Object.keys(values).length){alert('Заполни хотя бы одно поле');return}data.measurements.push({id:id(),date:todayKey(),values});saveData();Object.values(fields).forEach(k=>{if(el(k))el(k).value=''});renderMeasurements()}function renderMeasurements(){const b=el('measurementList');if(!b)return;b.innerHTML=data.measurements.length?[...data.measurements].reverse().map(x=>`<div class="item"><div class="item-main"><b>${fmtDate(x.date)}</b><div class="item-meta">${Object.entries(x.values||{}).map(([k,v])=>esc(k)+': '+esc(v)+' см').join(' · ')}</div></div><button class="danger" onclick="deleteMeasurement('${esc(x.id)}')">×</button></div>`).join(''):'<p class="empty">Замеров пока нет</p>'}function deleteMeasurement(i){data.measurements=data.measurements.filter(x=>x.id!==i);saveData();renderMeasurements()}
-function openFilesDB(){return new Promise((res,rej)=>{const r=indexedDB.open('HealthDiaryFiles');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}async function saveLabFile(file){if(!file)return null;const fileData=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=()=>rej(r.error);r.readAsDataURL(file)});const db=await openFilesDB();if(!db.objectStoreNames.contains('files')){db.close();throw Error('Хранилище files не найдено')};const fileId=id();return new Promise((res,rej)=>{const tx=db.transaction('files','readwrite');tx.objectStore('files').put({id:fileId,name:file.name,type:file.type,data:fileData});tx.oncomplete=()=>{db.close();res(fileId)};tx.onerror=()=>{db.close();rej(tx.error)};tx.onabort=()=>{db.close();rej(tx.error)}})}async function getLabFile(i){const db=await openFilesDB();return new Promise((res,rej)=>{const r=db.transaction('files','readonly').objectStore('files').get(i);r.onsuccess=()=>{db.close();res(r.result||null)};r.onerror=()=>{db.close();rej(r.error)}})}
-async function addLab(e){e.preventDefault();const name=val('labName');if(!name)return;try{const f=el('labFile').files[0],files=[];if(f)files.push(await saveLabFile(f));data.labs.push({id:id(),name,date:val('labDate')||todayKey(),comment:val('labComment'),value:'',unit:'',min:'',max:'',files:files.filter(Boolean)});saveData();el('labForm').reset();el('labDate').value=todayKey();renderLabs()}catch(err){console.error(err);alert('Не удалось сохранить файл анализа')}}async function openLabFile(i){try{const f=await getLabFile(i);if(!f?.data){alert('Файл не найден');return}const a=document.createElement('a');a.href=f.data;a.download=f.name||'analysis';a.target='_blank';a.click()}catch(e){alert('Не удалось открыть файл')}}function delLab(i){if(!confirm('Удалить запись анализа?'))return;data.labs=data.labs.filter(x=>x.id!==i);saveData();renderLabs()}function renderLabs(){const b=el('labList');if(!b)return;b.innerHTML=data.labs.length?[...data.labs].reverse().map(x=>`<div class="item"><div class="item-main"><b>${esc(x.name)}</b><div class="item-meta">${fmtDate(x.date)}</div>${x.comment?`<p>${esc(x.comment)}</p>`:''}${(x.files||[]).map(f=>`<button class="secondary" onclick="openLabFile('${esc(f)}')">Открыть файл</button>`).join(' ')}</div><button class="danger" onclick="delLab('${esc(x.id)}')">×</button></div>`).join(''):'<p class="empty">Анализов пока нет</p>'}
-function addSupplement(e){e.preventDefault();const name=val('supplementName');if(!name)return;data.supplements.push({id:id(),name,dose:val('supplementDose'),time:val('supplementTime'),comment:val('supplementComment'),active:true});saveData();el('supplementForm').reset();renderSupplements()}function toggleSupplement(i){const x=data.supplements.find(a=>a.id===i);if(x){x.active=x.active===false;saveData();renderSupplements()}}function delSupplement(i){data.supplements=data.supplements.filter(x=>x.id!==i);saveData();renderSupplements()}function renderSupplements(){const b=el('supplementList');if(!b)return;b.innerHTML=data.supplements.length?data.supplements.map(x=>`<div class="item"><div class="item-main"><label class="checkline"><input type="checkbox" ${x.active===false?'':'checked'} onchange="toggleSupplement('${esc(x.id)}')"><b>${esc(x.name)}</b></label><div class="item-meta">${esc(x.dose||'')} ${esc(x.time||'')}</div>${x.comment?`<p>${esc(x.comment)}</p>`:''}</div><button class="danger" onclick="delSupplement('${esc(x.id)}')">×</button></div>`).join(''):'<p class="empty">Список пока пуст</p>'}
-function calcNutrition(e){e.preventDefault();const sex=val('nutritionSex'),age=num('nutritionAge'),height=num('nutritionHeight'),weight=num('nutritionWeight'),goalWeight=num('nutritionGoalWeight')||weight,activity=val('nutritionActivity'),goal=val('nutritionGoal'),pace=val('nutritionPace');if(!age||!height||!weight){alert('Заполни возраст, рост и вес');return}const factors={sedentary:1.2,light:1.375,moderate:1.55,high:1.725,veryhigh:1.9},bmr=10*weight+6.25*height-5*age+(sex==='male'?5:-161),tdee=bmr*(factors[activity]||1.2),deficit={slow:200,moderate:350,fast:500}[pace]||350;let calories=Math.round(goal==='lose'?tdee-deficit:goal==='gain'?tdee+deficit:tdee);calories=Math.max(1200,calories);const protein=Math.round(weight*(goal==='gain'?1.8:1.6)),fat=Math.round(weight*.8),carbs=Math.max(0,Math.round((calories-protein*4-fat*9)/4));data.nutritionProfile={sex,age,height,weight,goalWeight,activity,goal,pace,bmr:Math.round(bmr),tdee:Math.round(tdee),calories,protein,fat,carbs};saveData();renderNutrition();alert('Норма рассчитана и сохранена')}
-function fillProfile(){const p=data.nutritionProfile||{};Object.entries({nutritionSex:p.sex,nutritionAge:p.age,nutritionHeight:p.height,nutritionWeight:p.weight,nutritionGoalWeight:p.goalWeight,nutritionActivity:p.activity,nutritionGoal:p.goal,nutritionPace:p.pace}).forEach(([k,v])=>{if(el(k)&&v!==undefined)el(k).value=v})}function renderNutrition(){const b=el('nutritionTargets'),p=data.nutritionProfile||{};if(!b)return;b.innerHTML=p.calories?`<div class="card" style="padding:10px;margin:10px 0"><b>Твоя дневная норма</b><div class="macro-grid"><div class="macro"><b>${p.calories}</b><small>ккал</small></div><div class="macro"><b>${p.protein}</b><small>белки, г</small></div><div class="macro"><b>${p.fat}</b><small>жиры, г</small></div><div class="macro"><b>${p.carbs}</b><small>углеводы, г</small></div></div><small>Основной обмен: ${p.bmr} ккал · Расход с активностью: ${p.tdee} ккал</small></div>`:'<p class="empty">Заполни профиль и рассчитай норму</p>'}
-let foodSearchResults=[];
-async function searchFoodProducts(){const q=val('foodName'),status=el('foodSearchStatus'),box=el('foodSearchResults');if(!q){status.textContent='Сначала введи название продукта';return}status.textContent='Ищу продукты в базе…';box.innerHTML='';try{const url='https://world.openfoodfacts.org/cgi/search.pl?search_terms='+encodeURIComponent(q)+'&search_simple=1&action=process&json=1&page_size=12&lc=ru';const response=await fetch(url,{headers:{'Accept':'application/json'}});if(!response.ok)throw new Error('HTTP '+response.status);const result=await response.json();const products=Array.isArray(result.products)?result.products:[];foodSearchResults=products.map(x=>{const n=x.nutriments||{},kcal=Number(n['energy-kcal_100g']??n['energy-kcal']??(Number(n['energy_100g']??n.energy)/4.184)),protein=Number(n.proteins_100g??n.proteins),fat=Number(n.fat_100g??n.fat),carbs=Number(n.carbohydrates_100g??n.carbohydrates);return {name:x.product_name||x.product_name_ru||q,brand:x.brands||'',calories:kcal,protein,fat,carbs,code:x.code}}).filter(x=>x.name&&[x.calories,x.protein,x.fat,x.carbs].every(v=>Number.isFinite(v)&&v>=0));if(!foodSearchResults.length){status.textContent='Подходящих результатов с полным КБЖУ не нашлось. Можно ввести показатели вручную ниже.';return}status.textContent='Выбери именно тот продукт и бренд, который ты использовала. Данные в базе могут быть неполными.';box.innerHTML=foodSearchResults.map((x,i)=>`<div class="item"><div class="item-main"><b>${esc(x.name)}</b><div class="item-meta">${esc(x.brand||'Бренд не указан')} · на 100 г: ${Math.round(x.calories)} ккал · Б ${x.protein} · Ж ${x.fat} · У ${x.carbs}</div></div><button type="button" class="secondary" onclick="selectFoodSearchResult(${i})">Выбрать</button></div>`).join('')}catch(err){console.error(err);status.textContent='Не удалось подключиться к базе. Проверь интернет или введи КБЖУ вручную.'}}
-function selectFoodSearchResult(i){const p=foodSearchResults[i];if(!p)return;[['foodName',p.brand?p.name+' ('+p.brand+')':p.name],['foodCalories',p.calories],['foodProtein',p.protein],['foodFat',p.fat],['foodCarbs',p.carbs]].forEach(([k,v])=>el(k).value=v);el('foodSearchStatus').textContent='Выбрано. Укажи массу порции — приложение рассчитает КБЖУ.';el('foodSearchResults').innerHTML='';el('foodAmount').focus()}
-function addFood(e){e.preventDefault();const name=val('foodName'),amount=num('foodAmount'),c=num('foodCalories'),p=num('foodProtein'),f=num('foodFat'),a=num('foodCarbs');if(!name||amount<=0||[c,p,f,a].some(x=>!Number.isFinite(x)||x<0)||![c,p,f,a].some(x=>x>0)){alert('Выбери продукт из поиска или введи его КБЖУ вручную, затем укажи массу порции');return}const factor=amount/100,meal=val('foodMeal')||'Перекус';data.foodEntries.push({id:id(),name,meal,amount,calories:Math.round(c*factor*10)/10,protein:Math.round(p*factor*10)/10,fat:Math.round(f*factor*10)/10,carbs:Math.round(a*factor*10)/10,date:val('foodDate')||todayKey()});if(!data.foodProducts.some(x=>x.name.toLowerCase()===name.toLowerCase()))data.foodProducts.push({id:id(),name,calories:c,protein:p,fat:f,carbs:a});saveData();el('foodForm').reset();el('foodSearchStatus').textContent='';el('foodSearchResults').innerHTML='';renderFood()}
-function totals(a){return a.reduce((s,x)=>{['calories','protein','fat','carbs'].forEach(k=>s[k]+=Number(x[k]||0));return s},{calories:0,protein:0,fat:0,carbs:0})}function delFood(i){data.foodEntries=data.foodEntries.filter(x=>x.id!==i);saveData();renderFood()}function chooseProduct(i){const p=data.foodProducts.find(x=>x.id===i);if(!p)return;[['foodName',p.name],['foodCalories',p.calories],['foodProtein',p.protein],['foodFat',p.fat],['foodCarbs',p.carbs]].forEach(([k,v])=>el(k).value=v);el('foodAmount').focus()}function delProduct(i){if(!confirm('Удалить продукт из списка?'))return;data.foodProducts=data.foodProducts.filter(x=>x.id!==i);saveData();renderFoodProducts()}function renderFood(){const date=val('foodDate')||todayKey(),a=data.foodEntries.filter(x=>x.date===date),t=totals(a),p=data.nutritionProfile||{},b=el('foodDailySummary');if(b)b.innerHTML=`<div class="macro-grid"><div class="macro"><b>${Math.round(t.calories)}</b><small>ккал</small></div><div class="macro"><b>${t.protein.toFixed(1)}</b><small>белки</small></div><div class="macro"><b>${t.fat.toFixed(1)}</b><small>жиры</small></div><div class="macro"><b>${t.carbs.toFixed(1)}</b><small>углеводы</small></div></div>${p.calories?`<p>${p.calories-Math.round(t.calories)>=0?'Осталось':'Превышение'} ${Math.abs(p.calories-Math.round(t.calories))} ккал</p>`:'<small>Рассчитай дневную норму в профиле</small>'}`;const box=el('foodEntriesList');if(box){const meals=['Завтрак','Обед','Ужин','Перекус'];box.innerHTML=meals.map(m=>{const rows=a.filter(x=>x.meal===m);if(!rows.length)return'';return `<div class="food-entry"><b>${m}</b>${rows.map(x=>`<div class="item"><div class="item-main"><b>${esc(x.name)}</b><div class="item-meta">${x.amount} г · ${Math.round(x.calories)} ккал · Б ${Number(x.protein).toFixed(1)} · Ж ${Number(x.fat).toFixed(1)} · У ${Number(x.carbs).toFixed(1)}</div></div><button class="danger" onclick="delFood('${esc(x.id)}')">×</button></div>`).join('')}</div>`}).join('')||'<p class="empty">Записей за этот день пока нет</p>'}renderFoodProducts();renderNutrition()}function renderFoodProducts(){const b=el('foodProductsList');if(!b)return;b.innerHTML=data.foodProducts.length?data.foodProducts.map(x=>`<div class="item"><div class="item-main"><b>${esc(x.name)}</b><div class="item-meta">На 100 г: ${x.calories} ккал · Б ${x.protein} · Ж ${x.fat} · У ${x.carbs}</div></div><div class="item-actions"><button class="secondary" onclick="chooseProduct('${esc(x.id)}')">Выбрать</button><button class="danger" onclick="delProduct('${esc(x.id)}')">×</button></div></div>`).join(''):'<p class="empty">Сохранённых продуктов пока нет</p>'}
-let habitWeekOffset=0;
-function dateKeyLocal(d){const x=new Date(d.getTime()-d.getTimezoneOffset()*60000);return x.toISOString().slice(0,10)}
-function getHabitWeek(){const now=new Date();now.setHours(0,0,0,0);const monday=new Date(now);monday.setDate(now.getDate()-((now.getDay()+6)%7)+habitWeekOffset*7);return Array.from({length:7},(_,i)=>{const d=new Date(monday);d.setDate(monday.getDate()+i);return dateKeyLocal(d)})}
-function changeHabitWeek(n){habitWeekOffset+=n;renderHabits()}
-function addHabit(e){e.preventDefault();const name=val('habitName');if(!name)return;data.habits.push({id:id(),name,goal:1,history:[]});saveData();el('habitForm').reset();renderAll()}
-function toggleHabit(i,date){const h=data.habits.find(x=>x.id===i);if(!h)return;h.history=Array.isArray(h.history)?h.history:[];const n=h.history.indexOf(date);n>=0?h.history.splice(n,1):h.history.push(date);saveData();renderHabits()}
-function delHabit(i){data.habits=data.habits.filter(x=>x.id!==i);saveData();renderAll()}
-function renderHabits(){const b=el('habitList');if(!b)return;const days=getHabitWeek(),today=todayKey(),fmt=d=>{const x=new Date(d+'T00:00:00');return String(x.getDate())};const first=new Date(days[0]+'T00:00:00'),last=new Date(days[6]+'T00:00:00');const range=d=>d.toLocaleDateString('ru-RU',{day:'numeric',month:'short'});if(el('habitWeekTitle'))el('habitWeekTitle').textContent=habitWeekOffset===0?'Эта неделя':`${range(first)} — ${range(last)}`;if(el('habitWeekHeader'))el('habitWeekHeader').innerHTML=days.map((d,i)=>`<div class="habit-day">${['Пн','Вт','Ср','Чт','Пт','Сб','Вс'][i]}<span class="habit-date">${fmt(d)}</span></div>`).join('');b.innerHTML=data.habits.length?data.habits.map(h=>{const hist=Array.isArray(h.history)?h.history:[];return `<div class="habit-row"><div class="habit-name"><span>${esc(h.name)}</span><button class="danger" aria-label="Удалить привычку" onclick="delHabit('${esc(h.id)}')">×</button></div><div class="habit-dots">${days.map(d=>{const done=hist.includes(d);return `<button type="button" class="habit-dot ${done?'done':''}" aria-label="${esc(h.name)} — ${fmtDate(d)}" aria-pressed="${done}" onclick="toggleHabit('${esc(h.id)}','${d}')">${done?'✓':''}</button>`}).join('')}</div></div>`}).join(''):'<p class="empty">Добавь первую привычку ✨</p>'}
-let calendarMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1);function changeCalendarMonth(n){calendarMonth.setMonth(calendarMonth.getMonth()+n);renderCalendar()}function renderCalendar(){const b=el('calendarGrid');if(!b)return;const y=calendarMonth.getFullYear(),m=calendarMonth.getMonth(),first=new Date(y,m,1),last=new Date(y,m+1,0),offset=(first.getDay()+6)%7;el('calendarTitle').textContent=new Intl.DateTimeFormat('ru-RU',{month:'long',year:'numeric'}).format(calendarMonth);let h=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'].map(x=>`<div class="calendar-head">${x}</div>`).join('');for(let i=0;i<offset;i++)h+='<div></div>';for(let d=1;d<=last.getDate();d++){const date=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`,ev=data.events.filter(x=>x.date===date),ts=data.tasks.filter(x=>x.date===date);h+=`<div class="calendar-cell ${date===todayKey()?'today':''}"><div class="daynum">${d}</div>${ev.map(x=>`<span class="event-dot">${x.time?esc(x.time)+' ':''}${esc(x.name)}</span>`).join('')}${ts.map(x=>`<span class="event-dot">${x.time?esc(x.time)+' ':''}${esc(x.name)}</span>`).join('')}</div>`}b.innerHTML=h;const list=el('eventList');if(list)list.innerHTML=data.events.length?[...data.events].sort((a,b)=>String(a.date).localeCompare(String(b.date))).map(x=>`<div class="item"><div class="item-main"><b>${esc(x.name)}</b><div class="item-meta">${fmtDate(x.date)} ${esc(x.time||'')}</div>${x.description?`<p>${esc(x.description)}</p>`:''}</div><button class="danger" onclick="delEvent('${esc(x.id)}')">×</button></div>`).join(''):'<p class="empty">Событий пока нет</p>'}function addEvent(e){e.preventDefault();const name=val('eventName');if(!name)return;data.events.push({id:id(),name,date:val('eventDate')||todayKey(),time:val('eventTime'),description:val('eventDescription')});saveData();el('eventForm').reset();renderAll()}function delEvent(i){data.events=data.events.filter(x=>x.id!==i);saveData();renderAll()}
-function addMood(m){const d=todayKey();data.moods[d]=m;data.moodEntries.push({id:id(),date:d,mood:m,time:new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})});saveData();renderMoods()}function delMood(i){data.moodEntries=data.moodEntries.filter(x=>x.id!==i);const last=[...data.moodEntries].reverse().find(x=>x.date===todayKey());if(last)data.moods[todayKey()]=last.mood;else delete data.moods[todayKey()];saveData();renderMoods()}function renderMoods(){const b=el('moodList');if(!b)return;const a=[...data.moodEntries].reverse().slice(0,10);b.innerHTML=(data.moods[todayKey()]?`<p>Сегодня: ${esc(data.moods[todayKey()])}</p>`:'')+(a.map(x=>`<div class="item"><div>${esc(x.mood)} <small>${fmtDate(x.date)} ${esc(x.time||'')}</small></div><button class="danger" onclick="delMood('${esc(x.id)}')">×</button></div>`).join('')||'<p class="empty">Отметок пока нет</p>');if(el('homeMood'))el('homeMood').textContent=data.moods[todayKey()]||'—'}function addNote(e){e.preventDefault();const title=val('noteTitle'),text=val('noteText');if(!title&&!text)return;data.notes.push({id:id(),title:title||'Заметка',text,type:'Заметка',date:todayKey(),createdAt:new Date().toISOString()});saveData();el('noteForm').reset();renderNotes()}function delNote(i){if(!confirm('Удалить заметку?'))return;data.notes=data.notes.filter(x=>x.id!==i);saveData();renderNotes()}function renderNotes(){const b=el('noteList');if(!b)return;b.innerHTML=data.notes.length?[...data.notes].reverse().map(x=>`<div class="item"><div class="item-main"><b>${esc(x.title||'Заметка')}</b><div class="item-meta">${fmtDate(x.date)}</div><p>${esc(x.text||'')}</p></div><button class="danger" onclick="delNote('${esc(x.id)}')">×</button></div>`).join(''):'<p class="empty">Заметок пока нет</p>'}
-async function getAllFiles(){try{const db=await openFilesDB();return await new Promise((res,rej)=>{const r=db.transaction('files','readonly').objectStore('files').getAll();r.onsuccess=()=>{db.close();res(r.result||[])};r.onerror=()=>{db.close();rej(r.error)}})}catch(e){return []}}async function exportData(){try{const backup={version:3,exportedAt:new Date().toISOString(),data,themePreset:getThemeName(),files:await getAllFiles()},blob=new Blob([JSON.stringify(backup)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`HealthDiary-backup-${todayKey()}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),3000)}catch(e){alert('Не удалось создать копию')}}function importData(){el('importFile').click()}async function restoreFiles(files){if(!Array.isArray(files)||!files.length)return;const db=await openFilesDB();if(!db.objectStoreNames.contains('files')){db.close();throw Error('Нет object store files')}await new Promise((res,rej)=>{const tx=db.transaction('files','readwrite'),store=tx.objectStore('files');files.forEach(f=>{if(f?.id)store.put(f)});tx.oncomplete=res;tx.onerror=()=>rej(tx.error);tx.onabort=()=>rej(tx.error)});db.close()}async function handleImport(e){const file=e.target.files[0];if(!file)return;if(!confirm('Восстановить данные из копии? Текущие записи будут заменены.')){e.target.value='';return}try{const raw=JSON.parse(await file.text()),d=raw.data&&typeof raw.data==='object'?raw.data:raw;if(!d||Array.isArray(d)||typeof d!=='object')throw Error('Bad backup');const next={...defaults,...d};['water','health','tasks','notes','habits','events','moodEntries','supplements','measurements','labs','foodEntries','foodProducts','recipes'].forEach(k=>{if(!Array.isArray(next[k]))next[k]=[]});if(!next.moods||typeof next.moods!=='object')next.moods={};if(!next.nutritionProfile||typeof next.nutritionProfile!=='object')next.nutritionProfile={};const previous=data;data=next;if(!saveData()){data=previous;throw Error('Save failed')}if(Array.isArray(raw.files))await restoreFiles(raw.files);if(raw.themePreset&&THEME_PRESETS[raw.themePreset])applyTheme(raw.themePreset);alert('Резервная копия восстановлена');renderAll()}catch(err){console.error(err);alert('Не удалось восстановить файл. Проверь, что это резервная копия Health Diary.')}finally{e.target.value=''}}
-function renderAll(){renderWater();renderDay();renderHealth();renderMeasurements();renderLabs();renderSupplements();renderHabits();renderCalendar();renderNutrition();renderFood();renderMoods();renderNotes()}
-document.addEventListener('DOMContentLoaded',()=>{[['taskForm',addTask],['healthForm',addHealth],['labForm',addLab],['supplementForm',addSupplement],['nutritionProfileForm',calcNutrition],['foodForm',addFood],['habitForm',addHabit],['eventForm',addEvent],['noteForm',addNote]].forEach(([k,f])=>el(k)?.addEventListener('submit',f));el('importFile').addEventListener('change',handleImport);[['dayDate',renderDay],['foodDate',renderFood]].forEach(([k,f])=>{el(k).value=todayKey();el(k).addEventListener('change',f)});['taskDate','healthDate','labDate','eventDate'].forEach(k=>{if(el(k))el(k).value=todayKey()});applyTheme(getThemeName());carryOverTasks();fillProfile();renderAll()});
+let data=loadData();
+let calendarDate=new Date();
+let calendarPick=today();
+let statsRange='week';
+
+function loadData(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(KEY));
+    if(saved)return {...structuredClone(defaults),...saved,profile:{...defaults.profile,...(saved.profile||{})}};
+  }catch(e){console.warn('Не удалось прочитать данные',e)}
+  return structuredClone(defaults);
+}
+function save(){localStorage.setItem(KEY,JSON.stringify(data));refresh();}
+function dayData(date=today()){
+  if(!data.days[date])data.days[date]={food:[],drinks:[],steps:null,sleep:null,wellbeing:null};
+  return data.days[date];
+}
+function sum(arr,key){return arr.reduce((s,x)=>s+(Number(x[key])||0),0)}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function fmt(n){return Math.round(Number(n)||0).toLocaleString('ru-RU')}
+function dateLabel(d){return new Date(d+'T12:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'})}
+function notify(msg){alert(msg)}
+function navigate(page){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.querySelectorAll('.navitem').forEach(x=>x.classList.toggle('active',x.dataset.page===page));
+  if(page==='stats')renderStats();
+  if(page==='more')fillProfile();
+  window.scrollTo(0,0);
+}
+function showSub(group,name,button){
+  document.querySelectorAll('#page-'+group+' .subpage').forEach(x=>x.style.display='none');
+  document.getElementById(group+'-'+name).style.display='block';
+  button.parentElement.querySelectorAll('button').forEach(x=>x.classList.remove('selected'));
+  button.classList.add('selected');
+  renderAll();
+}
+function getTotals(date=today()){
+  const d=dayData(date),foods=d.food||[],drinks=d.drinks||[];
+  return {kcal:sum(foods,'kcal'),p:sum(foods,'p'),f:sum(foods,'f'),c:sum(foods,'c'),
+    water:sum(drinks.filter(x=>x.type==='water'),'ml'),
+    coffee:sum(drinks.filter(x=>x.type==='coffee'),'ml')};
+}
+function getSleepHours(sleep){
+  if(!sleep||!sleep.start||!sleep.end)return null;
+  let [sh,sm]=sleep.start.split(':').map(Number),[eh,em]=sleep.end.split(':').map(Number);
+  let mins=eh*60+em-(sh*60+sm);if(mins<=0)mins+=1440;
+  return mins/60;
+}
+function calcScore(date=today()){
+  const d=dayData(date),t=getTotals(date),p=data.profile;
+  const tasks=data.tasks.filter(x=>x.date===date);
+  const tracked=[];
+  if(tasks.length)tracked.push({weight:25,value:tasks.filter(x=>x.done).length/tasks.length});
+  const hasWater=(d.drinks||[]).some(x=>x.type==='water');
+  if(hasWater)tracked.push({weight:20,value:Math.min(1,t.water/(p.water||2100))});
+  if((d.food||[]).length)tracked.push({weight:15,value:1});
+  if((d.food||[]).length) {
+    const kcalOk=t.kcal>0&&t.kcal<=p.kcal*1.1;
+    const pOk=t.p>=p.p*.8&&t.p<=p.p*1.2;
+    const fOk=t.f>=p.f*.8&&t.f<=p.f*1.2;
+    const cOk=t.c>=p.c*.8&&t.c<=p.c*1.2;
+    tracked.push({weight:20,value:[kcalOk,pOk,fOk,cOk].filter(Boolean).length/4});
+  }
+  const sleep=dayData(previousDate(date)).sleep;
+  const hours=getSleepHours(sleep);
+  if(hours!==null)tracked.push({weight:20,value:Math.min(1,hours/8)});
+  const max=tracked.reduce((s,x)=>s+x.weight,0);
+  if(!max)return null;
+  return Math.round(tracked.reduce((s,x)=>s+x.weight*x.value,0)/max*100);
+}
+function previousDate(date){
+  const d=new Date(date+'T12:00:00');d.setDate(d.getDate()-1);return d.toISOString().slice(0,10);
+}
+function refresh(){
+  const d=dayData(),t=getTotals(),p=data.profile;
+  const now=new Date(),hour=now.getHours();
+  document.getElementById('greeting').textContent=hour<12?'Доброе утро!':hour<18?'Хорошего дня!':'Добрый вечер!';
+  document.getElementById('headerDate').textContent=dateLabel(today());
+  document.getElementById('homeDate').textContent=dateLabel(today());
+  const score=calcScore();
+  document.getElementById('homeScore').textContent=score===null?'—':score;
+  document.getElementById('scoreBar').style.width=(score||0)+'%';
+  document.getElementById('scoreHint').textContent=score===null?'Добавь данные, чтобы рассчитать индекс':score>=80?'Отличный результат! Так держать':score>=50?'Хорошее начало. Продолжай':'Каждый маленький шаг имеет значение';
+  document.getElementById('homeWater').textContent=fmt(t.water)+' мл';
+  document.getElementById('waterGoalText').textContent='Цель '+fmt(p.water)+' мл';
+  document.getElementById('waterBar').style.width=Math.min(100,t.water/(p.water||1)*100)+'%';
+  document.getElementById('homeCoffee').textContent=fmt(t.coffee)+' мл';
+  const sleep=dayData(yesterday()).sleep,h=getSleepHours(sleep);
+  document.getElementById('homeSleep').textContent=h===null?'—':h.toFixed(1).replace('.',',')+' ч';
+  document.getElementById('homeSteps').textContent=d.steps===null||d.steps===undefined?'—':fmt(d.steps);
+  document.getElementById('homeCalories').textContent=fmt(t.kcal)+' / '+fmt(p.kcal)+' ккал';
+  document.getElementById('calorieBar').style.width=Math.min(100,t.kcal/(p.kcal||1)*100)+'%';
+  ['P','F','C'].forEach((x,i)=>{
+    const key=['p','f','c'][i],target=p[key];
+    document.getElementById('home'+x).textContent=fmt(t[key])+' / '+fmt(target)+' г';
+  });
+  document.getElementById('homeRemain').textContent=fmt(Math.max(0,p.kcal-t.kcal))+' ккал';
+  renderHomeTasks();renderAll();
+}
+function renderHomeTasks(){
+  const tasks=data.tasks.filter(x=>x.date===today()&&!x.done).slice(0,4);
+  document.getElementById('homeTasks').innerHTML=tasks.length?tasks.map(x=>`<div class="listitem"><input class="check" type="checkbox" onchange="toggleTask('${x.id}')"><div class="grow">${esc(x.title)}</div></div>`).join(''):'<div class="empty">На сегодня нет незавершённых задач ✨</div>';
+}
+function renderAll(){
+  renderTasks();renderHabits();renderNotes();renderFood();renderDrinks();renderSleep();renderWorkouts();renderWeight();renderWellbeing();renderMeds();renderCalendar();renderThemeGrid();
+  const t=getTotals();
+  const wt=document.getElementById('waterTotal');if(wt)wt.textContent=fmt(t.water)+' мл';
+  const ct=document.getElementById('coffeeTotal');if(ct)ct.textContent=fmt(t.coffee)+' мл';
+  const wg=document.getElementById('waterGoal');if(wg)wg.textContent='Цель '+fmt(data.profile.water)+' мл';
+  const wp=document.getElementById('waterProgress');if(wp)wp.style.width=Math.min(100,t.water/(data.profile.water||1)*100)+'%';
+}
+function addTask(){
+  const title=document.getElementById('taskTitle').value.trim();if(!title)return notify('Введи название задачи');
+  data.tasks.push({id:uid(),title,date:document.getElementById('taskDate').value||today(),priority:document.getElementById('taskPriority').value,done:false,created:today()});
+  document.getElementById('taskTitle').value='';save();
+}
+function toggleTask(id){const x=data.tasks.find(x=>x.id===id);if(x)x.done=!x.done;save()}
+function deleteTask(id){if(confirm('Удалить задачу?')){data.tasks=data.tasks.filter(x=>x.id!==id);save()}}
+function renderTasks(){
+  const el=document.getElementById('taskList');if(!el)return;
+  const labels={important:'Важно и срочно',plan:'Важно, не срочно',delegate:'Срочно, не важно',later:'Не срочно и не важно'};
+  const tasks=data.tasks.filter(x=>x.date===today());
+  el.innerHTML=tasks.length?tasks.map(x=>`<div class="listitem ${x.done?'done':''}"><input class="check" type="checkbox" ${x.done?'checked':''} onchange="toggleTask('${x.id}')"><div class="grow"><b>${esc(x.title)}</b><div class="smalltext">${labels[x.priority]||''}</div></div><button class="iconbtn" onclick="deleteTask('${x.id}')">×</button></div>`).join(''):'<div class="empty">Задач пока нет</div>';
+}
+function addHabit(){
+  const title=document.getElementById('habitTitle').value.trim();if(!title)return;
+  data.habits.push({id:uid(),title,checks:{}});
+  document.getElementById('habitTitle').value='';save();
+}
+function toggleHabit(id){const h=data.habits.find(x=>x.id===id);if(!h)return;h.checks[today()]=!h.checks[today()];save()}
+function deleteHabit(id){if(confirm('Удалить привычку?')){data.habits=data.habits.filter(x=>x.id!==id);save()}}
+function renderHabits(){
+  const el=document.getElementById('habitList');if(!el)return;
+  el.innerHTML=data.habits.length?data.habits.map(h=>`<div class="listitem"><input class="check" type="checkbox" ${h.checks[today()]?'checked':''} onchange="toggleHabit('${h.id}')"><div class="grow">${esc(h.title)}</div><button class="iconbtn" onclick="deleteHabit('${h.id}')">×</button></div>`).join(''):'<div class="empty">Добавь привычки, которые хочешь развивать</div>';
+}
+function addNote(){
+  const title=document.getElementById('noteTitle').value.trim(),text=document.getElementById('noteText').value.trim();
+  if(!title&&!text)return;
+  data.notes.unshift({id:uid(),title,text,date:today()});
+  document.getElementById('noteTitle').value='';document.getElementById('noteText').value='';save();
+}
+function deleteNote(id){data.notes=data.notes.filter(x=>x.id!==id);save()}
+function renderNotes(){
+  const el=document.getElementById('noteList');if(!el)return;
+  el.innerHTML=data.notes.length?data.notes.map(n=>`<div class="card"><div class="row"><b>${esc(n.title||'Без названия')}</b><button class="iconbtn" onclick="deleteNote('${n.id}')">×</button></div><p>${esc(n.text)}</p><div class="smalltext">${dateLabel(n.date)}</div></div>`).join(''):'<div class="empty">Заметок пока нет</div>';
+}
+function addFood(){
+  const name=document.getElementById('foodName').value.trim();
+  if(!name)return notify('Введи название блюда');
+  const d=dayData();
+  d.food.push({id:uid(),name,type:document.getElementById('foodType').value,kcal:+document.getElementById('foodKcal').value||0,p:+document.getElementById('foodP').value||0,f:+document.getElementById('foodF').value||0,c:+document.getElementById('foodC').value||0,time:new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})});
+  ['foodName','foodKcal','foodP','foodF','foodC'].forEach(id=>document.getElementById(id).value='');save();
+}
+function deleteFood(id){dayData().food=dayData().food.filter(x=>x.id!==id);save()}
+function renderFood(){
+  const el=document.getElementById('foodList');if(!el)return;
+  const arr=dayData().food||[];
+  el.innerHTML=arr.length?arr.map(x=>`<div class="listitem"><div class="grow"><b>${esc(x.name)}</b><div class="smalltext">${esc(x.type)} · ${x.time||''}</div><div class="smalltext">${fmt(x.kcal)} ккал · Б ${fmt(x.p)} · Ж ${fmt(x.f)} · У ${fmt(x.c)}</div></div><button class="iconbtn" onclick="deleteFood('${x.id}')">×</button></div>`).join(''):'<div class="empty">Пока нет записей о питании</div>';
+}
+function addDrink(type,ml){
+  dayData().drinks.push({id:uid(),type,ml,time:new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})});save();
+}
+function addCustomDrink(type){
+  const id=type==='water'?'customWater':'customCoffee',v=Number(document.getElementById(id).value);
+  if(!v||v<=0)return notify('Укажи объём напитка');
+  addDrink(type,v);document.getElementById(id).value='';
+}
+function deleteDrink(id){dayData().drinks=dayData().drinks.filter(x=>x.id!==id);save()}
+function renderDrinks(){
+  const el=document.getElementById('drinkList');if(!el)return;
+  const arr=dayData().drinks||[];
+  el.innerHTML=arr.length?arr.map(x=>`<div class="listitem"><div class="grow">${x.type==='water'?'💧 Вода':'☕ Кофе'} · ${fmt(x.ml)} мл <span class="smalltext">${x.time}</span></div><button class="iconbtn" onclick="deleteDrink('${x.id}')">×</button></div>`).join(''):'<div class="empty">Напитки ещё не добавлены</div>';
+}
+function saveSleep(){
+  const start=document.getElementById('sleepStart').value,end=document.getElementById('sleepEnd').value;
+  if(!start||!end)return notify('Укажи время сна и пробуждения');
+  dayData(yesterday()).sleep={start,end,quality:+document.getElementById('sleepQuality').value};
+  save();notify('Данные сна сохранены');
+}
+function renderSleep(){
+  const el=document.getElementById('sleepHistory');if(!el)return;
+  const entries=Object.entries(data.days).filter(([k,v])=>v.sleep).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,14);
+  el.innerHTML=entries.length?entries.map(([date,v])=>`<div class="listitem"><div class="grow"><b>${dateLabel(date)}</b><div class="smalltext">${v.sleep.start} — ${v.sleep.end} · ${getSleepHours(v.sleep)?.toFixed(1)} ч</div></div></div>`).join(''):'<div class="empty">История сна появится после первых записей</div>';
+}
+function saveSteps(){
+  const v=document.getElementById('stepsInput').value;if(v==='')return notify('Введи количество шагов');
+  dayData().steps=Math.max(0,+v);save();notify('Шаги сохранены');
+}
+function addWorkout(){
+  const name=document.getElementById('workoutName').value.trim(),duration=+document.getElementById('workoutDuration').value;
+  if(!name||!duration)return notify('Заполни вид тренировки и длительность');
+  data.workouts.unshift({id:uid(),name,duration,date:document.getElementById('workoutDate').value||today()});
+  document.getElementById('workoutName').value='';document.getElementById('workoutDuration').value='';save();
+}
+function deleteWorkout(id){data.workouts=data.workouts.filter(x=>x.id!==id);save()}
+function renderWorkouts(){
+  const el=document.getElementById('workoutList');if(!el)return;
+  el.innerHTML=data.workouts.length?data.workouts.map(x=>`<div class="listitem"><div class="grow"><b>${esc(x.name)}</b><div class="smalltext">${dateLabel(x.date)} · ${x.duration} мин</div></div><button class="iconbtn" onclick="deleteWorkout('${x.id}')">×</button></div>`).join(''):'<div class="empty">Тренировок пока нет</div>';
+}
+function saveWeight(){
+  const v=+document.getElementById('weightInput').value;if(!v)return notify('Введи вес');
+  data.weights.unshift({date:today(),weight:v});data.profile.weight=v;save();notify('Вес сохранён');
+}
+function saveMeasures(){
+  const entry={date:today(),waist:+document.getElementById('measureWaist').value||null,hips:+document.getElementById('measureHips').value||null,chest:+document.getElementById('measureChest').value||null,thigh:+document.getElementById('measureThigh').value||null};
+  if(!entry.waist&&!entry.hips&&!entry.chest&&!entry.thigh)return notify('Заполни хотя бы один замер');
+  data.measures.unshift(entry);save();notify('Замеры сохранены');
+}
+function renderWeight(){
+  const el=document.getElementById('weightHistory');if(!el)return;
+  const weights=data.weights.slice(0,12),measures=data.measures.slice(0,5);
+  el.innerHTML='<h3>Вес</h3>'+(weights.length?weights.map(x=>`<div class="listitem"><div class="grow">${dateLabel(x.date)}</div><b>${x.weight} кг</b></div>`).join(''):'<div class="empty">Записей веса пока нет</div>')+'<hr><h3>Замеры</h3>'+(measures.length?measures.map(x=>`<div class="listitem"><div class="grow">${dateLabel(x.date)}</div><div class="smalltext">Талия ${x.waist||'—'} · Бёдра ${x.hips||'—'} · Грудь ${x.chest||'—'} · Бедро ${x.thigh||'—'}</div></div>`).join(''):'<div class="empty">Замеров пока нет</div>');
+}
+function saveWellbeing(){
+  const entry={date:today(),mood:+document.getElementById('mood').value,energy:+document.getElementById('energy').value,symptoms:document.getElementById('symptoms').value};
+  dayData().wellbeing=entry;data.wellbeing.unshift(entry);save();notify('Самочувствие сохранено');
+}
+function renderWellbeing(){
+  const el=document.getElementById('wellbeingHistory');if(!el)return;
+  const arr=data.wellbeing.slice(0,10);
+  el.innerHTML=arr.length?arr.map(x=>`<div class="listitem"><div class="grow"><b>${dateLabel(x.date)}</b><div class="smalltext">Настроение: ${x.mood}/5 · Энергия: ${x.energy}/5</div>${x.symptoms?'<div class="smalltext">'+esc(x.symptoms)+'</div>':''}</div></div>`).join(''):'<div class="empty">Записей пока нет</div>';
+}
+function addMed(){
+  const name=document.getElementById('medName').value.trim();if(!name)return notify('Укажи название');
+  data.meds.push({id:uid(),name,dose:document.getElementById('medDose').value,time:document.getElementById('medTime').value,comment:document.getElementById('medComment').value});
+  ['medName','medDose','medTime','medComment'].forEach(id=>document.getElementById(id).value='');save();
+}
+function deleteMed(id){data.meds=data.meds.filter(x=>x.id!==id);save()}
+function renderMeds(){
+  const el=document.getElementById('medList');if(!el)return;
+  el.innerHTML=data.meds.length?data.meds.map(x=>`<div class="listitem"><div class="grow"><b>${esc(x.name)}</b><div class="smalltext">${esc(x.dose)} ${x.time?'· '+x.time:''}</div><div class="smalltext">${esc(x.comment)}</div></div><button class="iconbtn" onclick="deleteMed('${x.id}')">×</button></div>`).join(''):'<div class="empty">Список пока пуст</div>';
+}
+function changeMonth(n){calendarDate.setMonth(calendarDate.getMonth()+n);renderCalendar()}
+function renderCalendar(){
+  const grid=document.getElementById('calendarGrid');if(!grid)return;
+  const y=calendarDate.getFullYear(),m=calendarDate.getMonth();
+  document.getElementById('monthTitle').textContent=calendarDate.toLocaleDateString('ru-RU',{month:'long',year:'numeric'});
+  const first=new Date(y,m,1),offset=(first.getDay()+6)%7,days=new Date(y,m+1,0).getDate();
+  const names=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+  grid.innerHTML=names.map(n=>`<div class="smalltext" style="text-align:center">${n}</div>`).join('');
+  for(let i=0;i<offset;i++)grid.innerHTML+='<div></div>';
+  for(let day=1;day<=days;day++){
+    const date=y+'-'+String(m+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');
+    const hasTask=data.tasks.some(x=>x.date===date);
+    grid.innerHTML+=`<button onclick="selectCalendarDate('${date}')" style="border:1px solid ${calendarPick===date?'var(--accent)':'var(--border)'};background:${date===today()?'var(--accent2)':'var(--card)'};border-radius:10px;padding:9px 2px;color:var(--text)">${day}${hasTask?'<div style="font-size:8px">●</div>':''}</button>`;
+  }
+  document.getElementById('calendarSelected').textContent='Выбрано: '+dateLabel(calendarPick)+' · задач: '+data.tasks.filter(x=>x.date===calendarPick).length;
+}
+function selectCalendarDate(date){calendarPick=date;renderCalendar()}
+function showStats(range,btn){
+  statsRange=range;btn.parentElement.querySelectorAll('button').forEach(x=>x.classList.remove('selected'));btn.classList.add('selected');renderStats();
+}
+function datesForRange(){
+  const count=statsRange==='week'?7:statsRange==='month'?30:365;
+  return Array.from({length:count},(_,i)=>{let d=new Date();d.setDate(d.getDate()-(count-1-i));return d.toISOString().slice(0,10)});
+}
+function renderStats(){
+  const dates=datesForRange(),scores=dates.map(d=>calcScore(d)).filter(x=>x!==null);
+  const waters=dates.map(d=>getTotals(d).water).filter(x=>x>0);
+  const steps=dates.map(d=>dayData(d).steps).filter(x=>x!==null&&x!==undefined);
+  const tasks=data.tasks.filter(x=>dates.includes(x.date));
+  document.getElementById('statScore').textContent=scores.length?Math.round(sum(scores.map(x=>({v:x})),'v')/scores.length):'—';
+  document.getElementById('statWater').textContent=waters.length?fmt(sum(waters.map(x=>({v:x})),'v')/waters.length)+' мл':'—';
+  document.getElementById('statSteps').textContent=steps.length?fmt(sum(steps.map(x=>({v:x})),'v')):'—';
+  document.getElementById('statTasks').textContent=tasks.length?tasks.filter(x=>x.done).length+'/'+tasks.length:'—';
+  const chart=document.getElementById('scoreChart');
+  chart.innerHTML=scores.length?'<div style="display:flex;align-items:end;gap:4px;height:110px">'+scores.slice(-14).map(v=>`<div title="${v}" style="flex:1;height:${Math.max(5,v)}%;background:var(--accent);border-radius:6px 6px 0 0"></div>`).join('')+'</div>':'<div class="empty">Недостаточно данных для графика</div>';
+  const w=document.getElementById('weightChart'),arr=data.weights.slice(0,10).reverse();
+  w.innerHTML=arr.length?arr.map(x=>`<div class="row"><span class="smalltext">${dateLabel(x.date)}</span><b>${x.weight} кг</b></div><div class="progress"><span style="width:${Math.min(100,x.weight/120*100)}%"></span></div>`).join(''):'<div class="empty">Добавь записи веса, чтобы увидеть динамику</div>';
+}
+function generateReview(){
+  const end=new Date(),start=new Date();start.setDate(end.getDate()-6);
+  const dates=Array.from({length:7},(_,i)=>{let d=new Date(start);d.setDate(start.getDate()+i);return d.toISOString().slice(0,10)});
+  const scores=dates.map(d=>calcScore(d)).filter(x=>x!==null);
+  const water=dates.map(d=>getTotals(d).water).filter(x=>x>0);
+  const tasks=data.tasks.filter(x=>dates.includes(x.date));
+  const done=tasks.filter(x=>x.done).length;
+  const avg=scores.length?Math.round(scores.reduce((a,b)=>a+b,0)/scores.length):null;
+  const avgWater=water.length?Math.round(water.reduce((a,b)=>a+b,0)/water.length):null;
+  const review={date:today(),avg,avgWater,done,total:tasks.length,daysTracked:scores.length};
+  data.reviews[today()]=review;localStorage.setItem(KEY,JSON.stringify(data));
+  document.getElementById('reviewResult').innerHTML=`<hr><h3>Твой обзор за 7 дней</h3><div class="grid"><div class="metric"><div class="label">Средний индекс</div><div class="value">${avg===null?'—':avg}</div></div><div class="metric"><div class="label">Средняя вода</div><div class="value">${avgWater===null?'—':fmt(avgWater)+' мл'}</div></div><div class="metric"><div class="label">Задачи</div><div class="value">${done}/${tasks.length}</div></div><div class="metric"><div class="label">Дней с данными</div><div class="value">${scores.length}/7</div></div></div><p class="muted">${avg===null?'На этой неделе пока мало данных.':avg>=80?'Ты хорошо заботилась о себе на этой неделе!': 'Посмотри, какие небольшие изменения помогут следующей неделе стать комфортнее.'}</p>`;
+}
+function fillProfile(){
+  const p=data.profile;
+  const map={profileAge:p.age,profileHeight:p.height,profileWeight:p.weight,profileGoal:p.goal,targetKcal:p.kcal,targetP:p.p,targetF:p.f,targetC:p.c,targetWater:p.water,targetSteps:p.steps};
+  Object.entries(map).forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.value=v??''});
+}
+function saveProfile(){
+  const fields={age:'profileAge',height:'profileHeight',weight:'profileWeight',goal:'profileGoal',kcal:'targetKcal',p:'targetP',f:'targetF',c:'targetC',water:'targetWater',steps:'targetSteps'};
+  Object.entries(fields).forEach(([key,id])=>{const v=Number(document.getElementById(id).value);if(v>0)data.profile[key]=v});
+  save();notify('Профиль сохранён');
+}
+const baseThemes=[
+  {id:'white',name:'Белая',bg:'#f7f7f9',card:'#ffffff',text:'#292a30',accent:'#a8bce9',accent2:'#e9efff'},
+  {id:'yellow',name:'Пастельная',bg:'#fffaf0',card:'#ffffff',text:'#403a2f',accent:'#e8c76f',accent2:'#fff1c9'},
+  {id:'blue',name:'Голубая',bg:'#f1f7fc',card:'#ffffff',text:'#263746',accent:'#91c5e6',accent2:'#e0f1fc'},
+  {id:'lavender',name:'Лавандовая',bg:'#f7f3fc',card:'#ffffff',text:'#3c3448',accent:'#b7a1dc',accent2:'#eee6fa'},
+  {id:'black',name:'Тёмная',bg:'#202127',card:'#2b2d35',text:'#f3f3f5',accent:'#a9b9ed',accent2:'#41465a'},
+  {id:'grey',name:'Серая',bg:'#f1f2f3',card:'#ffffff',text:'#303238',accent:'#aeb5c0',accent2:'#e6e9ed'},
+  {id:'beige',name:'Бежевая',bg:'#f7f1e9',card:'#fffdf9',text:'#453b32',accent:'#d8b99b',accent2:'#f0e1d2'}
+];
+function applyTheme(t){
+  const root=document.documentElement;
+  root.style.setProperty('--bg',t.bg);root.style.setProperty('--card',t.card);
+  root.style.setProperty('--text',t.text);root.style.setProperty('--accent',t.accent);
+  root.style.setProperty('--accent2',t.accent2);
+  root.style.setProperty('--border',t.id==='black'?'#454751':'#ececf1');
+  document.querySelector('meta[name="theme-color"]').content=t.bg;
+  data.activeTheme=t.id;localStorage.setItem(KEY,JSON.stringify(data));renderThemeGrid();
+}
+function renderThemeGrid(){
+  const el=document.getElementById('themeGrid');if(!el)return;
+  const themes=[...baseThemes,...data.themes];
+  el.innerHTML=themes.map(t=>`<button class="themechoice ${data.activeTheme===t.id?'active':''}" onclick="applyThemeById('${t.id}')"><div class="theme-swatch" style="background:linear-gradient(90deg,${t.bg} 50%,${t.accent} 50%)"></div><b>${esc(t.name)}</b></button>`).join('');
+}
+function applyThemeById(id){const t=[...baseThemes,...data.themes].find(x=>x.id===id);if(t)applyTheme(t)}
+function saveCustomTheme(){
+  const name=document.getElementById('customThemeName').value.trim()||'Моя тема';
+  const t={id:'custom-'+uid(),name,bg:document.getElementById('customBg').value,card:document.getElementById('customCard').value,text:document.getElementById('customText').value,accent:document.getElementById('customAccent').value,accent2:document.getElementById('customAccent2').value};
+  data.themes.push(t);data.activeTheme=t.id;save();applyTheme(t);notify('Тема сохранена');
+}
+function exportBackup(){
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download='health-diary-backup-'+today()+'.json';a.click();URL.revokeObjectURL(url);
+}
+function importBackup(){
+  const file=document.getElementById('backupFile').files[0];if(!file)return notify('Выбери файл резервной копии');
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const incoming=JSON.parse(reader.result);
+      if(!incoming||typeof incoming!=='object'||!incoming.profile||!incoming.days)throw new Error('Неверный формат');
+      if(!confirm('Импорт заменит текущие данные. Продолжить?'))return;
+      data={...structuredClone(defaults),...incoming,profile:{...defaults.profile,...incoming.profile}};
+      localStorage.setItem(KEY,JSON.stringify(data));applyThemeById(data.activeTheme||'white');refresh();fillProfile();notify('Данные восстановлены');
+    }catch(e){notify('Не удалось импортировать файл. Проверь резервную копию JSON.')}
+  };
+  reader.readAsText(file);
+}
+function clearAll(){
+  if(!confirm('Точно удалить все данные? Это действие нельзя отменить.'))return;
+  if(!confirm('Подтверди удаление ещё раз.'))return;
+  localStorage.removeItem(KEY);data=structuredClone(defaults);save();applyThemeById('white');fillProfile();notify('Данные удалены');
+}
+function migrate(){
+  // Поддерживаем старые записи в healthDiaryData: неизвестные поля не удаляются.
+  if(!data.profile)data.profile={...defaults.profile};
+  if(!data.days)data.days={};
+  if(!data.tasks)data.tasks=[];
+  if(!data.reviews)data.reviews={};
+  localStorage.setItem(KEY,JSON.stringify(data));
+}
+function init(){
+  migrate();
+  document.getElementById('taskDate').value=today();
+  document.getElementById('workoutDate').value=today();
+  applyThemeById(data.activeTheme||'white');
+  fillProfile();
+  refresh();
+  const now=new Date();
+  // Недельный обзор можно сформировать вручную; при открытии в воскресенье
+  // приложение предлагает его, если обзор за сегодня ещё не создан.
+  if(now.getDay()===0&&!data.reviews[today()]){
+    setTimeout(()=>{if(confirm('Сегодня воскресенье. Сформировать недельный обзор?')){navigate('stats');generateReview()}},700);
+  }
+}
+init();
 </script>
 </body>
 </html>
+
