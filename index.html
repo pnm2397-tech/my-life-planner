@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -81,6 +80,7 @@ hr{border:0;border-top:1px solid var(--border);margin:14px 0}
 .calendar-day.selected{border:2px solid var(--accent);font-weight:700}
 .calendar-dot{width:5px;height:5px;border-radius:50%;background:var(--accent)}
 .calendar-empty{min-height:42px}
+.task-actions{display:flex;align-items:center;gap:2px}
 @media(min-width:600px){main{padding:12px 22px 30px}.card{padding:19px}}
 </style>
 </head>
@@ -143,6 +143,15 @@ hr{border:0;border-top:1px solid var(--border);margin:14px 0}
       <div class="formgrid">
         <div class="field"><label>Приоритет</label><select id="taskPriority"><option value="important">Важно и срочно</option><option value="plan">Важно, не срочно</option><option value="delegate">Срочно, не важно</option><option value="later">Не срочно и не важно</option></select></div>
         <div class="field"><label>Дата</label><input type="date" id="taskDate"></div>
+      </div>
+      <div class="field">
+        <label>Повторять</label>
+        <select id="taskRepeat">
+          <option value="none">Не повторять</option>
+          <option value="daily">Ежедневно</option>
+          <option value="weekly">Еженедельно</option>
+          <option value="monthly">Ежемесячно</option>
+        </select>
       </div>
       <button class="btn primary block" onclick="addTask()">Добавить задачу</button>
     </div>
@@ -322,13 +331,13 @@ const defaults={
 };
 
 const baseThemes=[
-  {id:'yellow',name:'Пастельно-жёлтая',bg:'#fff9e9',card:'#fffefa',text:'#403a2f',accent:'#e8c76f',accent2:'#fff0c2'},
-  {id:'blue',name:'Голубая',bg:'#edf6fc',card:'#ffffff',text:'#263746',accent:'#91c5e6',accent2:'#dceffc'},
-  {id:'lavender',name:'Лавандовая',bg:'#f5f0fb',card:'#ffffff',text:'#3c3448',accent:'#b7a1dc',accent2:'#ece3f8'},
+  {id:'yellow',name:'Пастельно-жёлтая',bg:'#fff8e4',card:'#fffdf6',text:'#403a2f',accent:'#e3bd50',accent2:'#ffedb5'},
+  {id:'blue',name:'Голубая',bg:'#eaf4fc',card:'#ffffff',text:'#263746',accent:'#79b9e2',accent2:'#d5eafa'},
+  {id:'lavender',name:'Лавандовая',bg:'#f2ecfa',card:'#ffffff',text:'#3c3448',accent:'#ad91d7',accent2:'#e7dcf5'},
   {id:'white',name:'Белая',bg:'#f7f7f9',card:'#ffffff',text:'#292a30',accent:'#a8bce9',accent2:'#e9efff'},
   {id:'black',name:'Чёрная',bg:'#202127',card:'#2b2d35',text:'#f3f3f5',accent:'#a9b9ed',accent2:'#41465a'},
-  {id:'grey',name:'Нежно-серая',bg:'#f0f1f3',card:'#ffffff',text:'#303238',accent:'#aeb5c0',accent2:'#e4e7eb'},
-  {id:'beige',name:'Светло-бежевая',bg:'#f7f1e9',card:'#fffdf9',text:'#453b32',accent:'#d8b99b',accent2:'#f0e1d2'}
+  {id:'grey',name:'Нежно-серая',bg:'#eef0f3',card:'#ffffff',text:'#303238',accent:'#a5aeba',accent2:'#dfe3e9'},
+  {id:'beige',name:'Светло-бежевая',bg:'#f6eee4',card:'#fffdf9',text:'#453b32',accent:'#d2aa83',accent2:'#efddca'}
 ];
 
 let data=loadData();
@@ -344,7 +353,7 @@ function loadData(){
       ...saved,
       profile:{...defaults.profile,...(saved.profile||{})},
       days:saved.days||{},
-      tasks:saved.tasks||[],
+      tasks:Array.isArray(saved.tasks)?saved.tasks:[],
       themes:[],
       activeTheme:baseThemes.some(t=>t.id===saved.activeTheme)?saved.activeTheme:'white'
     };
@@ -415,12 +424,66 @@ function getSleepHours(sleep){
   return mins/60;
 }
 
+function previousDate(date){
+  const d=new Date(date+'T12:00:00');
+  d.setDate(d.getDate()-1);
+  return localDate(d);
+}
+
+/* ПОВТОРЯЮЩИЕСЯ ЗАДАЧИ */
+
+function taskRepeat(task){
+  return task.repeat||'none';
+}
+
+function taskOccursOn(task,date){
+  if(!task||!task.date||date<task.date)return false;
+  if(Array.isArray(task.skippedDates)&&task.skippedDates.includes(date))return false;
+
+  const repeat=taskRepeat(task);
+  if(repeat==='none')return task.date===date;
+
+  const start=new Date(task.date+'T12:00:00');
+  const current=new Date(date+'T12:00:00');
+
+  if(repeat==='daily')return true;
+
+  if(repeat==='weekly'){
+    return start.getDay()===current.getDay();
+  }
+
+  if(repeat==='monthly'){
+    const startDay=start.getDate();
+    const lastDay=new Date(current.getFullYear(),current.getMonth()+1,0).getDate();
+    return current.getDate()===Math.min(startDay,lastDay);
+  }
+
+  return task.date===date;
+}
+
+function tasksForDate(date){
+  return data.tasks
+    .filter(task=>taskOccursOn(task,date))
+    .map(task=>({
+      ...task,
+      occurrenceDate:date,
+      occurrenceDone:taskRepeat(task)==='none'
+        ?!!task.done
+        :(Array.isArray(task.completedDates)&&task.completedDates.includes(date))
+    }));
+}
+
+function taskIsDone(task,date){
+  if(taskRepeat(task)==='none')return !!task.done;
+  return Array.isArray(task.completedDates)&&task.completedDates.includes(date);
+}
+
 function calcScore(date=today()){
   const d=dayData(date),t=getTotals(date),p=data.profile;
-  const tasks=data.tasks.filter(x=>x.date===date);
+  const tasks=tasksForDate(date);
   const tracked=[];
 
-  if(tasks.length)tracked.push({weight:25,value:tasks.filter(x=>x.done).length/tasks.length});
+  if(tasks.length)tracked.push({weight:25,value:tasks.filter(x=>x.occurrenceDone).length/tasks.length});
 
   const hasWater=(d.drinks||[]).some(x=>x.type==='water');
   if(hasWater)tracked.push({weight:20,value:Math.min(1,t.water/(p.water||2100))});
@@ -442,12 +505,6 @@ function calcScore(date=today()){
   const max=tracked.reduce((s,x)=>s+x.weight,0);
   if(!max)return null;
   return Math.round(tracked.reduce((s,x)=>s+x.weight*x.value,0)/max*100);
-}
-
-function previousDate(date){
-  const d=new Date(date+'T12:00:00');
-  d.setDate(d.getDate()-1);
-  return localDate(d);
 }
 
 function refresh(){
@@ -486,9 +543,12 @@ function refresh(){
 }
 
 function renderHomeTasks(){
-  const tasks=data.tasks.filter(x=>x.date===today()&&!x.done).slice(0,4);
+  const tasks=tasksForDate(today()).filter(x=>!x.occurrenceDone).slice(0,4);
   document.getElementById('homeTasks').innerHTML=tasks.length
-    ?tasks.map(x=>`<div class="listitem"><input class="check" type="checkbox" onchange="toggleTask('${x.id}')"><div class="grow">${esc(x.title)}</div></div>`).join('')
+    ?tasks.map(x=>`<div class="listitem">
+      <input class="check" type="checkbox" onchange="toggleTask('${x.id}','${today()}')">
+      <div class="grow">${esc(x.title)}</div>
+    </div>`).join('')
     :'<div class="empty">На сегодня нет незавершённых задач ✨</div>';
 }
 
@@ -521,22 +581,77 @@ function addTask(){
   const title=document.getElementById('taskTitle').value.trim();
   if(!title)return notify('Введи название задачи');
 
+  const repeat=document.getElementById('taskRepeat').value||'none';
   data.tasks.push({
     id:uid(),
     title,
     date:document.getElementById('taskDate').value||today(),
     priority:document.getElementById('taskPriority').value,
+    repeat,
     done:false,
+    completedDates:[],
+    skippedDates:[],
     created:today()
   });
 
   document.getElementById('taskTitle').value='';
+  document.getElementById('taskRepeat').value='none';
   save();
 }
 
-function toggleTask(id){
+function toggleTask(id,date=today()){
   const x=data.tasks.find(x=>x.id===id);
-  if(x)x.done=!x.done;
+  if(!x)return;
+
+  if(taskRepeat(x)==='none'){
+    x.done=!x.done;
+  }else{
+    if(!Array.isArray(x.completedDates))x.completedDates=[];
+    const index=x.completedDates.indexOf(date);
+    if(index>=0)x.completedDates.splice(index,1);
+    else x.completedDates.push(date);
+  }
+  save();
+}
+
+function moveTask(id,fromDate){
+  const task=data.tasks.find(x=>x.id===id);
+  if(!task)return;
+
+  const newDate=prompt('На какую дату перенести задачу? Введи дату в формате ГГГГ-ММ-ДД:',fromDate);
+  if(newDate===null)return;
+
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(newDate)){
+    return notify('Укажи дату в формате ГГГГ-ММ-ДД');
+  }
+
+  const parsed=new Date(newDate+'T12:00:00');
+  if(Number.isNaN(parsed.getTime())||localDate(parsed)!==newDate){
+    return notify('Такой даты не существует');
+  }
+
+  if(newDate===fromDate)return;
+
+  if(taskRepeat(task)==='none'){
+    task.date=newDate;
+  }else{
+    if(!Array.isArray(task.skippedDates))task.skippedDates=[];
+    if(!task.skippedDates.includes(fromDate))task.skippedDates.push(fromDate);
+
+    data.tasks.push({
+      id:uid(),
+      title:task.title,
+      date:newDate,
+      priority:task.priority,
+      repeat:'none',
+      done:false,
+      completedDates:[],
+      skippedDates:[],
+      created:today(),
+      movedFrom:task.id
+    });
+  }
+
   save();
 }
 
@@ -547,10 +662,9 @@ function deleteTask(id){
   }
 }
 
-function renderTasks(){
-  const el=document.getElementById('taskList');
-  if(!el)return;
-
+function renderTaskItem(task,date,showDate=false){
+  const done=!!task.occurrenceDone;
+  const repeatLabels={none:'Без повтора',daily:'Ежедневно',weekly:'Еженедельно',monthly:'Ежемесячно'};
   const labels={
     important:'Важно и срочно',
     plan:'Важно, не срочно',
@@ -558,15 +672,30 @@ function renderTasks(){
     later:'Не срочно и не важно'
   };
 
-  const tasks=data.tasks.filter(x=>x.date===today());
+  return `<div class="listitem ${done?'done':''}">
+    <input class="check" type="checkbox" ${done?'checked':''} onchange="toggleTask('${task.id}','${date}')">
+    <div class="grow">
+      <b>${esc(task.title)}</b>
+      <div class="smalltext">${labels[task.priority]||''}</div>
+      <div class="smalltext">${repeatLabels[taskRepeat(task)]||'Без повтора'}${showDate?' · '+dateLabel(date):''}</div>
+      ${done?'<div class="smalltext">Выполнено</div>':''}
+    </div>
+    <div class="task-actions">
+      <button class="iconbtn" title="Перенести на другую дату" onclick="moveTask('${task.id}','${date}')">↗</button>
+      <button class="iconbtn" title="Удалить задачу" onclick="deleteTask('${task.id}')">×</button>
+    </div>
+  </div>`;
+}
+
+function renderTasks(){
+  const el=document.getElementById('taskList');
+  if(!el)return;
+
+  const tasks=tasksForDate(today());
 
   el.innerHTML=tasks.length
-    ?tasks.map(x=>`<div class="listitem ${x.done?'done':''}">
-      <input class="check" type="checkbox" ${x.done?'checked':''} onchange="toggleTask('${x.id}')">
-      <div class="grow"><b>${esc(x.title)}</b><div class="smalltext">${labels[x.priority]||''}</div></div>
-      <button class="iconbtn" onclick="deleteTask('${x.id}')">×</button>
-    </div>`).join('')
-    :'<div class="empty">Задач пока нет</div>';
+    ?tasks.map(x=>renderTaskItem(x,today())).join('')
+    :'<div class="empty">Задач на сегодня пока нет</div>';
 }
 
 function addHabit(){
@@ -912,7 +1041,7 @@ function renderCalendar(){
 
   for(let day=1;day<=days;day++){
     const date=y+'-'+String(m+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');
-    const hasTask=data.tasks.some(x=>x.date===date);
+    const hasTask=tasksForDate(date).length>0;
     const classes=[
       'calendar-day',
       date===today()?'today':'',
@@ -927,7 +1056,7 @@ function renderCalendar(){
 
   grid.innerHTML=html;
 
-  const selectedTasks=data.tasks.filter(x=>x.date===calendarPick);
+  const selectedTasks=tasksForDate(calendarPick);
   document.getElementById('calendarSelected').textContent=
     'Выбрано: '+dateLabel(calendarPick)+' · задач: '+selectedTasks.length;
 
@@ -940,6 +1069,8 @@ function renderCalendar(){
 
 function selectCalendarDate(date){
   calendarPick=date;
+  const selected=new Date(date+'T12:00:00');
+  calendarDate=new Date(selected.getFullYear(),selected.getMonth(),1);
   renderCalendar();
 }
 
@@ -947,25 +1078,10 @@ function renderCalendarTasks(){
   const el=document.getElementById('calendarTasks');
   if(!el)return;
 
-  const labels={
-    important:'Важно и срочно',
-    plan:'Важно, не срочно',
-    delegate:'Срочно, не важно',
-    later:'Не срочно и не важно'
-  };
-
-  const tasks=data.tasks.filter(x=>x.date===calendarPick);
+  const tasks=tasksForDate(calendarPick);
 
   el.innerHTML=tasks.length
-    ?tasks.map(x=>`<div class="listitem ${x.done?'done':''}">
-      <input class="check" type="checkbox" ${x.done?'checked':''} onchange="toggleTask('${x.id}')">
-      <div class="grow">
-        <b>${esc(x.title)}</b>
-        <div class="smalltext">${labels[x.priority]||''}</div>
-        ${x.done?'<div class="smalltext">Выполнено</div>':''}
-      </div>
-      <button class="iconbtn" onclick="deleteTask('${x.id}')">×</button>
-    </div>`).join('')
+    ?tasks.map(x=>renderTaskItem(x,calendarPick)).join('')
     :'<div class="empty">На эту дату задач нет</div>';
 }
 
@@ -992,7 +1108,10 @@ function renderStats(){
   const scores=dates.map(d=>calcScore(d)).filter(x=>x!==null);
   const waters=dates.map(d=>getTotals(d).water).filter(x=>x>0);
   const steps=dates.map(d=>dayData(d).steps).filter(x=>x!==null&&x!==undefined);
-  const tasks=data.tasks.filter(x=>dates.includes(x.date));
+
+  const occurrences=dates.flatMap(d=>tasksForDate(d).map(task=>({
+    id:task.id,date:d,done:task.occurrenceDone
+  })));
 
   document.getElementById('statScore').textContent=
     scores.length?Math.round(scores.reduce((a,b)=>a+b,0)/scores.length):'—';
@@ -1004,7 +1123,7 @@ function renderStats(){
     steps.length?fmt(steps.reduce((a,b)=>a+b,0)):'—';
 
   document.getElementById('statTasks').textContent=
-    tasks.length?tasks.filter(x=>x.done).length+'/'+tasks.length:'—';
+    occurrences.length?occurrences.filter(x=>x.done).length+'/'+occurrences.length:'—';
 
   const chart=document.getElementById('scoreChart');
 
@@ -1035,7 +1154,9 @@ function generateReview(){
 
   const scores=dates.map(d=>calcScore(d)).filter(x=>x!==null);
   const water=dates.map(d=>getTotals(d).water).filter(x=>x>0);
-  const tasks=data.tasks.filter(x=>dates.includes(x.date));
+  const tasks=dates.flatMap(d=>tasksForDate(d).map(task=>({
+    id:task.id,date:d,done:task.occurrenceDone
+  })));
   const done=tasks.filter(x=>x.done).length;
 
   const avg=scores.length?Math.round(scores.reduce((a,b)=>a+b,0)/scores.length):null;
@@ -1176,10 +1297,12 @@ function importBackup(){
         ...structuredClone(defaults),
         ...incoming,
         profile:{...defaults.profile,...incoming.profile},
+        tasks:Array.isArray(incoming.tasks)?incoming.tasks:[],
         themes:[],
         activeTheme:baseThemes.some(t=>t.id===incoming.activeTheme)?incoming.activeTheme:'white'
       };
 
+      migrate();
       localStorage.setItem(KEY,JSON.stringify(data));
       applyThemeById(data.activeTheme);
       refresh();
@@ -1210,33 +1333,41 @@ function clearAll(){
 
 function migrate(){
   if(!data.profile)data.profile={...defaults.profile};
+  else data.profile={...defaults.profile,...data.profile};
+
   if(!data.days)data.days={};
-  if(!data.tasks)data.tasks=[];
-  if(!data.habits)data.habits=[];
-  if(!data.notes)data.notes=[];
-  if(!data.weights)data.weights=[];
-  if(!data.measures)data.measures=[];
-  if(!data.workouts)data.workouts=[];
-  if(!data.wellbeing)data.wellbeing=[];
-  if(!data.meds)data.meds=[];
+  if(!Array.isArray(data.tasks))data.tasks=[];
+  if(!Array.isArray(data.habits))data.habits=[];
+  if(!Array.isArray(data.notes))data.notes=[];
+  if(!Array.isArray(data.weights))data.weights=[];
+  if(!Array.isArray(data.measures))data.measures=[];
+  if(!Array.isArray(data.workouts))data.workouts=[];
+  if(!Array.isArray(data.wellbeing))data.wellbeing=[];
+  if(!Array.isArray(data.meds))data.meds=[];
   if(!data.reviews)data.reviews={};
 
-  // Пользовательские темы больше не используются.
   data.themes=[];
 
-  // Если ранее была выбрана пользовательская тема,
-  // переключаем приложение на белую.
   if(!baseThemes.some(t=>t.id===data.activeTheme)){
     data.activeTheme='white';
   }
 
-  // Обеспечиваем наличие полей у старых записей дней.
   Object.values(data.days).forEach(d=>{
     if(!Array.isArray(d.food))d.food=[];
     if(!Array.isArray(d.drinks))d.drinks=[];
     if(d.steps===undefined)d.steps=null;
     if(d.sleep===undefined)d.sleep=null;
     if(d.wellbeing===undefined)d.wellbeing=null;
+  });
+
+  // Старые задачи сохраняют прежнюю дату и статус выполнения.
+  // Для повторяющихся задач добавляются недостающие массивы статусов.
+  data.tasks.forEach(task=>{
+    if(!task.id)task.id=uid();
+    if(!task.repeat)task.repeat='none';
+    if(!Array.isArray(task.completedDates))task.completedDates=[];
+    if(!Array.isArray(task.skippedDates))task.skippedDates=[];
+    if(task.done===undefined)task.done=false;
   });
 
   localStorage.setItem(KEY,JSON.stringify(data));
@@ -1254,8 +1385,6 @@ function init(){
 
   const now=new Date();
 
-  // В воскресенье приложение предлагает сформировать недельный обзор,
-  // если обзор за сегодня ещё не создан.
   if(now.getDay()===0&&!data.reviews[today()]){
     setTimeout(()=>{
       if(confirm('Сегодня воскресенье. Сформировать недельный обзор?')){
