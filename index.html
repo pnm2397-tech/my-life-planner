@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -70,10 +71,16 @@ hr{border:0;border-top:1px solid var(--border);margin:14px 0}
 .check{width:19px;height:19px;accent-color:var(--accent)}
 .smalltext{font-size:12px;color:var(--muted)}
 .themegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
-.themechoice{border:2px solid var(--border);border-radius:14px;padding:10px;background:var(--card);text-align:left}
+.themechoice{border:2px solid var(--border);border-radius:14px;padding:10px;background:var(--card);text-align:left;color:var(--text)}
 .themechoice.active{border-color:var(--accent)}
-.theme-swatch{height:24px;border-radius:8px;margin-bottom:7px}
-canvas{max-width:100%}
+.theme-swatch{height:28px;border-radius:8px;margin-bottom:7px}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin-top:13px}
+.calendar-weekday{text-align:center;padding:5px 0;color:var(--muted);font-size:11px}
+.calendar-day{min-width:0;min-height:42px;border:1px solid var(--border);background:var(--card);border-radius:10px;padding:6px 2px;color:var(--text);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+.calendar-day.today{background:var(--accent2)}
+.calendar-day.selected{border:2px solid var(--accent);font-weight:700}
+.calendar-dot{width:5px;height:5px;border-radius:50%;background:var(--accent)}
+.calendar-empty{min-height:42px}
 @media(min-width:600px){main{padding:12px 22px 30px}.card{padding:19px}}
 </style>
 </head>
@@ -146,7 +153,19 @@ canvas{max-width:100%}
     <div class="card"><h2>Мои привычки</h2><div id="habitList" class="list"></div></div>
   </div>
   <div id="day-calendar" class="subpage" style="display:none">
-    <div class="card"><h2>Календарь</h2><div class="row"><button class="btn small" onclick="changeMonth(-1)">‹</button><b id="monthTitle"></b><button class="btn small" onclick="changeMonth(1)">›</button></div><div id="calendarGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:13px"></div><p class="muted" id="calendarSelected"></p></div>
+    <div class="card">
+      <h2>Календарь</h2>
+      <div class="row">
+        <button class="btn small" onclick="changeMonth(-1)">‹</button>
+        <b id="monthTitle"></b>
+        <button class="btn small" onclick="changeMonth(1)">›</button>
+      </div>
+      <div id="calendarGrid" class="calendar-grid"></div>
+      <p class="muted" id="calendarSelected"></p>
+      <hr>
+      <div class="row"><h3 id="calendarTasksTitle">Задачи на выбранную дату</h3><span class="pill" id="calendarTaskCount">0</span></div>
+      <div id="calendarTasks" class="list"></div>
+    </div>
   </div>
   <div id="day-notes" class="subpage" style="display:none">
     <div class="card"><h2>Заметки</h2><input id="noteTitle" placeholder="Заголовок"><div class="field"><textarea id="noteText" placeholder="Запиши мысли, идеи или планы..."></textarea></div><button class="btn primary block" onclick="addNote()">Сохранить заметку</button></div>
@@ -250,18 +269,9 @@ canvas{max-width:100%}
     <button class="btn primary block" onclick="saveProfile()">Сохранить профиль</button>
   </div>
   <div class="card">
-    <h2>Оформление</h2><p class="muted">Выбери готовую тему или создай собственную палитру.</p>
+    <h2>Оформление</h2>
+    <p class="muted">Выбери одну из готовых цветовых тем.</p>
     <div class="themegrid" id="themeGrid"></div>
-    <hr><h3>Своя тема</h3>
-    <div class="formgrid">
-      <div class="field"><label>Название темы</label><input id="customThemeName" placeholder="Моя тема"></div>
-      <div class="field"><label>Фон</label><input type="color" id="customBg" value="#f7f7f9"></div>
-      <div class="field"><label>Карточки</label><input type="color" id="customCard" value="#ffffff"></div>
-      <div class="field"><label>Текст</label><input type="color" id="customText" value="#292a30"></div>
-      <div class="field"><label>Акцент</label><input type="color" id="customAccent" value="#a8bce9"></div>
-      <div class="field"><label>Дополнительный цвет</label><input type="color" id="customAccent2" value="#e9efff"></div>
-    </div>
-    <button class="btn primary block" onclick="saveCustomTheme()">Сохранить свою тему</button>
   </div>
   <div class="card">
     <h2>Резервная копия</h2><p class="muted">Сохраняй копию данных на устройстве и восстанавливай её при необходимости.</p>
@@ -290,14 +300,37 @@ canvas{max-width:100%}
 
 <script>
 const KEY='healthDiaryData';
-const today=()=>new Date().toISOString().slice(0,10);
-const yesterday=()=>{let d=new Date();d.setDate(d.getDate()-1);return d.toISOString().slice(0,10)};
+
+function localDate(date=new Date()){
+  const y=date.getFullYear();
+  const m=String(date.getMonth()+1).padStart(2,'0');
+  const d=String(date.getDate()).padStart(2,'0');
+  return `${y}-${m}-${d}`;
+}
+const today=()=>localDate();
+const yesterday=()=>{
+  const d=new Date();
+  d.setDate(d.getDate()-1);
+  return localDate(d);
+};
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+
 const defaults={
   profile:{age:28,height:161,weight:71.4,goal:60,kcal:1450,p:100,f:50,c:150,water:2100,steps:8000},
   days:{},tasks:[],habits:[],notes:[],weights:[],measures:[],workouts:[],wellbeing:[],meds:[],
   themes:[],activeTheme:'white',reviews:{},createdAt:new Date().toISOString()
 };
+
+const baseThemes=[
+  {id:'yellow',name:'Пастельно-жёлтая',bg:'#fff9e9',card:'#fffefa',text:'#403a2f',accent:'#e8c76f',accent2:'#fff0c2'},
+  {id:'blue',name:'Голубая',bg:'#edf6fc',card:'#ffffff',text:'#263746',accent:'#91c5e6',accent2:'#dceffc'},
+  {id:'lavender',name:'Лавандовая',bg:'#f5f0fb',card:'#ffffff',text:'#3c3448',accent:'#b7a1dc',accent2:'#ece3f8'},
+  {id:'white',name:'Белая',bg:'#f7f7f9',card:'#ffffff',text:'#292a30',accent:'#a8bce9',accent2:'#e9efff'},
+  {id:'black',name:'Чёрная',bg:'#202127',card:'#2b2d35',text:'#f3f3f5',accent:'#a9b9ed',accent2:'#41465a'},
+  {id:'grey',name:'Нежно-серая',bg:'#f0f1f3',card:'#ffffff',text:'#303238',accent:'#aeb5c0',accent2:'#e4e7eb'},
+  {id:'beige',name:'Светло-бежевая',bg:'#f7f1e9',card:'#fffdf9',text:'#453b32',accent:'#d8b99b',accent2:'#f0e1d2'}
+];
+
 let data=loadData();
 let calendarDate=new Date();
 let calendarPick=today();
@@ -306,20 +339,47 @@ let statsRange='week';
 function loadData(){
   try{
     const saved=JSON.parse(localStorage.getItem(KEY));
-    if(saved)return {...structuredClone(defaults),...saved,profile:{...defaults.profile,...(saved.profile||{})}};
+    if(saved)return {
+      ...structuredClone(defaults),
+      ...saved,
+      profile:{...defaults.profile,...(saved.profile||{})},
+      days:saved.days||{},
+      tasks:saved.tasks||[],
+      themes:[],
+      activeTheme:baseThemes.some(t=>t.id===saved.activeTheme)?saved.activeTheme:'white'
+    };
   }catch(e){console.warn('Не удалось прочитать данные',e)}
   return structuredClone(defaults);
 }
-function save(){localStorage.setItem(KEY,JSON.stringify(data));refresh();}
+
+function save(){
+  localStorage.setItem(KEY,JSON.stringify(data));
+  refresh();
+}
+
 function dayData(date=today()){
   if(!data.days[date])data.days[date]={food:[],drinks:[],steps:null,sleep:null,wellbeing:null};
   return data.days[date];
 }
-function sum(arr,key){return arr.reduce((s,x)=>s+(Number(x[key])||0),0)}
-function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function fmt(n){return Math.round(Number(n)||0).toLocaleString('ru-RU')}
-function dateLabel(d){return new Date(d+'T12:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'})}
+
+function sum(arr,key){
+  return arr.reduce((s,x)=>s+(Number(x[key])||0),0);
+}
+
+function esc(s){
+  return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function fmt(n){
+  return Math.round(Number(n)||0).toLocaleString('ru-RU');
+}
+
+function dateLabel(d){
+  return new Date(d+'T12:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
+}
+
 function notify(msg){alert(msg)}
+
 function navigate(page){
   document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
   document.getElementById('page-'+page).classList.add('active');
@@ -328,6 +388,7 @@ function navigate(page){
   if(page==='more')fillProfile();
   window.scrollTo(0,0);
 }
+
 function showSub(group,name,button){
   document.querySelectorAll('#page-'+group+' .subpage').forEach(x=>x.style.display='none');
   document.getElementById(group+'-'+name).style.display='block';
@@ -335,340 +396,877 @@ function showSub(group,name,button){
   button.classList.add('selected');
   renderAll();
 }
+
 function getTotals(date=today()){
   const d=dayData(date),foods=d.food||[],drinks=d.drinks||[];
-  return {kcal:sum(foods,'kcal'),p:sum(foods,'p'),f:sum(foods,'f'),c:sum(foods,'c'),
+  return {
+    kcal:sum(foods,'kcal'),p:sum(foods,'p'),f:sum(foods,'f'),c:sum(foods,'c'),
     water:sum(drinks.filter(x=>x.type==='water'),'ml'),
-    coffee:sum(drinks.filter(x=>x.type==='coffee'),'ml')};
+    coffee:sum(drinks.filter(x=>x.type==='coffee'),'ml')
+  };
 }
+
 function getSleepHours(sleep){
   if(!sleep||!sleep.start||!sleep.end)return null;
-  let [sh,sm]=sleep.start.split(':').map(Number),[eh,em]=sleep.end.split(':').map(Number);
-  let mins=eh*60+em-(sh*60+sm);if(mins<=0)mins+=1440;
+  let [sh,sm]=sleep.start.split(':').map(Number);
+  let [eh,em]=sleep.end.split(':').map(Number);
+  let mins=eh*60+em-(sh*60+sm);
+  if(mins<=0)mins+=1440;
   return mins/60;
 }
+
 function calcScore(date=today()){
   const d=dayData(date),t=getTotals(date),p=data.profile;
   const tasks=data.tasks.filter(x=>x.date===date);
   const tracked=[];
+
   if(tasks.length)tracked.push({weight:25,value:tasks.filter(x=>x.done).length/tasks.length});
+
   const hasWater=(d.drinks||[]).some(x=>x.type==='water');
   if(hasWater)tracked.push({weight:20,value:Math.min(1,t.water/(p.water||2100))});
+
   if((d.food||[]).length)tracked.push({weight:15,value:1});
-  if((d.food||[]).length) {
+
+  if((d.food||[]).length){
     const kcalOk=t.kcal>0&&t.kcal<=p.kcal*1.1;
     const pOk=t.p>=p.p*.8&&t.p<=p.p*1.2;
     const fOk=t.f>=p.f*.8&&t.f<=p.f*1.2;
     const cOk=t.c>=p.c*.8&&t.c<=p.c*1.2;
     tracked.push({weight:20,value:[kcalOk,pOk,fOk,cOk].filter(Boolean).length/4});
   }
+
   const sleep=dayData(previousDate(date)).sleep;
   const hours=getSleepHours(sleep);
   if(hours!==null)tracked.push({weight:20,value:Math.min(1,hours/8)});
+
   const max=tracked.reduce((s,x)=>s+x.weight,0);
   if(!max)return null;
   return Math.round(tracked.reduce((s,x)=>s+x.weight*x.value,0)/max*100);
 }
+
 function previousDate(date){
-  const d=new Date(date+'T12:00:00');d.setDate(d.getDate()-1);return d.toISOString().slice(0,10);
+  const d=new Date(date+'T12:00:00');
+  d.setDate(d.getDate()-1);
+  return localDate(d);
 }
+
 function refresh(){
   const d=dayData(),t=getTotals(),p=data.profile;
-  const now=new Date(),hour=now.getHours();
+  const hour=new Date().getHours();
+
   document.getElementById('greeting').textContent=hour<12?'Доброе утро!':hour<18?'Хорошего дня!':'Добрый вечер!';
   document.getElementById('headerDate').textContent=dateLabel(today());
   document.getElementById('homeDate').textContent=dateLabel(today());
+
   const score=calcScore();
   document.getElementById('homeScore').textContent=score===null?'—':score;
   document.getElementById('scoreBar').style.width=(score||0)+'%';
   document.getElementById('scoreHint').textContent=score===null?'Добавь данные, чтобы рассчитать индекс':score>=80?'Отличный результат! Так держать':score>=50?'Хорошее начало. Продолжай':'Каждый маленький шаг имеет значение';
+
   document.getElementById('homeWater').textContent=fmt(t.water)+' мл';
   document.getElementById('waterGoalText').textContent='Цель '+fmt(p.water)+' мл';
   document.getElementById('waterBar').style.width=Math.min(100,t.water/(p.water||1)*100)+'%';
   document.getElementById('homeCoffee').textContent=fmt(t.coffee)+' мл';
+
   const sleep=dayData(yesterday()).sleep,h=getSleepHours(sleep);
   document.getElementById('homeSleep').textContent=h===null?'—':h.toFixed(1).replace('.',',')+' ч';
   document.getElementById('homeSteps').textContent=d.steps===null||d.steps===undefined?'—':fmt(d.steps);
+
   document.getElementById('homeCalories').textContent=fmt(t.kcal)+' / '+fmt(p.kcal)+' ккал';
   document.getElementById('calorieBar').style.width=Math.min(100,t.kcal/(p.kcal||1)*100)+'%';
+
   ['P','F','C'].forEach((x,i)=>{
     const key=['p','f','c'][i],target=p[key];
     document.getElementById('home'+x).textContent=fmt(t[key])+' / '+fmt(target)+' г';
   });
+
   document.getElementById('homeRemain').textContent=fmt(Math.max(0,p.kcal-t.kcal))+' ккал';
-  renderHomeTasks();renderAll();
+  renderHomeTasks();
+  renderAll();
 }
+
 function renderHomeTasks(){
   const tasks=data.tasks.filter(x=>x.date===today()&&!x.done).slice(0,4);
-  document.getElementById('homeTasks').innerHTML=tasks.length?tasks.map(x=>`<div class="listitem"><input class="check" type="checkbox" onchange="toggleTask('${x.id}')"><div class="grow">${esc(x.title)}</div></div>`).join(''):'<div class="empty">На сегодня нет незавершённых задач ✨</div>';
+  document.getElementById('homeTasks').innerHTML=tasks.length
+    ?tasks.map(x=>`<div class="listitem"><input class="check" type="checkbox" onchange="toggleTask('${x.id}')"><div class="grow">${esc(x.title)}</div></div>`).join('')
+    :'<div class="empty">На сегодня нет незавершённых задач ✨</div>';
 }
+
 function renderAll(){
-  renderTasks();renderHabits();renderNotes();renderFood();renderDrinks();renderSleep();renderWorkouts();renderWeight();renderWellbeing();renderMeds();renderCalendar();renderThemeGrid();
+  renderTasks();
+  renderHabits();
+  renderNotes();
+  renderFood();
+  renderDrinks();
+  renderSleep();
+  renderWorkouts();
+  renderWeight();
+  renderWellbeing();
+  renderMeds();
+  renderCalendar();
+  renderThemeGrid();
+
   const t=getTotals();
-  const wt=document.getElementById('waterTotal');if(wt)wt.textContent=fmt(t.water)+' мл';
-  const ct=document.getElementById('coffeeTotal');if(ct)ct.textContent=fmt(t.coffee)+' мл';
-  const wg=document.getElementById('waterGoal');if(wg)wg.textContent='Цель '+fmt(data.profile.water)+' мл';
-  const wp=document.getElementById('waterProgress');if(wp)wp.style.width=Math.min(100,t.water/(data.profile.water||1)*100)+'%';
+  const wt=document.getElementById('waterTotal');
+  if(wt)wt.textContent=fmt(t.water)+' мл';
+  const ct=document.getElementById('coffeeTotal');
+  if(ct)ct.textContent=fmt(t.coffee)+' мл';
+  const wg=document.getElementById('waterGoal');
+  if(wg)wg.textContent='Цель '+fmt(data.profile.water)+' мл';
+  const wp=document.getElementById('waterProgress');
+  if(wp)wp.style.width=Math.min(100,t.water/(data.profile.water||1)*100)+'%';
 }
+
 function addTask(){
-  const title=document.getElementById('taskTitle').value.trim();if(!title)return notify('Введи название задачи');
-  data.tasks.push({id:uid(),title,date:document.getElementById('taskDate').value||today(),priority:document.getElementById('taskPriority').value,done:false,created:today()});
-  document.getElementById('taskTitle').value='';save();
+  const title=document.getElementById('taskTitle').value.trim();
+  if(!title)return notify('Введи название задачи');
+
+  data.tasks.push({
+    id:uid(),
+    title,
+    date:document.getElementById('taskDate').value||today(),
+    priority:document.getElementById('taskPriority').value,
+    done:false,
+    created:today()
+  });
+
+  document.getElementById('taskTitle').value='';
+  save();
 }
-function toggleTask(id){const x=data.tasks.find(x=>x.id===id);if(x)x.done=!x.done;save()}
-function deleteTask(id){if(confirm('Удалить задачу?')){data.tasks=data.tasks.filter(x=>x.id!==id);save()}}
+
+function toggleTask(id){
+  const x=data.tasks.find(x=>x.id===id);
+  if(x)x.done=!x.done;
+  save();
+}
+
+function deleteTask(id){
+  if(confirm('Удалить задачу?')){
+    data.tasks=data.tasks.filter(x=>x.id!==id);
+    save();
+  }
+}
+
 function renderTasks(){
-  const el=document.getElementById('taskList');if(!el)return;
-  const labels={important:'Важно и срочно',plan:'Важно, не срочно',delegate:'Срочно, не важно',later:'Не срочно и не важно'};
+  const el=document.getElementById('taskList');
+  if(!el)return;
+
+  const labels={
+    important:'Важно и срочно',
+    plan:'Важно, не срочно',
+    delegate:'Срочно, не важно',
+    later:'Не срочно и не важно'
+  };
+
   const tasks=data.tasks.filter(x=>x.date===today());
-  el.innerHTML=tasks.length?tasks.map(x=>`<div class="listitem ${x.done?'done':''}"><input class="check" type="checkbox" ${x.done?'checked':''} onchange="toggleTask('${x.id}')"><div class="grow"><b>${esc(x.title)}</b><div class="smalltext">${labels[x.priority]||''}</div></div><button class="iconbtn" onclick="deleteTask('${x.id}')">×</button></div>`).join(''):'<div class="empty">Задач пока нет</div>';
+
+  el.innerHTML=tasks.length
+    ?tasks.map(x=>`<div class="listitem ${x.done?'done':''}">
+      <input class="check" type="checkbox" ${x.done?'checked':''} onchange="toggleTask('${x.id}')">
+      <div class="grow"><b>${esc(x.title)}</b><div class="smalltext">${labels[x.priority]||''}</div></div>
+      <button class="iconbtn" onclick="deleteTask('${x.id}')">×</button>
+    </div>`).join('')
+    :'<div class="empty">Задач пока нет</div>';
 }
+
 function addHabit(){
-  const title=document.getElementById('habitTitle').value.trim();if(!title)return;
+  const title=document.getElementById('habitTitle').value.trim();
+  if(!title)return;
   data.habits.push({id:uid(),title,checks:{}});
-  document.getElementById('habitTitle').value='';save();
+  document.getElementById('habitTitle').value='';
+  save();
 }
-function toggleHabit(id){const h=data.habits.find(x=>x.id===id);if(!h)return;h.checks[today()]=!h.checks[today()];save()}
-function deleteHabit(id){if(confirm('Удалить привычку?')){data.habits=data.habits.filter(x=>x.id!==id);save()}}
+
+function toggleHabit(id){
+  const h=data.habits.find(x=>x.id===id);
+  if(!h)return;
+  h.checks[today()]=!h.checks[today()];
+  save();
+}
+
+function deleteHabit(id){
+  if(confirm('Удалить привычку?')){
+    data.habits=data.habits.filter(x=>x.id!==id);
+    save();
+  }
+}
+
 function renderHabits(){
-  const el=document.getElementById('habitList');if(!el)return;
-  el.innerHTML=data.habits.length?data.habits.map(h=>`<div class="listitem"><input class="check" type="checkbox" ${h.checks[today()]?'checked':''} onchange="toggleHabit('${h.id}')"><div class="grow">${esc(h.title)}</div><button class="iconbtn" onclick="deleteHabit('${h.id}')">×</button></div>`).join(''):'<div class="empty">Добавь привычки, которые хочешь развивать</div>';
+  const el=document.getElementById('habitList');
+  if(!el)return;
+  el.innerHTML=data.habits.length
+    ?data.habits.map(h=>`<div class="listitem">
+      <input class="check" type="checkbox" ${h.checks[today()]?'checked':''} onchange="toggleHabit('${h.id}')">
+      <div class="grow">${esc(h.title)}</div>
+      <button class="iconbtn" onclick="deleteHabit('${h.id}')">×</button>
+    </div>`).join('')
+    :'<div class="empty">Добавь привычки, которые хочешь развивать</div>';
 }
+
 function addNote(){
-  const title=document.getElementById('noteTitle').value.trim(),text=document.getElementById('noteText').value.trim();
+  const title=document.getElementById('noteTitle').value.trim();
+  const text=document.getElementById('noteText').value.trim();
   if(!title&&!text)return;
+
   data.notes.unshift({id:uid(),title,text,date:today()});
-  document.getElementById('noteTitle').value='';document.getElementById('noteText').value='';save();
+  document.getElementById('noteTitle').value='';
+  document.getElementById('noteText').value='';
+  save();
 }
-function deleteNote(id){data.notes=data.notes.filter(x=>x.id!==id);save()}
+
+function deleteNote(id){
+  data.notes=data.notes.filter(x=>x.id!==id);
+  save();
+}
+
 function renderNotes(){
-  const el=document.getElementById('noteList');if(!el)return;
-  el.innerHTML=data.notes.length?data.notes.map(n=>`<div class="card"><div class="row"><b>${esc(n.title||'Без названия')}</b><button class="iconbtn" onclick="deleteNote('${n.id}')">×</button></div><p>${esc(n.text)}</p><div class="smalltext">${dateLabel(n.date)}</div></div>`).join(''):'<div class="empty">Заметок пока нет</div>';
+  const el=document.getElementById('noteList');
+  if(!el)return;
+  el.innerHTML=data.notes.length
+    ?data.notes.map(n=>`<div class="card">
+      <div class="row"><b>${esc(n.title||'Без названия')}</b><button class="iconbtn" onclick="deleteNote('${n.id}')">×</button></div>
+      <p>${esc(n.text)}</p><div class="smalltext">${dateLabel(n.date)}</div>
+    </div>`).join('')
+    :'<div class="empty">Заметок пока нет</div>';
 }
+
 function addFood(){
   const name=document.getElementById('foodName').value.trim();
   if(!name)return notify('Введи название блюда');
+
   const d=dayData();
-  d.food.push({id:uid(),name,type:document.getElementById('foodType').value,kcal:+document.getElementById('foodKcal').value||0,p:+document.getElementById('foodP').value||0,f:+document.getElementById('foodF').value||0,c:+document.getElementById('foodC').value||0,time:new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})});
-  ['foodName','foodKcal','foodP','foodF','foodC'].forEach(id=>document.getElementById(id).value='');save();
+  d.food.push({
+    id:uid(),
+    name,
+    type:document.getElementById('foodType').value,
+    kcal:+document.getElementById('foodKcal').value||0,
+    p:+document.getElementById('foodP').value||0,
+    f:+document.getElementById('foodF').value||0,
+    c:+document.getElementById('foodC').value||0,
+    time:new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})
+  });
+
+  ['foodName','foodKcal','foodP','foodF','foodC'].forEach(id=>document.getElementById(id).value='');
+  save();
 }
-function deleteFood(id){dayData().food=dayData().food.filter(x=>x.id!==id);save()}
+
+function deleteFood(id){
+  dayData().food=dayData().food.filter(x=>x.id!==id);
+  save();
+}
+
 function renderFood(){
-  const el=document.getElementById('foodList');if(!el)return;
+  const el=document.getElementById('foodList');
+  if(!el)return;
   const arr=dayData().food||[];
-  el.innerHTML=arr.length?arr.map(x=>`<div class="listitem"><div class="grow"><b>${esc(x.name)}</b><div class="smalltext">${esc(x.type)} · ${x.time||''}</div><div class="smalltext">${fmt(x.kcal)} ккал · Б ${fmt(x.p)} · Ж ${fmt(x.f)} · У ${fmt(x.c)}</div></div><button class="iconbtn" onclick="deleteFood('${x.id}')">×</button></div>`).join(''):'<div class="empty">Пока нет записей о питании</div>';
+
+  el.innerHTML=arr.length
+    ?arr.map(x=>`<div class="listitem">
+      <div class="grow"><b>${esc(x.name)}</b>
+      <div class="smalltext">${esc(x.type)} · ${x.time||''}</div>
+      <div class="smalltext">${fmt(x.kcal)} ккал · Б ${fmt(x.p)} · Ж ${fmt(x.f)} · У ${fmt(x.c)}</div></div>
+      <button class="iconbtn" onclick="deleteFood('${x.id}')">×</button>
+    </div>`).join('')
+    :'<div class="empty">Пока нет записей о питании</div>';
 }
+
 function addDrink(type,ml){
-  dayData().drinks.push({id:uid(),type,ml,time:new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})});save();
+  dayData().drinks.push({
+    id:uid(),type,ml,
+    time:new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})
+  });
+  save();
 }
+
 function addCustomDrink(type){
-  const id=type==='water'?'customWater':'customCoffee',v=Number(document.getElementById(id).value);
+  const id=type==='water'?'customWater':'customCoffee';
+  const v=Number(document.getElementById(id).value);
   if(!v||v<=0)return notify('Укажи объём напитка');
-  addDrink(type,v);document.getElementById(id).value='';
+  addDrink(type,v);
+  document.getElementById(id).value='';
 }
-function deleteDrink(id){dayData().drinks=dayData().drinks.filter(x=>x.id!==id);save()}
+
+function deleteDrink(id){
+  dayData().drinks=dayData().drinks.filter(x=>x.id!==id);
+  save();
+}
+
 function renderDrinks(){
-  const el=document.getElementById('drinkList');if(!el)return;
+  const el=document.getElementById('drinkList');
+  if(!el)return;
   const arr=dayData().drinks||[];
-  el.innerHTML=arr.length?arr.map(x=>`<div class="listitem"><div class="grow">${x.type==='water'?'💧 Вода':'☕ Кофе'} · ${fmt(x.ml)} мл <span class="smalltext">${x.time}</span></div><button class="iconbtn" onclick="deleteDrink('${x.id}')">×</button></div>`).join(''):'<div class="empty">Напитки ещё не добавлены</div>';
+
+  el.innerHTML=arr.length
+    ?arr.map(x=>`<div class="listitem">
+      <div class="grow">${x.type==='water'?'💧 Вода':'☕ Кофе'} · ${fmt(x.ml)} мл <span class="smalltext">${x.time}</span></div>
+      <button class="iconbtn" onclick="deleteDrink('${x.id}')">×</button>
+    </div>`).join('')
+    :'<div class="empty">Напитки ещё не добавлены</div>';
 }
+
 function saveSleep(){
-  const start=document.getElementById('sleepStart').value,end=document.getElementById('sleepEnd').value;
+  const start=document.getElementById('sleepStart').value;
+  const end=document.getElementById('sleepEnd').value;
   if(!start||!end)return notify('Укажи время сна и пробуждения');
-  dayData(yesterday()).sleep={start,end,quality:+document.getElementById('sleepQuality').value};
-  save();notify('Данные сна сохранены');
+
+  dayData(yesterday()).sleep={
+    start,end,
+    quality:+document.getElementById('sleepQuality').value
+  };
+
+  save();
+  notify('Данные сна сохранены');
 }
+
 function renderSleep(){
-  const el=document.getElementById('sleepHistory');if(!el)return;
-  const entries=Object.entries(data.days).filter(([k,v])=>v.sleep).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,14);
-  el.innerHTML=entries.length?entries.map(([date,v])=>`<div class="listitem"><div class="grow"><b>${dateLabel(date)}</b><div class="smalltext">${v.sleep.start} — ${v.sleep.end} · ${getSleepHours(v.sleep)?.toFixed(1)} ч</div></div></div>`).join(''):'<div class="empty">История сна появится после первых записей</div>';
+  const el=document.getElementById('sleepHistory');
+  if(!el)return;
+
+  const entries=Object.entries(data.days)
+    .filter(([k,v])=>v.sleep)
+    .sort((a,b)=>b[0].localeCompare(a[0]))
+    .slice(0,14);
+
+  el.innerHTML=entries.length
+    ?entries.map(([date,v])=>`<div class="listitem">
+      <div class="grow"><b>${dateLabel(date)}</b>
+      <div class="smalltext">${v.sleep.start} — ${v.sleep.end} · ${getSleepHours(v.sleep)?.toFixed(1)} ч</div></div>
+    </div>`).join('')
+    :'<div class="empty">История сна появится после первых записей</div>';
 }
+
 function saveSteps(){
-  const v=document.getElementById('stepsInput').value;if(v==='')return notify('Введи количество шагов');
-  dayData().steps=Math.max(0,+v);save();notify('Шаги сохранены');
+  const v=document.getElementById('stepsInput').value;
+  if(v==='')return notify('Введи количество шагов');
+  dayData().steps=Math.max(0,+v);
+  save();
+  notify('Шаги сохранены');
 }
+
 function addWorkout(){
-  const name=document.getElementById('workoutName').value.trim(),duration=+document.getElementById('workoutDuration').value;
+  const name=document.getElementById('workoutName').value.trim();
+  const duration=+document.getElementById('workoutDuration').value;
   if(!name||!duration)return notify('Заполни вид тренировки и длительность');
-  data.workouts.unshift({id:uid(),name,duration,date:document.getElementById('workoutDate').value||today()});
-  document.getElementById('workoutName').value='';document.getElementById('workoutDuration').value='';save();
+
+  data.workouts.unshift({
+    id:uid(),name,duration,
+    date:document.getElementById('workoutDate').value||today()
+  });
+
+  document.getElementById('workoutName').value='';
+  document.getElementById('workoutDuration').value='';
+  save();
 }
-function deleteWorkout(id){data.workouts=data.workouts.filter(x=>x.id!==id);save()}
+
+function deleteWorkout(id){
+  data.workouts=data.workouts.filter(x=>x.id!==id);
+  save();
+}
+
 function renderWorkouts(){
-  const el=document.getElementById('workoutList');if(!el)return;
-  el.innerHTML=data.workouts.length?data.workouts.map(x=>`<div class="listitem"><div class="grow"><b>${esc(x.name)}</b><div class="smalltext">${dateLabel(x.date)} · ${x.duration} мин</div></div><button class="iconbtn" onclick="deleteWorkout('${x.id}')">×</button></div>`).join(''):'<div class="empty">Тренировок пока нет</div>';
+  const el=document.getElementById('workoutList');
+  if(!el)return;
+
+  el.innerHTML=data.workouts.length
+    ?data.workouts.map(x=>`<div class="listitem">
+      <div class="grow"><b>${esc(x.name)}</b><div class="smalltext">${dateLabel(x.date)} · ${x.duration} мин</div></div>
+      <button class="iconbtn" onclick="deleteWorkout('${x.id}')">×</button>
+    </div>`).join('')
+    :'<div class="empty">Тренировок пока нет</div>';
 }
+
 function saveWeight(){
-  const v=+document.getElementById('weightInput').value;if(!v)return notify('Введи вес');
-  data.weights.unshift({date:today(),weight:v});data.profile.weight=v;save();notify('Вес сохранён');
+  const v=+document.getElementById('weightInput').value;
+  if(!v)return notify('Введи вес');
+  data.weights.unshift({date:today(),weight:v});
+  data.profile.weight=v;
+  save();
+  notify('Вес сохранён');
 }
+
 function saveMeasures(){
-  const entry={date:today(),waist:+document.getElementById('measureWaist').value||null,hips:+document.getElementById('measureHips').value||null,chest:+document.getElementById('measureChest').value||null,thigh:+document.getElementById('measureThigh').value||null};
+  const entry={
+    date:today(),
+    waist:+document.getElementById('measureWaist').value||null,
+    hips:+document.getElementById('measureHips').value||null,
+    chest:+document.getElementById('measureChest').value||null,
+    thigh:+document.getElementById('measureThigh').value||null
+  };
+
   if(!entry.waist&&!entry.hips&&!entry.chest&&!entry.thigh)return notify('Заполни хотя бы один замер');
-  data.measures.unshift(entry);save();notify('Замеры сохранены');
+  data.measures.unshift(entry);
+  save();
+  notify('Замеры сохранены');
 }
+
 function renderWeight(){
-  const el=document.getElementById('weightHistory');if(!el)return;
-  const weights=data.weights.slice(0,12),measures=data.measures.slice(0,5);
-  el.innerHTML='<h3>Вес</h3>'+(weights.length?weights.map(x=>`<div class="listitem"><div class="grow">${dateLabel(x.date)}</div><b>${x.weight} кг</b></div>`).join(''):'<div class="empty">Записей веса пока нет</div>')+'<hr><h3>Замеры</h3>'+(measures.length?measures.map(x=>`<div class="listitem"><div class="grow">${dateLabel(x.date)}</div><div class="smalltext">Талия ${x.waist||'—'} · Бёдра ${x.hips||'—'} · Грудь ${x.chest||'—'} · Бедро ${x.thigh||'—'}</div></div>`).join(''):'<div class="empty">Замеров пока нет</div>');
+  const el=document.getElementById('weightHistory');
+  if(!el)return;
+
+  const weights=data.weights.slice(0,12);
+  const measures=data.measures.slice(0,5);
+
+  el.innerHTML='<h3>Вес</h3>'+
+    (weights.length
+      ?weights.map(x=>`<div class="listitem"><div class="grow">${dateLabel(x.date)}</div><b>${x.weight} кг</b></div>`).join('')
+      :'<div class="empty">Записей веса пока нет</div>')+
+    '<hr><h3>Замеры</h3>'+
+    (measures.length
+      ?measures.map(x=>`<div class="listitem"><div class="grow">${dateLabel(x.date)}</div><div class="smalltext">Талия ${x.waist||'—'} · Бёдра ${x.hips||'—'} · Грудь ${x.chest||'—'} · Бедро ${x.thigh||'—'}</div></div>`).join('')
+      :'<div class="empty">Замеров пока нет</div>');
 }
+
 function saveWellbeing(){
-  const entry={date:today(),mood:+document.getElementById('mood').value,energy:+document.getElementById('energy').value,symptoms:document.getElementById('symptoms').value};
-  dayData().wellbeing=entry;data.wellbeing.unshift(entry);save();notify('Самочувствие сохранено');
+  const entry={
+    date:today(),
+    mood:+document.getElementById('mood').value,
+    energy:+document.getElementById('energy').value,
+    symptoms:document.getElementById('symptoms').value
+  };
+
+  dayData().wellbeing=entry;
+  data.wellbeing.unshift(entry);
+  save();
+  notify('Самочувствие сохранено');
 }
+
 function renderWellbeing(){
-  const el=document.getElementById('wellbeingHistory');if(!el)return;
+  const el=document.getElementById('wellbeingHistory');
+  if(!el)return;
   const arr=data.wellbeing.slice(0,10);
-  el.innerHTML=arr.length?arr.map(x=>`<div class="listitem"><div class="grow"><b>${dateLabel(x.date)}</b><div class="smalltext">Настроение: ${x.mood}/5 · Энергия: ${x.energy}/5</div>${x.symptoms?'<div class="smalltext">'+esc(x.symptoms)+'</div>':''}</div></div>`).join(''):'<div class="empty">Записей пока нет</div>';
+
+  el.innerHTML=arr.length
+    ?arr.map(x=>`<div class="listitem">
+      <div class="grow"><b>${dateLabel(x.date)}</b>
+      <div class="smalltext">Настроение: ${x.mood}/5 · Энергия: ${x.energy}/5</div>
+      ${x.symptoms?'<div class="smalltext">'+esc(x.symptoms)+'</div>':''}</div>
+    </div>`).join('')
+    :'<div class="empty">Записей пока нет</div>';
 }
+
 function addMed(){
-  const name=document.getElementById('medName').value.trim();if(!name)return notify('Укажи название');
-  data.meds.push({id:uid(),name,dose:document.getElementById('medDose').value,time:document.getElementById('medTime').value,comment:document.getElementById('medComment').value});
-  ['medName','medDose','medTime','medComment'].forEach(id=>document.getElementById(id).value='');save();
+  const name=document.getElementById('medName').value.trim();
+  if(!name)return notify('Укажи название');
+
+  data.meds.push({
+    id:uid(),name,
+    dose:document.getElementById('medDose').value,
+    time:document.getElementById('medTime').value,
+    comment:document.getElementById('medComment').value
+  });
+
+  ['medName','medDose','medTime','medComment'].forEach(id=>document.getElementById(id).value='');
+  save();
 }
-function deleteMed(id){data.meds=data.meds.filter(x=>x.id!==id);save()}
+
+function deleteMed(id){
+  data.meds=data.meds.filter(x=>x.id!==id);
+  save();
+}
+
 function renderMeds(){
-  const el=document.getElementById('medList');if(!el)return;
-  el.innerHTML=data.meds.length?data.meds.map(x=>`<div class="listitem"><div class="grow"><b>${esc(x.name)}</b><div class="smalltext">${esc(x.dose)} ${x.time?'· '+x.time:''}</div><div class="smalltext">${esc(x.comment)}</div></div><button class="iconbtn" onclick="deleteMed('${x.id}')">×</button></div>`).join(''):'<div class="empty">Список пока пуст</div>';
+  const el=document.getElementById('medList');
+  if(!el)return;
+
+  el.innerHTML=data.meds.length
+    ?data.meds.map(x=>`<div class="listitem">
+      <div class="grow"><b>${esc(x.name)}</b>
+      <div class="smalltext">${esc(x.dose)} ${x.time?'· '+x.time:''}</div>
+      <div class="smalltext">${esc(x.comment)}</div></div>
+      <button class="iconbtn" onclick="deleteMed('${x.id}')">×</button>
+    </div>`).join('')
+    :'<div class="empty">Список пока пуст</div>';
 }
-function changeMonth(n){calendarDate.setMonth(calendarDate.getMonth()+n);renderCalendar()}
+
+/* КАЛЕНДАРЬ */
+
+function changeMonth(n){
+  calendarDate=new Date(
+    calendarDate.getFullYear(),
+    calendarDate.getMonth()+n,
+    1
+  );
+  renderCalendar();
+}
+
 function renderCalendar(){
-  const grid=document.getElementById('calendarGrid');if(!grid)return;
-  const y=calendarDate.getFullYear(),m=calendarDate.getMonth();
-  document.getElementById('monthTitle').textContent=calendarDate.toLocaleDateString('ru-RU',{month:'long',year:'numeric'});
-  const first=new Date(y,m,1),offset=(first.getDay()+6)%7,days=new Date(y,m+1,0).getDate();
+  const grid=document.getElementById('calendarGrid');
+  if(!grid)return;
+
+  const y=calendarDate.getFullYear();
+  const m=calendarDate.getMonth();
+
+  document.getElementById('monthTitle').textContent=
+    calendarDate.toLocaleDateString('ru-RU',{month:'long',year:'numeric'});
+
+  const first=new Date(y,m,1);
+  const offset=(first.getDay()+6)%7;
+  const days=new Date(y,m+1,0).getDate();
   const names=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
-  grid.innerHTML=names.map(n=>`<div class="smalltext" style="text-align:center">${n}</div>`).join('');
-  for(let i=0;i<offset;i++)grid.innerHTML+='<div></div>';
+
+  let html=names.map(n=>`<div class="calendar-weekday">${n}</div>`).join('');
+
+  for(let i=0;i<offset;i++){
+    html+='<div class="calendar-empty"></div>';
+  }
+
   for(let day=1;day<=days;day++){
     const date=y+'-'+String(m+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');
     const hasTask=data.tasks.some(x=>x.date===date);
-    grid.innerHTML+=`<button onclick="selectCalendarDate('${date}')" style="border:1px solid ${calendarPick===date?'var(--accent)':'var(--border)'};background:${date===today()?'var(--accent2)':'var(--card)'};border-radius:10px;padding:9px 2px;color:var(--text)">${day}${hasTask?'<div style="font-size:8px">●</div>':''}</button>`;
+    const classes=[
+      'calendar-day',
+      date===today()?'today':'',
+      calendarPick===date?'selected':''
+    ].filter(Boolean).join(' ');
+
+    html+=`<button class="${classes}" onclick="selectCalendarDate('${date}')">
+      <span>${day}</span>
+      ${hasTask?'<span class="calendar-dot"></span>':''}
+    </button>`;
   }
-  document.getElementById('calendarSelected').textContent='Выбрано: '+dateLabel(calendarPick)+' · задач: '+data.tasks.filter(x=>x.date===calendarPick).length;
+
+  grid.innerHTML=html;
+
+  const selectedTasks=data.tasks.filter(x=>x.date===calendarPick);
+  document.getElementById('calendarSelected').textContent=
+    'Выбрано: '+dateLabel(calendarPick)+' · задач: '+selectedTasks.length;
+
+  document.getElementById('calendarTasksTitle').textContent=
+    'Задачи на '+new Date(calendarPick+'T12:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'long'});
+
+  document.getElementById('calendarTaskCount').textContent=selectedTasks.length;
+  renderCalendarTasks();
 }
-function selectCalendarDate(date){calendarPick=date;renderCalendar()}
+
+function selectCalendarDate(date){
+  calendarPick=date;
+  renderCalendar();
+}
+
+function renderCalendarTasks(){
+  const el=document.getElementById('calendarTasks');
+  if(!el)return;
+
+  const labels={
+    important:'Важно и срочно',
+    plan:'Важно, не срочно',
+    delegate:'Срочно, не важно',
+    later:'Не срочно и не важно'
+  };
+
+  const tasks=data.tasks.filter(x=>x.date===calendarPick);
+
+  el.innerHTML=tasks.length
+    ?tasks.map(x=>`<div class="listitem ${x.done?'done':''}">
+      <input class="check" type="checkbox" ${x.done?'checked':''} onchange="toggleTask('${x.id}')">
+      <div class="grow">
+        <b>${esc(x.title)}</b>
+        <div class="smalltext">${labels[x.priority]||''}</div>
+        ${x.done?'<div class="smalltext">Выполнено</div>':''}
+      </div>
+      <button class="iconbtn" onclick="deleteTask('${x.id}')">×</button>
+    </div>`).join('')
+    :'<div class="empty">На эту дату задач нет</div>';
+}
+
+/* СТАТИСТИКА */
+
 function showStats(range,btn){
-  statsRange=range;btn.parentElement.querySelectorAll('button').forEach(x=>x.classList.remove('selected'));btn.classList.add('selected');renderStats();
+  statsRange=range;
+  btn.parentElement.querySelectorAll('button').forEach(x=>x.classList.remove('selected'));
+  btn.classList.add('selected');
+  renderStats();
 }
+
 function datesForRange(){
   const count=statsRange==='week'?7:statsRange==='month'?30:365;
-  return Array.from({length:count},(_,i)=>{let d=new Date();d.setDate(d.getDate()-(count-1-i));return d.toISOString().slice(0,10)});
+  return Array.from({length:count},(_,i)=>{
+    const d=new Date();
+    d.setDate(d.getDate()-(count-1-i));
+    return localDate(d);
+  });
 }
+
 function renderStats(){
-  const dates=datesForRange(),scores=dates.map(d=>calcScore(d)).filter(x=>x!==null);
+  const dates=datesForRange();
+  const scores=dates.map(d=>calcScore(d)).filter(x=>x!==null);
   const waters=dates.map(d=>getTotals(d).water).filter(x=>x>0);
   const steps=dates.map(d=>dayData(d).steps).filter(x=>x!==null&&x!==undefined);
   const tasks=data.tasks.filter(x=>dates.includes(x.date));
-  document.getElementById('statScore').textContent=scores.length?Math.round(sum(scores.map(x=>({v:x})),'v')/scores.length):'—';
-  document.getElementById('statWater').textContent=waters.length?fmt(sum(waters.map(x=>({v:x})),'v')/waters.length)+' мл':'—';
-  document.getElementById('statSteps').textContent=steps.length?fmt(sum(steps.map(x=>({v:x})),'v')):'—';
-  document.getElementById('statTasks').textContent=tasks.length?tasks.filter(x=>x.done).length+'/'+tasks.length:'—';
+
+  document.getElementById('statScore').textContent=
+    scores.length?Math.round(scores.reduce((a,b)=>a+b,0)/scores.length):'—';
+
+  document.getElementById('statWater').textContent=
+    waters.length?fmt(waters.reduce((a,b)=>a+b,0)/waters.length)+' мл':'—';
+
+  document.getElementById('statSteps').textContent=
+    steps.length?fmt(steps.reduce((a,b)=>a+b,0)):'—';
+
+  document.getElementById('statTasks').textContent=
+    tasks.length?tasks.filter(x=>x.done).length+'/'+tasks.length:'—';
+
   const chart=document.getElementById('scoreChart');
-  chart.innerHTML=scores.length?'<div style="display:flex;align-items:end;gap:4px;height:110px">'+scores.slice(-14).map(v=>`<div title="${v}" style="flex:1;height:${Math.max(5,v)}%;background:var(--accent);border-radius:6px 6px 0 0"></div>`).join('')+'</div>':'<div class="empty">Недостаточно данных для графика</div>';
-  const w=document.getElementById('weightChart'),arr=data.weights.slice(0,10).reverse();
-  w.innerHTML=arr.length?arr.map(x=>`<div class="row"><span class="smalltext">${dateLabel(x.date)}</span><b>${x.weight} кг</b></div><div class="progress"><span style="width:${Math.min(100,x.weight/120*100)}%"></span></div>`).join(''):'<div class="empty">Добавь записи веса, чтобы увидеть динамику</div>';
+
+  chart.innerHTML=scores.length
+    ?'<div style="display:flex;align-items:end;gap:4px;height:110px">'+
+      scores.slice(-14).map(v=>`<div title="${v}" style="flex:1;height:${Math.max(5,v)}%;background:var(--accent);border-radius:6px 6px 0 0"></div>`).join('')+
+      '</div>'
+    :'<div class="empty">Недостаточно данных для графика</div>';
+
+  const w=document.getElementById('weightChart');
+  const arr=data.weights.slice(0,10).reverse();
+
+  w.innerHTML=arr.length
+    ?arr.map(x=>`<div class="row"><span class="smalltext">${dateLabel(x.date)}</span><b>${x.weight} кг</b></div><div class="progress"><span style="width:${Math.min(100,x.weight/120*100)}%"></span></div>`).join('')
+    :'<div class="empty">Добавь записи веса, чтобы увидеть динамику</div>';
 }
+
 function generateReview(){
-  const end=new Date(),start=new Date();start.setDate(end.getDate()-6);
-  const dates=Array.from({length:7},(_,i)=>{let d=new Date(start);d.setDate(start.getDate()+i);return d.toISOString().slice(0,10)});
+  const end=new Date();
+  const start=new Date();
+  start.setDate(end.getDate()-6);
+
+  const dates=Array.from({length:7},(_,i)=>{
+    const d=new Date(start);
+    d.setDate(start.getDate()+i);
+    return localDate(d);
+  });
+
   const scores=dates.map(d=>calcScore(d)).filter(x=>x!==null);
   const water=dates.map(d=>getTotals(d).water).filter(x=>x>0);
   const tasks=data.tasks.filter(x=>dates.includes(x.date));
   const done=tasks.filter(x=>x.done).length;
+
   const avg=scores.length?Math.round(scores.reduce((a,b)=>a+b,0)/scores.length):null;
   const avgWater=water.length?Math.round(water.reduce((a,b)=>a+b,0)/water.length):null;
-  const review={date:today(),avg,avgWater,done,total:tasks.length,daysTracked:scores.length};
-  data.reviews[today()]=review;localStorage.setItem(KEY,JSON.stringify(data));
-  document.getElementById('reviewResult').innerHTML=`<hr><h3>Твой обзор за 7 дней</h3><div class="grid"><div class="metric"><div class="label">Средний индекс</div><div class="value">${avg===null?'—':avg}</div></div><div class="metric"><div class="label">Средняя вода</div><div class="value">${avgWater===null?'—':fmt(avgWater)+' мл'}</div></div><div class="metric"><div class="label">Задачи</div><div class="value">${done}/${tasks.length}</div></div><div class="metric"><div class="label">Дней с данными</div><div class="value">${scores.length}/7</div></div></div><p class="muted">${avg===null?'На этой неделе пока мало данных.':avg>=80?'Ты хорошо заботилась о себе на этой неделе!': 'Посмотри, какие небольшие изменения помогут следующей неделе стать комфортнее.'}</p>`;
+
+  const review={
+    date:today(),avg,avgWater,done,total:tasks.length,daysTracked:scores.length
+  };
+
+  data.reviews[today()]=review;
+  localStorage.setItem(KEY,JSON.stringify(data));
+
+  document.getElementById('reviewResult').innerHTML=`
+    <hr><h3>Твой обзор за 7 дней</h3>
+    <div class="grid">
+      <div class="metric"><div class="label">Средний индекс</div><div class="value">${avg===null?'—':avg}</div></div>
+      <div class="metric"><div class="label">Средняя вода</div><div class="value">${avgWater===null?'—':fmt(avgWater)+' мл'}</div></div>
+      <div class="metric"><div class="label">Задачи</div><div class="value">${done}/${tasks.length}</div></div>
+      <div class="metric"><div class="label">Дней с данными</div><div class="value">${scores.length}/7</div></div>
+    </div>
+    <p class="muted">${avg===null?'На этой неделе пока мало данных.':avg>=80?'Ты хорошо заботилась о себе на этой неделе!':'Посмотри, какие небольшие изменения помогут следующей неделе стать комфортнее.'}</p>`;
 }
+
+/* ПРОФИЛЬ */
+
 function fillProfile(){
   const p=data.profile;
-  const map={profileAge:p.age,profileHeight:p.height,profileWeight:p.weight,profileGoal:p.goal,targetKcal:p.kcal,targetP:p.p,targetF:p.f,targetC:p.c,targetWater:p.water,targetSteps:p.steps};
-  Object.entries(map).forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.value=v??''});
+  const map={
+    profileAge:p.age,
+    profileHeight:p.height,
+    profileWeight:p.weight,
+    profileGoal:p.goal,
+    targetKcal:p.kcal,
+    targetP:p.p,
+    targetF:p.f,
+    targetC:p.c,
+    targetWater:p.water,
+    targetSteps:p.steps
+  };
+
+  Object.entries(map).forEach(([id,v])=>{
+    const el=document.getElementById(id);
+    if(el)el.value=v??'';
+  });
 }
+
 function saveProfile(){
-  const fields={age:'profileAge',height:'profileHeight',weight:'profileWeight',goal:'profileGoal',kcal:'targetKcal',p:'targetP',f:'targetF',c:'targetC',water:'targetWater',steps:'targetSteps'};
-  Object.entries(fields).forEach(([key,id])=>{const v=Number(document.getElementById(id).value);if(v>0)data.profile[key]=v});
-  save();notify('Профиль сохранён');
+  const fields={
+    age:'profileAge',
+    height:'profileHeight',
+    weight:'profileWeight',
+    goal:'profileGoal',
+    kcal:'targetKcal',
+    p:'targetP',
+    f:'targetF',
+    c:'targetC',
+    water:'targetWater',
+    steps:'targetSteps'
+  };
+
+  Object.entries(fields).forEach(([key,id])=>{
+    const v=Number(document.getElementById(id).value);
+    if(v>0)data.profile[key]=v;
+  });
+
+  save();
+  notify('Профиль сохранён');
 }
-const baseThemes=[
-  {id:'white',name:'Белая',bg:'#f7f7f9',card:'#ffffff',text:'#292a30',accent:'#a8bce9',accent2:'#e9efff'},
-  {id:'yellow',name:'Пастельная',bg:'#fffaf0',card:'#ffffff',text:'#403a2f',accent:'#e8c76f',accent2:'#fff1c9'},
-  {id:'blue',name:'Голубая',bg:'#f1f7fc',card:'#ffffff',text:'#263746',accent:'#91c5e6',accent2:'#e0f1fc'},
-  {id:'lavender',name:'Лавандовая',bg:'#f7f3fc',card:'#ffffff',text:'#3c3448',accent:'#b7a1dc',accent2:'#eee6fa'},
-  {id:'black',name:'Тёмная',bg:'#202127',card:'#2b2d35',text:'#f3f3f5',accent:'#a9b9ed',accent2:'#41465a'},
-  {id:'grey',name:'Серая',bg:'#f1f2f3',card:'#ffffff',text:'#303238',accent:'#aeb5c0',accent2:'#e6e9ed'},
-  {id:'beige',name:'Бежевая',bg:'#f7f1e9',card:'#fffdf9',text:'#453b32',accent:'#d8b99b',accent2:'#f0e1d2'}
-];
+
+/* ГОТОВЫЕ ТЕМЫ */
+
 function applyTheme(t){
   const root=document.documentElement;
-  root.style.setProperty('--bg',t.bg);root.style.setProperty('--card',t.card);
-  root.style.setProperty('--text',t.text);root.style.setProperty('--accent',t.accent);
+
+  root.style.setProperty('--bg',t.bg);
+  root.style.setProperty('--card',t.card);
+  root.style.setProperty('--text',t.text);
+  root.style.setProperty('--accent',t.accent);
   root.style.setProperty('--accent2',t.accent2);
   root.style.setProperty('--border',t.id==='black'?'#454751':'#ececf1');
+
   document.querySelector('meta[name="theme-color"]').content=t.bg;
-  data.activeTheme=t.id;localStorage.setItem(KEY,JSON.stringify(data));renderThemeGrid();
+
+  data.activeTheme=t.id;
+  data.themes=[];
+  localStorage.setItem(KEY,JSON.stringify(data));
+  renderThemeGrid();
 }
+
 function renderThemeGrid(){
-  const el=document.getElementById('themeGrid');if(!el)return;
-  const themes=[...baseThemes,...data.themes];
-  el.innerHTML=themes.map(t=>`<button class="themechoice ${data.activeTheme===t.id?'active':''}" onclick="applyThemeById('${t.id}')"><div class="theme-swatch" style="background:linear-gradient(90deg,${t.bg} 50%,${t.accent} 50%)"></div><b>${esc(t.name)}</b></button>`).join('');
+  const el=document.getElementById('themeGrid');
+  if(!el)return;
+
+  el.innerHTML=baseThemes.map(t=>`
+    <button class="themechoice ${data.activeTheme===t.id?'active':''}" onclick="applyThemeById('${t.id}')">
+      <div class="theme-swatch" style="background:linear-gradient(90deg,${t.bg} 50%,${t.accent} 50%)"></div>
+      <b>${esc(t.name)}</b>
+    </button>
+  `).join('');
 }
-function applyThemeById(id){const t=[...baseThemes,...data.themes].find(x=>x.id===id);if(t)applyTheme(t)}
-function saveCustomTheme(){
-  const name=document.getElementById('customThemeName').value.trim()||'Моя тема';
-  const t={id:'custom-'+uid(),name,bg:document.getElementById('customBg').value,card:document.getElementById('customCard').value,text:document.getElementById('customText').value,accent:document.getElementById('customAccent').value,accent2:document.getElementById('customAccent2').value};
-  data.themes.push(t);data.activeTheme=t.id;save();applyTheme(t);notify('Тема сохранена');
+
+function applyThemeById(id){
+  const t=baseThemes.find(x=>x.id===id);
+  if(t)applyTheme(t);
 }
+
+/* РЕЗЕРВНАЯ КОПИЯ */
+
 function exportBackup(){
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob),a=document.createElement('a');
-  a.href=url;a.download='health-diary-backup-'+today()+'.json';a.click();URL.revokeObjectURL(url);
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+
+  a.href=url;
+  a.download='health-diary-backup-'+today()+'.json';
+  a.click();
+
+  URL.revokeObjectURL(url);
 }
+
 function importBackup(){
-  const file=document.getElementById('backupFile').files[0];if(!file)return notify('Выбери файл резервной копии');
+  const file=document.getElementById('backupFile').files[0];
+  if(!file)return notify('Выбери файл резервной копии');
+
   const reader=new FileReader();
+
   reader.onload=()=>{
     try{
       const incoming=JSON.parse(reader.result);
-      if(!incoming||typeof incoming!=='object'||!incoming.profile||!incoming.days)throw new Error('Неверный формат');
+
+      if(!incoming||typeof incoming!=='object'||!incoming.profile||!incoming.days){
+        throw new Error('Неверный формат');
+      }
+
       if(!confirm('Импорт заменит текущие данные. Продолжить?'))return;
-      data={...structuredClone(defaults),...incoming,profile:{...defaults.profile,...incoming.profile}};
-      localStorage.setItem(KEY,JSON.stringify(data));applyThemeById(data.activeTheme||'white');refresh();fillProfile();notify('Данные восстановлены');
-    }catch(e){notify('Не удалось импортировать файл. Проверь резервную копию JSON.')}
+
+      data={
+        ...structuredClone(defaults),
+        ...incoming,
+        profile:{...defaults.profile,...incoming.profile},
+        themes:[],
+        activeTheme:baseThemes.some(t=>t.id===incoming.activeTheme)?incoming.activeTheme:'white'
+      };
+
+      localStorage.setItem(KEY,JSON.stringify(data));
+      applyThemeById(data.activeTheme);
+      refresh();
+      fillProfile();
+      notify('Данные восстановлены');
+    }catch(e){
+      notify('Не удалось импортировать файл. Проверь резервную копию JSON.');
+    }
   };
+
   reader.readAsText(file);
 }
+
 function clearAll(){
   if(!confirm('Точно удалить все данные? Это действие нельзя отменить.'))return;
   if(!confirm('Подтверди удаление ещё раз.'))return;
-  localStorage.removeItem(KEY);data=structuredClone(defaults);save();applyThemeById('white');fillProfile();notify('Данные удалены');
+
+  localStorage.removeItem(KEY);
+  data=structuredClone(defaults);
+
+  save();
+  applyThemeById('white');
+  fillProfile();
+  notify('Данные удалены');
 }
+
+/* МИГРАЦИЯ СТАРЫХ ДАННЫХ */
+
 function migrate(){
-  // Поддерживаем старые записи в healthDiaryData: неизвестные поля не удаляются.
   if(!data.profile)data.profile={...defaults.profile};
   if(!data.days)data.days={};
   if(!data.tasks)data.tasks=[];
+  if(!data.habits)data.habits=[];
+  if(!data.notes)data.notes=[];
+  if(!data.weights)data.weights=[];
+  if(!data.measures)data.measures=[];
+  if(!data.workouts)data.workouts=[];
+  if(!data.wellbeing)data.wellbeing=[];
+  if(!data.meds)data.meds=[];
   if(!data.reviews)data.reviews={};
+
+  // Пользовательские темы больше не используются.
+  data.themes=[];
+
+  // Если ранее была выбрана пользовательская тема,
+  // переключаем приложение на белую.
+  if(!baseThemes.some(t=>t.id===data.activeTheme)){
+    data.activeTheme='white';
+  }
+
+  // Обеспечиваем наличие полей у старых записей дней.
+  Object.values(data.days).forEach(d=>{
+    if(!Array.isArray(d.food))d.food=[];
+    if(!Array.isArray(d.drinks))d.drinks=[];
+    if(d.steps===undefined)d.steps=null;
+    if(d.sleep===undefined)d.sleep=null;
+    if(d.wellbeing===undefined)d.wellbeing=null;
+  });
+
   localStorage.setItem(KEY,JSON.stringify(data));
 }
+
 function init(){
   migrate();
+
   document.getElementById('taskDate').value=today();
   document.getElementById('workoutDate').value=today();
+
   applyThemeById(data.activeTheme||'white');
   fillProfile();
   refresh();
+
   const now=new Date();
-  // Недельный обзор можно сформировать вручную; при открытии в воскресенье
-  // приложение предлагает его, если обзор за сегодня ещё не создан.
+
+  // В воскресенье приложение предлагает сформировать недельный обзор,
+  // если обзор за сегодня ещё не создан.
   if(now.getDay()===0&&!data.reviews[today()]){
-    setTimeout(()=>{if(confirm('Сегодня воскресенье. Сформировать недельный обзор?')){navigate('stats');generateReview()}},700);
+    setTimeout(()=>{
+      if(confirm('Сегодня воскресенье. Сформировать недельный обзор?')){
+        navigate('stats');
+        generateReview();
+      }
+    },700);
   }
 }
+
 init();
 </script>
 </body>
 </html>
-
